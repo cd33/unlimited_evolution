@@ -112,8 +112,6 @@ contract UnlimitedEvolution is ERC721, Ownable {
     function createCharacter(type_character _typeCharacter) external payable {
         require(msg.value == mintFee, "Wrong amount of fees");
         require(balanceOf(msg.sender) < 5, "You can't have more than 5 NFT");
-        require(_typeCharacter == type_character.BRUTE || _typeCharacter == type_character.SPIRITUAL || _typeCharacter == type_character.ELEMENTARY,
-        "You must choose between brute, spiritual or elementary");
         uint256 dna = _generateRandomNum(10**16);
         if (_typeCharacter == type_character.BRUTE) {
             _characterDetails[nextId] = Character(nextId, dna, 1, 1, 100, 10, 5, 3, 1, 1, block.timestamp, block.timestamp, type_character.BRUTE);

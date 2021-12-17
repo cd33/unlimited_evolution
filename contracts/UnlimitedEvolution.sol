@@ -40,6 +40,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
     event Healed(uint256 tokenId);
     event Fighted(uint256 myTokenId, uint256 rivalTokenId, uint256 substrateLifeToRival, uint256 substrateLifeToMe);
     event LevelUp(uint256 tokenId, uint256 level);
+    event FeesUpdated(uint256 _mintFee, uint256 _healFee, uint256 _fightFee);
 
     // Helper
     function _generateRandomNum(uint256 _mod) internal view returns(uint256) {
@@ -51,6 +52,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
         mintFee = _mintFee;
         healFee = _healFee;
         fightFee = _fightFee;
+        emit FeesUpdated(mintFee, healFee, fightFee);
     }
     
     function withdraw() external onlyOwner() {

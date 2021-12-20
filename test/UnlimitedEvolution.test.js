@@ -26,14 +26,6 @@ contract('UnlimitedEvolution', function (accounts) {
       ue = await UnlimitedEvolution.new({ from: owner })
     })
 
-    it('a un nom', async function () {
-      expect(await ue.name()).to.equal('UnlimitedEvolution')
-    })
-
-    it('a un symbole', async function () {
-      expect(await ue.symbol()).to.equal('UEV')
-    })
-
     it('Update fees', async function () {
       eventOwner = await ue.updateFees(
         readable('0.01'),
@@ -81,20 +73,17 @@ contract('UnlimitedEvolution', function (accounts) {
 
     describe('Create a Character', async () => {
       it('Creation', async function () {
-        balance = await ue.balanceOf(investor)
+        balance = await ue.getBalanceOfCharacters(investor)
         expect(balance).to.be.bignumber.equal('0')
 
         eventInvestor = await ue.createCharacter(0, {
           value: readable('0.001'),
           from: investor,
         })
-
-        balance = await ue.balanceOf(investor)
-        expect(balance).to.be.bignumber.equal('1')
-
         tokenIdInvestor = eventInvestor.logs[1].args[0].toString()
-        let checkIfOwner = await ue.ownerOf(tokenIdInvestor)
-        expect(checkIfOwner).to.equal(investor)
+
+        balance = await ue.getBalanceOfCharacters(investor)
+        expect(balance).to.be.bignumber.equal("1")
 
         expectEvent(eventInvestor, 'CharacterCreated', { id: tokenIdInvestor })
       })

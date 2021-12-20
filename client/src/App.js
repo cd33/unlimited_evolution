@@ -80,7 +80,8 @@ const App = () => {
   useEffect(() => {
     if (nftgContract !== null && web3 !== null && accounts !== null) {
       nftgContract.events.CharacterCreated()
-      .on('data', event => handleModal("Character Created", `Your have a new character #${event.returnValues.id}`))
+      .on('data', event => handleModal(`Character Created ID #${event.returnValues.id}`,
+      "Your caracter has just woken up and needs a one minute rest before interacting with other NFTs"))
       .on('error', err => handleModal("Error", err.message))
 
       nftgContract.events.Healed()

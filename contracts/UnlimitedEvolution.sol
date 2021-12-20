@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract UnlimitedEvolution is ERC721, Ownable {
+contract UnlimitedEvolution is ERC1155, Ownable {
 
-    constructor() ERC721("UnlimitedEvolution", "UEV") {}
+    constructor() ERC1155("") {}
+
+    function setURI(string memory newuri) external onlyOwner {
+        _setURI(newuri);
+    }
 
     using SafeMath for uint256;
 
@@ -34,6 +38,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
     }
 
     mapping(uint256 => Character) private _characterDetails;
+    mapping(address => uint8) private _balanceOfCharacters;
 
     // events
     event CharacterCreated(uint256 id);
@@ -43,9 +48,13 @@ contract UnlimitedEvolution is ERC721, Ownable {
     event FeesUpdated(uint256 _mintFee, uint256 _healFee, uint256 _fightFee);
 
     // Helper
-    function _generateRandomNum(uint256 _mod) internal view returns(uint256) {
+    function _generateRandomNum(uint256 _mod) private view returns(uint256) {
         uint256 randNum = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender)));
         return randNum.mod(_mod);
+    }
+
+    function _ownerOf(uint256 tokenId) private view returns (bool) {
+        return balanceOf(msg.sender, tokenId) != 0;
     }
     
     function updateFees(uint256 _mintFee, uint256 _healFee, uint256 _fightFee) external onlyOwner() {
@@ -59,7 +68,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
         payable(owner()).transfer(address(this).balance);
     }
     
-    function substrateLife(uint256 id1, uint256 id2) internal view returns(uint256) {
+    function substrateLife(uint256 id1, uint256 id2) private view returns(uint256) {
         uint256 op1 = (_characterDetails[id1].attack).mul((1 + _characterDetails[id1].xp));
         uint256 op2 = (_characterDetails[id2].armor).mul(((1 + _characterDetails[id2].xp).div(2)));
         if (op1 < op2) {
@@ -69,7 +78,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
         }
     }
 
-    function substrateLifeMagic(uint256 id1, uint256 id2) internal view returns(uint256) {
+    function substrateLifeMagic(uint256 id1, uint256 id2) private view returns(uint256) {
         uint256 op1 = (_characterDetails[id1].magicAttack).mul((1 + _characterDetails[id1].xp));
         uint256 op2 = (_characterDetails[id2].magicResistance).mul(((1 + _characterDetails[id2].xp).div(2)));
         if (op1 < op2) {
@@ -79,7 +88,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
         }
     }
 
-    function XpLevelUp(uint256 _tokenId) internal {
+    function XpLevelUp(uint256 _tokenId) private {
         _characterDetails[_tokenId].xp++;
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
@@ -87,7 +96,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
         }
     }
 
-    function sustrateLifeOperation(uint256 _myTokenId, uint256 _rivalTokenId, uint256 substrateLifeToRival, uint256 substrateLifeToMe) internal {
+    function sustrateLifeOperation(uint256 _myTokenId, uint256 _rivalTokenId, uint256 substrateLifeToRival, uint256 substrateLifeToMe) private {
         if(substrateLifeToRival >= _characterDetails[_rivalTokenId].hp) {
             _characterDetails[_rivalTokenId].hp = 0;
             XpLevelUp(_myTokenId);
@@ -113,7 +122,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
 
     function createCharacter(type_character _typeCharacter) external payable {
         require(msg.value == mintFee, "Wrong amount of fees");
-        require(balanceOf(msg.sender) < 5, "You can't have more than 5 NFT");
+        require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
         uint256 dna = _generateRandomNum(10**16);
         if (_typeCharacter == type_character.BRUTE) {
             _characterDetails[nextId] = Character(nextId, dna, 1, 1, 100, 10, 5, 3, 1, 1, block.timestamp, block.timestamp, type_character.BRUTE);
@@ -124,14 +133,15 @@ contract UnlimitedEvolution is ERC721, Ownable {
         if (_typeCharacter == type_character.ELEMENTARY) {
             _characterDetails[nextId] = Character(nextId, dna, 1, 1, 100, 50, 2, 2, 3, 3, block.timestamp, block.timestamp, type_character.ELEMENTARY);
         }
-        _safeMint(msg.sender, nextId);
+        _balanceOfCharacters[msg.sender]++;
+        _mint(msg.sender, nextId, 1, "");
         emit CharacterCreated(nextId);
         nextId++;
     }
 
     function heal(uint256 _tokenId) external payable {
         require(msg.value == healFee, "Wrong amount of fees");
-        require(ownerOf(_tokenId) == msg.sender, "You're not the owner of the NFT");
+        require(_ownerOf(_tokenId), "You're not the owner of the NFT");
         require(_characterDetails[_tokenId].lastHeal + 60 < block.timestamp, "To soon to heal (1 min)");
         require(_characterDetails[_tokenId].hp < 100, "You're character is already healed");
         // require(_characterDetails[_tokenId].hp > 0, "You're NFT is dead");
@@ -147,8 +157,8 @@ contract UnlimitedEvolution is ERC721, Ownable {
 
     function fight(uint256 _myTokenId, uint256 _rivalTokenId) external payable {
         require(msg.value == fightFee, "Wrong amount of fees");
-        require(ownerOf(_myTokenId) == msg.sender, "You're not the owner of the NFT");
-        require(ownerOf(_myTokenId) != ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
+        require(_ownerOf(_myTokenId), "You're not the owner of the NFT");
+        require(_ownerOf(_myTokenId) != _ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
         require(_characterDetails[_myTokenId].lastFight + 60 < block.timestamp, "To soon to fight (1 min)");
         require(_characterDetails[_myTokenId].level <= _characterDetails[_rivalTokenId].level, "Fight someone your own size!");
         require(_characterDetails[_myTokenId].hp > 0 && _characterDetails[_rivalTokenId].hp > 0, "One of the NFTs is dead");
@@ -162,8 +172,8 @@ contract UnlimitedEvolution is ERC721, Ownable {
 
     function spell(uint256 _myTokenId, uint256 _rivalTokenId) external payable {
         require(msg.value == fightFee, "Wrong amount of fees");
-        require(ownerOf(_myTokenId) == msg.sender, "You're not the owner of the NFT");
-        require(ownerOf(_myTokenId) != ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
+        require(_ownerOf(_myTokenId), "You're not the owner of the NFT");
+        require(_ownerOf(_myTokenId) != _ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
         require(_characterDetails[_myTokenId].lastFight + 60 < block.timestamp, "To soon to fight (1 min)");
         require(_characterDetails[_myTokenId].mana >= 10, "You don't have enough mana");
         require(_characterDetails[_myTokenId].level <= _characterDetails[_rivalTokenId].level, "Fight someone your own size!");
@@ -184,9 +194,9 @@ contract UnlimitedEvolution is ERC721, Ownable {
 
     function getMyCharacters() external view returns (Character[] memory){
         uint8 count = 0;
-        Character[] memory myCharacters = new Character[](balanceOf(msg.sender));
+        Character[] memory myCharacters = new Character[](_balanceOfCharacters[msg.sender]);
         for (uint256 i = 0; i < nextId; i++) {
-            if (ownerOf(i) == msg.sender) {
+            if (_ownerOf(i)) {
                 myCharacters[count] = _characterDetails[i];
                 count++;
             }
@@ -196,9 +206,9 @@ contract UnlimitedEvolution is ERC721, Ownable {
 
     function getOthersCharacters() external view returns (Character[] memory){
         uint256 count = 0;
-        Character[] memory othersCharacters = new Character[](nextId.sub(balanceOf(msg.sender)));
+        Character[] memory othersCharacters = new Character[](nextId.sub(_balanceOfCharacters[msg.sender]));
         for (uint256 i = 0; i < nextId; i++) {
-            if (ownerOf(i) != msg.sender) {
+            if (_ownerOf(i)) {
                 othersCharacters[count] = _characterDetails[i];
                 count++;
             }
@@ -214,4 +224,7 @@ contract UnlimitedEvolution is ERC721, Ownable {
     //     }
     //     return allCharacters;
     // }
+    function getBalanceOfCharacters(address _address) external view returns(uint8) {
+        return _balanceOfCharacters[_address];
+    }
 }

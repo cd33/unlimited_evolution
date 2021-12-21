@@ -26,30 +26,37 @@ contract('UnlimitedEvolution', function (accounts) {
       ue = await UnlimitedEvolution.new({ from: owner })
     })
 
-    it('Update fees', async function () {
-      eventOwner = await ue.updateFees(
-        readable('0.01'),
-        readable('0.001'),
-        readable('0.001'),
-        { from: owner },
-      )
-      let mintFee = eventOwner.logs[0].args[0].toString()
-      let healFee = eventOwner.logs[0].args[1].toString()
-      let fightFee = eventOwner.logs[0].args[2].toString()
-      expect(readable('0.01')).to.equal(mintFee)
-      expect(readable('0.001')).to.equal(healFee)
-      expect(readable('0.001')).to.equal(fightFee)
+    // REFAIRE LES TESTS DE FIGHT LORSQUE L'ALGO FIGHT EST PRET (ACTUELLEMENT CASSé)
 
-      expectEvent(eventOwner, 'FeesUpdated', {
-        _mintFee: mintFee,
-        _healFee: healFee,
-        _fightFee: fightFee,
-      })
+    it('Update fee', async function () {
+      eventOwner = await ue.updateFee(readable('0.01'), { from: owner })
+      let mintFee = eventOwner.logs[0].args[0].toString()
+      expect(readable('0.01')).to.equal(mintFee)
+
+      expectEvent(eventOwner, 'FeeUpdated', { mintFee: mintFee })
     })
 
-    it('REVERT: updateFees()', async function () {
+    it('REVERT: updateFee() owner', async function () {
       await expectRevert(
-        ue.updateFees(readable('0.01'), readable('0.001'), readable('0.001'), {
+        ue.updateFee(readable('0.01'), {
+          from: investor,
+        }),
+        'Ownable: caller is not the owner',
+      )
+    })
+
+    // à tester
+    it('Update limit mint', async function () {
+      eventOwner = await ue.updateLimitMint(10, { from: owner })
+      let limitMint = eventOwner.logs[0].args[0].toString()
+      expect(readable('0.01')).to.equal(limitMint)
+
+      expectEvent(eventOwner, 'LimitUpdated', { limitMint: limitMint })
+    })
+
+    it('REVERT: updateLimitMint() owner', async function () {
+      await expectRevert(
+        ue.updateLimitMint(10, {
           from: investor,
         }),
         'Ownable: caller is not the owner',
@@ -58,13 +65,16 @@ contract('UnlimitedEvolution', function (accounts) {
 
     it('Withdraw', async function () {
       balanceBefore = await web3.eth.getBalance(accounts[0])
-      await ue.createCharacter(1, { value: readable('0.001'), from: investor })
+      await ue.createCharacter(1, 1, {
+        value: readable('0.001'),
+        from: investor,
+      })
       await ue.withdraw({ from: owner })
       balanceAfter = await web3.eth.getBalance(accounts[0])
       expect(parseInt(balanceBefore)).to.be.lt(parseInt(balanceAfter)) // lower than
     })
 
-    it('REVERT: withdraw()', async function () {
+    it('REVERT: withdraw() owner', async function () {
       await expectRevert(
         ue.withdraw({ from: investor }),
         'Ownable: caller is not the owner',
@@ -76,68 +86,96 @@ contract('UnlimitedEvolution', function (accounts) {
         balance = await ue.getBalanceOfCharacters(investor)
         expect(balance).to.be.bignumber.equal('0')
 
-        eventInvestor = await ue.createCharacter(0, {
+        eventInvestor = await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: investor,
         })
         tokenIdInvestor = eventInvestor.logs[1].args[0].toString()
 
         balance = await ue.getBalanceOfCharacters(investor)
-        expect(balance).to.be.bignumber.equal("1")
+        expect(balance).to.be.bignumber.equal('1')
 
         expectEvent(eventInvestor, 'CharacterCreated', { id: tokenIdInvestor })
       })
 
       it('REVERT: createCharacter() Wrong amount of fees', async function () {
         await expectRevert(
-          ue.createCharacter(0, { value: readable('0.01'), from: investor }),
+          ue.createCharacter(0, 0, { value: readable('0.01'), from: investor }),
           'Wrong amount of fees',
         )
       })
 
       it('REVERT: createCharacter() more than 5 NFTs', async function () {
-        await ue.createCharacter(0, {
+        await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: investor,
         })
-        await ue.createCharacter(1, {
+        await ue.createCharacter(1, 1, {
           value: readable('0.001'),
           from: investor,
         })
-        await ue.createCharacter(2, {
+        await ue.createCharacter(2, 2, {
           value: readable('0.001'),
           from: investor,
         })
-        await ue.createCharacter(1, {
+        await ue.createCharacter(1, 1, {
           value: readable('0.001'),
           from: investor,
         })
-        await ue.createCharacter(0, {
+        await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: investor,
         })
         await expectRevert(
-          ue.createCharacter(1, { value: readable('0.001'), from: investor }),
+          ue.createCharacter(1, 1, {
+            value: readable('0.001'),
+            from: investor,
+          }),
           "You can't have more than 5 NFT",
+        )
+      })
+
+      it('REVERT: createCharacter() limiteMint', async function () {
+        await ue.updateLimiteMint(1, { from: owner })
+
+        await ue.createCharacter(0, 0, {
+          value: readable('0.001'),
+          from: investor,
+        })
+
+        await ue.createCharacter(0, 0, {
+          value: readable('0.001'),
+          from: investor,
+        })
+
+        await expectRevert(
+          ue.createCharacter(0, 0, {
+            value: readable('0.001'),
+            from: investor,
+          }),
+          'You cannot mint more character with this class',
         )
       })
 
       it('REVERT: createCharacter() non-existent class', async function () {
         await expectRevert.unspecified(
-          ue.createCharacter(3, { value: readable('0.001'), from: investor }),
+          ue.createCharacter(3, 0, {
+            value: readable('0.001'),
+            from: investor,
+          }),
         )
       })
     })
 
     describe('Fight', async () => {
       beforeEach(async function () {
-        eventInvestor = await ue.createCharacter(1, {
+        eventInvestor = await ue.createCharacter(1, 1, {
           value: readable('0.001'),
           from: investor,
         })
         tokenIdInvestor = eventInvestor.logs[1].args[0].toString()
 
-        eventOwner = await ue.createCharacter(0, {
+        eventOwner = await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: owner,
         })
@@ -150,7 +188,6 @@ contract('UnlimitedEvolution', function (accounts) {
 
         await time.increase(61)
         let receipt = await ue.fight(tokenIdOwner, tokenIdInvestor, {
-          value: readable('0.00001'),
           from: owner,
         })
 
@@ -179,20 +216,19 @@ contract('UnlimitedEvolution', function (accounts) {
         })
       })
 
-      it('REVERT: fight() Wrong amount of fees', async function () {
-        await expectRevert(
-          ue.fight(tokenIdOwner, tokenIdInvestor, {
-            value: readable('0.00002'),
-            from: owner,
-          }),
-          'Wrong amount of fees',
-        )
-      })
+      // it('REVERT: fight() Wrong amount of fees', async function () {
+      //   await expectRevert(
+      //     ue.fight(tokenIdOwner, tokenIdInvestor, {
+      //       value: readable('0.00002'),
+      //       from: owner,
+      //     }),
+      //     'Wrong amount of fees',
+      //   )
+      // })
 
       it('REVERT: fight() Not Owner', async function () {
         await expectRevert(
           ue.fight(tokenIdOwner, tokenIdInvestor, {
-            value: readable('0.00001'),
             from: investor,
           }),
           "You're not the owner of the NFT",
@@ -200,14 +236,13 @@ contract('UnlimitedEvolution', function (accounts) {
       })
 
       it('REVERT: fight() between friends', async function () {
-        let eventOwner2 = await ue.createCharacter(0, {
+        let eventOwner2 = await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: owner,
         })
         let tokenIdOwner2 = eventOwner2.logs[1].args[0].toString()
         await expectRevert(
           ue.fight(tokenIdOwner, tokenIdOwner2, {
-            value: readable('0.00001'),
             from: owner,
           }),
           'Your NFTs cannot fight each other',
@@ -217,16 +252,76 @@ contract('UnlimitedEvolution', function (accounts) {
       it('REVERT: fight() To soon', async function () {
         await expectRevert(
           ue.fight(tokenIdOwner, tokenIdInvestor, {
-            value: readable('0.00001'),
             from: owner,
           }),
           'To soon to fight (1 min)',
         )
       })
 
+      // // TODO QUAND ALGO COMBAT PRET
+      // it('REVERT: fight() not enough stamina', async function () {
+      //   await time.increase(61)
+      //   let eventInvestor2 = await ue.createCharacter(0, 0, {
+      //     value: readable('0.001'),
+      //     from: investor,
+      //   })
+      //   let tokenIdInvestor2 = eventInvestor2.logs[1].args[0].toString()
+      //   let tokenDetailsInvestor2 = await ue.getTokenDetails(tokenIdInvestor2)
+
+      //   let tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+      //   // while (tokenDetailsInvestor2[4] > 0) {
+      //   //   await ue.fight(tokenIdOwner, tokenIdInvestor2, {
+      //   //     from: owner,
+      //   //   })
+      //   //   await time.increase(61)
+      //   //   tokenDetailsInvestor2 = await ue.getTokenDetails(tokenIdInvestor2)
+      //   // }
+      //   // let tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
+      //   // while (tokenDetailsInvestor[4] > 0) {
+      //   //   if (tokenDetailsOwner[5] < 10) {
+      //   //     break
+      //   //   }
+      //   //   await ue.fight(tokenIdOwner, tokenIdInvestor, {
+      //   //     from: owner,
+      //   //   })
+      //   //   await time.increase(61)
+      //   //   tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
+      //   //   tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+      //   // }
+
+      //   // TEMPORAIRE
+      //   await time.increase(61)
+      //   let eventInvestor3 = await ue.createCharacter(0, 0, {
+      //     value: readable('0.001'),
+      //     from: investor,
+      //   })
+      //   let tokenIdInvestor3 = eventInvestor3.logs[1].args[0].toString()
+
+      //   while (tokenDetailsInvestor[4] > 0) {
+      //     await ue.fight(tokenIdOwner, tokenIdInvestor, {
+      //       from: owner,
+      //     })
+      //     await time.increase(61)
+      //   }
+
+      //   while (tokenDetailsInvestor3[4] > 0) {
+      //     await ue.fight(tokenIdInvestor2, tokenIdInvestor3, {
+      //       from: investor,
+      //     })
+      //     await time.increase(61)
+      //   }
+      //   // TEMPORAIRE
+      //   await expectRevert(
+      //     ue.fight(tokenIdOwner, tokenIdInvestor2, {
+      //       from: owner,
+      //     }),
+      //     'Not enough stamina',
+      //   )
+      // })
+
       it('REVERT: fight() same level & expectEvent LevelUp', async function () {
         await time.increase(61)
-        let eventInvestor2 = await ue.createCharacter(0, {
+        let eventInvestor2 = await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: investor,
         })
@@ -234,7 +329,7 @@ contract('UnlimitedEvolution', function (accounts) {
         let tokenDetailsInvestor2 = await ue.getTokenDetails(tokenIdInvestor2)
 
         await time.increase(61)
-        let eventInvestor3 = await ue.createCharacter(0, {
+        let eventInvestor3 = await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: investor,
         })
@@ -244,7 +339,6 @@ contract('UnlimitedEvolution', function (accounts) {
         let tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
         while (tokenDetailsInvestor2[4] > 0) {
           await ue.fight(tokenIdOwner, tokenIdInvestor2, {
-            value: readable('0.00001'),
             from: owner,
           })
           await time.increase(61)
@@ -260,7 +354,6 @@ contract('UnlimitedEvolution', function (accounts) {
             break
           }
           receipt = await ue.fight(tokenIdOwner, tokenIdInvestor3, {
-            value: readable('0.00001'),
             from: owner,
           })
           await time.increase(61)
@@ -270,10 +363,9 @@ contract('UnlimitedEvolution', function (accounts) {
 
         await expectRevert(
           ue.fight(tokenIdOwner, tokenIdInvestor, {
-            value: readable('0.00001'),
             from: owner,
           }),
-          ' Fight someone your own size!',
+          'Fight someone your own size!',
         )
       })
 
@@ -282,7 +374,6 @@ contract('UnlimitedEvolution', function (accounts) {
         let tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
         while (tokenDetailsInvestor[4] > 0) {
           await ue.fight(tokenIdOwner, tokenIdInvestor, {
-            value: readable('0.00001'),
             from: owner,
           })
           await time.increase(61)
@@ -290,7 +381,6 @@ contract('UnlimitedEvolution', function (accounts) {
         }
         await expectRevert(
           ue.fight(tokenIdOwner, tokenIdInvestor, {
-            value: readable('0.00001'),
             from: owner,
           }),
           'One of the NFTs is dead',
@@ -298,105 +388,32 @@ contract('UnlimitedEvolution', function (accounts) {
       })
     })
 
-    describe('Spell', async () => {
+    describe('Rest', async () => {
       beforeEach(async function () {
-        eventInvestor = await ue.createCharacter(1, {
-          value: readable('0.001'),
-          from: investor,
-        })
-        tokenIdInvestor = eventInvestor.logs[1].args[0].toString()
-
-        eventOwner = await ue.createCharacter(0, {
-          value: readable('0.001'),
-          from: owner,
-        })
-        tokenIdOwner = eventOwner.logs[1].args[0].toString()
-      })
-
-      it('Spelling', async function () {
-        let ownerDetailsBefore = await ue.getTokenDetails(tokenIdOwner)
-        let investorDetailsBefore = await ue.getTokenDetails(tokenIdInvestor)
-
-        await time.increase(61)
-        let receipt = await ue.spell(tokenIdInvestor, tokenIdOwner, {
-          value: readable('0.00001'),
-          from: investor,
-        })
-
-        let substrateLifeToInvestor = receipt.logs[0].args[3]
-        let substrateLifeToOwner = receipt.logs[0].args[2]
-
-        let ownerDetailsAfter = await ue.getTokenDetails(tokenIdOwner)
-        let investorDetailsAfter = await ue.getTokenDetails(tokenIdInvestor)
-
-        expect(parseInt(ownerDetailsBefore[4] - substrateLifeToOwner)).to.equal(
-          parseInt(ownerDetailsAfter[4]),
-        )
-        expect(
-          parseInt(investorDetailsBefore[4] - substrateLifeToInvestor),
-        ).to.equal(parseInt(investorDetailsAfter[4]))
-
-        expect(parseInt(investorDetailsBefore[3]) + 1).to.equal(
-          parseInt(investorDetailsAfter[3]),
-        )
-
-        expect(parseInt(investorDetailsBefore[5]) - 10).to.equal(
-          parseInt(investorDetailsAfter[5]),
-        )
-
-        expectEvent(receipt, 'Fighted', {
-          myTokenId: tokenIdInvestor,
-          rivalTokenId: tokenIdOwner,
-          substrateLifeToRival: receipt.logs[0].args[2],
-          substrateLifeToMe: receipt.logs[0].args[3],
-        })
-      })
-
-      it('REVERT: spell() not enough mana', async function () {
-        await time.increase(61)
-        await ue.spell(tokenIdOwner, tokenIdInvestor, {
-          value: readable('0.00001'),
-          from: owner,
-        })
-        await time.increase(61)
-        await expectRevert(
-          ue.spell(tokenIdOwner, tokenIdInvestor, {
-            value: readable('0.00001'),
-            from: owner,
-          }),
-          "You don't have enough mana",
-        )
-      })
-    })
-
-    describe('Heal', async () => {
-      beforeEach(async function () {
-        eventInvestor = await ue.createCharacter(1, {
+        eventInvestor = await ue.createCharacter(1, 1, {
           value: readable('0.001'),
           from: investor,
         })
         tokenIdInvestor = eventInvestor.logs[1].args[0].toString()
       })
 
-      it('Healing', async function () {
-        eventOwner = await ue.createCharacter(0, {
+      it('Resting', async function () {
+        eventOwner = await ue.createCharacter(0, 0, {
           value: readable('0.001'),
           from: owner,
         })
         tokenIdOwner = eventOwner.logs[1].args[0].toString()
 
         await time.increase(61)
-        await ue.fight(tokenIdOwner, tokenIdInvestor, {
-          value: readable('0.00001'),
-          from: owner,
+        await ue.fight(tokenIdInvestor, tokenIdOwner, {
+          from: investor,
         })
 
         let tokenDetailsInvestorBefore = await ue.getTokenDetails(
           tokenIdInvestor,
         )
 
-        const receipt = await ue.heal(tokenIdInvestor, {
-          value: readable('0.00001'),
+        const receipt = await ue.rest(tokenIdInvestor, {
           from: investor,
         })
 
@@ -404,50 +421,99 @@ contract('UnlimitedEvolution', function (accounts) {
           tokenIdInvestor,
         )
 
-        expect(parseInt(tokenDetailsInvestorBefore[4])).to.be.lt(
-          parseInt(tokenDetailsInvestorAfter[4]),
+        expect(parseInt(tokenDetailsInvestorBefore[5])).to.be.lt(
+          parseInt(tokenDetailsInvestorAfter[5]),
         )
 
-        expectEvent(receipt, 'Healed', { tokenId: tokenIdInvestor })
+        expectEvent(receipt, 'Rested', { tokenId: tokenIdInvestor })
       })
 
-      it('REVERT: heal() Wrong amount of fees', async function () {
+      it('REVERT: rest() Not Owner', async function () {
         await expectRevert(
-          ue.heal(tokenIdInvestor, {
-            value: readable('0.00002'),
-            from: investor,
-          }),
-          'Wrong amount of fees',
-        )
-      })
-
-      it('REVERT: heal() Not Owner', async function () {
-        await expectRevert(
-          ue.heal(tokenIdInvestor, { value: readable('0.00001'), from: owner }),
+          ue.rest(tokenIdInvestor, { from: owner }),
           "You're not the owner of the NFT",
         )
       })
 
-      it('REVERT: heal() To soon', async function () {
-        await expectRevert(
-          ue.heal(tokenIdInvestor, {
-            value: readable('0.00001'),
-            from: investor,
-          }),
-          'To soon to heal (1 min)',
-        )
-      })
-
-      it('REVERT: heal() Already healed', async function () {
+      it('REVERT: rest() Already rested', async function () {
         await time.increase(61)
         await expectRevert(
-          ue.heal(tokenIdInvestor, {
-            value: readable('0.00001'),
+          ue.rest(tokenIdInvestor, {
             from: investor,
           }),
-          "You're character is already healed",
+          "You're character is already rested",
         )
       })
     })
+
+    // describe('Heal', async () => {
+    //   beforeEach(async function () {
+    //     eventInvestor = await ue.createCharacter(1, 1, {
+    //       value: readable('0.001'),
+    //       from: investor,
+    //     })
+    //     tokenIdInvestor = eventInvestor.logs[1].args[0].toString()
+    //   })
+
+    //   it('Healing', async function () {
+    //     eventOwner = await ue.createCharacter(0, 0, {
+    //       value: readable('0.001'),
+    //       from: owner,
+    //     })
+    //     tokenIdOwner = eventOwner.logs[1].args[0].toString()
+
+    //     await time.increase(61)
+    //     await ue.fight(tokenIdOwner, tokenIdInvestor, {
+    //       from: owner,
+    //     })
+
+    //     let tokenDetailsInvestorBefore = await ue.getTokenDetails(
+    //       tokenIdInvestor,
+    //     )
+
+    //     const receipt = await ue.heal(tokenIdInvestor, {
+    //       value: readable('0.00001'),
+    //       from: investor,
+    //     })
+
+    //     let tokenDetailsInvestorAfter = await ue.getTokenDetails(
+    //       tokenIdInvestor,
+    //     )
+
+    //     expect(parseInt(tokenDetailsInvestorBefore[4])).to.be.lt(
+    //       parseInt(tokenDetailsInvestorAfter[4]),
+    //     )
+
+    //     expectEvent(receipt, 'Healed', { tokenId: tokenIdInvestor })
+    //   })
+
+    //   it('REVERT: heal() Not Owner', async function () {
+    //     await expectRevert(
+    //       ue.heal(tokenIdInvestor, { value: readable('0.00001'), from: owner }),
+    //       "You're not the owner of the NFT",
+    //     )
+    //   })
+
+    //   it('REVERT: heal() To soon', async function () {
+    //     await expectRevert(
+    //       ue.heal(tokenIdInvestor, {
+    //         value: readable('0.00001'),
+    //         from: investor,
+    //       }),
+    //       'To soon to heal (1 min)',
+    //     )
+    //   })
+
+    //   it('REVERT: heal() Already healed', async function () {
+    //     await time.increase(61)
+    //     await expectRevert(
+    //       ue.heal(tokenIdInvestor, {
+    //         value: readable('0.00001'),
+    //         from: investor,
+    //       }),
+    //       "You're character is already healed",
+    //     )
+    //   })
+    // })
   })
 })

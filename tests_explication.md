@@ -3,8 +3,11 @@
 In the tests, I simulate the different use cases of the contract UnlimitedEvolution.  
 
 For the following functions, I check if :
-* UpdateFees function
-  - The fees change
+* UpdateFee function
+  - The fee change
+  - The event is emitted
+* UpdateLimitMint function
+  - The limit of nft mintable change
   - The event is emitted
 * Withdraw function
   - The balance of the owner increases
@@ -14,11 +17,8 @@ For the following functions, I check if :
 * Fight function
   - For the both protagonists, if they lose health points and gain experience
   - The event is emitted
-* Spell function
-  - For the both protagonists, if they lose health points, lose mana and gain experience 
-  - The event is emitted
-* Heal function
-  - The life points have increased
+* Rest function
+  - The stamina points have increased
   - The event is emitted
 
 **All the different possible Reverts are also tested.**

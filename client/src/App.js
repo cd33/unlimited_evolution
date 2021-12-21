@@ -11,9 +11,10 @@ const App = () => {
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [owner, setOwner] = useState(null);
-  const [nftgContract, setNftgContract] = useState(null);
+  const [ueContract, SetUeContract] = useState(null);
   const [characters, setCharacters] = useState(null);
   const [typeCharacter, setTypeCharacter] = useState(0);
+  const [genderCharacter, setGenderCharacter] = useState(0);
   const [othersCharacters, setOthersCharacters] = useState(null);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -47,19 +48,19 @@ const App = () => {
         }
 
         // Load UnlimitedEvolution and the NFTs
-        const nftgNetwork = UnlimitedEvolution.networks[networkId];
-        const nftgContract = new web3.eth.Contract(UnlimitedEvolution.abi, nftgNetwork && nftgNetwork.address);
-        setNftgContract(nftgContract);
-        await nftgContract.methods.getMyCharacters().call({ from: accounts[0] }).then(res => setCharacters(res));
-        await nftgContract.methods.getOthersCharacters().call({ from: accounts[0] }).then(res => setOthersCharacters(res));
+        const ueNetwork = UnlimitedEvolution.networks[networkId];
+        const ueContract = new web3.eth.Contract(UnlimitedEvolution.abi, ueNetwork && ueNetwork.address);
+        SetUeContract(ueContract);
+        await ueContract.methods.getMyCharacters().call({ from: accounts[0] }).then(res => setCharacters(res));
+        await ueContract.methods.getOthersCharacters().call({ from: accounts[0] }).then(res => setOthersCharacters(res));
 
-        setOwner(accounts[0] === await nftgContract.methods.owner().call());
+        setOwner(accounts[0] === await ueContract.methods.owner().call());
 
         // Subscribe to the contract states to update the front states
         web3.eth.subscribe('newBlockHeaders', async (err, res) => {
           if (!err) {
-            await nftgContract.methods.getMyCharacters().call({ from: accounts[0] }).then(res => setCharacters(res));
-            await nftgContract.methods.getOthersCharacters().call({ from: accounts[0] }).then(res => setOthersCharacters(res));
+            await ueContract.methods.getMyCharacters().call({ from: accounts[0] }).then(res => setCharacters(res));
+            await ueContract.methods.getOthersCharacters().call({ from: accounts[0] }).then(res => setOthersCharacters(res));
           }
         });
 
@@ -78,30 +79,30 @@ const App = () => {
 
   // EVENTS
   useEffect(() => {
-    if (nftgContract !== null && web3 !== null && accounts !== null) {
-      nftgContract.events.CharacterCreated()
+    if (ueContract !== null && web3 !== null && accounts !== null) {
+      ueContract.events.CharacterCreated()
       .on('data', event => handleModal(`Character Created ID #${event.returnValues.id}`,
       "Your caracter has just woken up and needs a one minute rest before interacting with other NFTs"))
       .on('error', err => handleModal("Error", err.message))
 
-      nftgContract.events.Healed()
-      .on('data', event => handleModal("Your Character Is Healed", `Your character #${event.returnValues.tokenId} was healed of 50 points`))
+      ueContract.events.Rested()
+      .on('data', event => handleModal("Your Character Is Rested", `Your character #${event.returnValues.tokenId} was rested of 50 points`))
       .on('error', err => handleModal("Error", err.message))
 
-      nftgContract.events.Fighted()
+      ueContract.events.Fighted()
       .on('data', event => handleModal("The Fight Took Place", `Your character #${event.returnValues.myTokenId} fought with #${event.returnValues.rivalTokenId}. 
         You inflicted ${event.returnValues.substrateLifeToRival} hp and you suffered ${event.returnValues.substrateLifeToMe} hp.`))
       .on('error', err => handleModal("Error", err.message))
 
-      nftgContract.events.LevelUp()
+      ueContract.events.LevelUp()
       .on('data', event => handleModal("Congratulations !", `Your character #${event.returnValues.tokenId} is now level #${event.returnValues.level}.`))
       .on('error', err => handleModal("Error", err.message))
     }
-  }, [accounts, nftgContract, web3])
+  }, [accounts, ueContract, web3])
     
   const createCharacter = () => {
     setLoading(true);
-    nftgContract.methods.createCharacter(typeCharacter)
+    ueContract.methods.createCharacter(typeCharacter, genderCharacter)
       .send({ from: accounts[0], value: web3.utils.toWei("0.001", 'Ether') })
       .once("error", err => {
         setLoading(false);
@@ -115,7 +116,7 @@ const App = () => {
 
   const withdraw = () => {
     setLoading(true);
-    nftgContract.methods.withdraw().send({ from: accounts[0] })
+    ueContract.methods.withdraw().send({ from: accounts[0] })
       .once("error", err => {
         setLoading(false);
         console.log(err);
@@ -128,8 +129,8 @@ const App = () => {
 
   const fight = (_myTokenId, _rivalTokenId) => {
     setLoading(true);
-    nftgContract.methods.fight(_myTokenId, _rivalTokenId)
-      .send({ from: accounts[0], value: web3.utils.toWei("0.00001", 'Ether') })
+    ueContract.methods.fight(_myTokenId, _rivalTokenId)
+      .send({ from: accounts[0] })
       .once("error", err => {
         setLoading(false);
         console.log(err);
@@ -140,24 +141,10 @@ const App = () => {
       })
   }
 
-  const spell = (_myTokenId, _rivalTokenId) => {
+  const rest = (_myTokenId) => {
     setLoading(true);
-    nftgContract.methods.spell(_myTokenId, _rivalTokenId)
-      .send({ from: accounts[0], value: web3.utils.toWei("0.00001", 'Ether') })
-      .once("error", err => {
-        setLoading(false);
-        console.log(err);
-      })
-      .then(res => {
-        setLoading(false);
-        console.log(res);
-      })
-  }
-
-  const heal = (_myTokenId) => {
-    setLoading(true);
-    nftgContract.methods.heal(_myTokenId)
-      .send({ from: accounts[0], value: web3.utils.toWei("0.00001", 'Ether') })
+    ueContract.methods.rest(_myTokenId)
+      .send({ from: accounts[0] })
       .once("error", err => {
         setLoading(false);
         console.log(err);
@@ -178,6 +165,16 @@ const App = () => {
     }
   }
 
+  const typeGenderName = (val) => {
+    if (parseInt(val) === 0) {
+      return "MASCULINE";
+    } else if (parseInt(val) === 1) {
+      return "FEMININE";
+    } else {
+      return "OTHER";
+    }
+  }
+
   const handleModal = (title, content) => {
     setTitleModal(title);
     setContentModal(content);
@@ -186,13 +183,26 @@ const App = () => {
 
   const handleSelectedCharacter = (e) => {
     if (e === "") return null;
-    let tempArray = {id: null, mana: null};
+    // let tempArray = {id: null, mana: null};
+    let tempArray = {id: null};
     let character = JSON.parse(e);
     tempArray.id = character.id;
-    tempArray.mana = character.mana;
+    // tempArray.mana = character.mana;
     setSelectedCharacter(tempArray);
   }
+
+  const attacks = (type, nb) => {
+    const attacksType = {
+      brute: ["Speed", "Power", "Resistance", "Weapons"],
+      spiritual: ["Gravitation", "Electromagnetism", "Magic", "Invocation"],
+      elementary: ["Air", "Water", "Earth", "Fire"]
+    };
+    if(type === "0") return (attacksType.brute[nb])
+    if(type === "1") return (attacksType.spiritual[nb])
+    if(type === "2") return (attacksType.elementary[nb])
+  }
   
+
   return (
     <s.Screen>
       <s.Container ai="center" style={{ flex: 1, backgroundColor: '#DBAD6A' }}>
@@ -210,6 +220,12 @@ const App = () => {
                 <option value="0">BRUTE</option>
                 <option value="1">SPIRITUAL</option>
                 <option value="2">ELEMENTARY</option>
+              </select>
+              
+              <select onChange={e => setGenderCharacter(e.target.value)}>
+                <option value="0">MASCULINE</option>
+                <option value="1">FEMININE</option>
+                <option value="2">OTHER</option>
               </select>
 
               <s.Button
@@ -237,19 +253,22 @@ const App = () => {
                         <s.TextDescription>Level: {character.level}</s.TextDescription>
                         <s.TextDescription>XP: {character.xp}</s.TextDescription>
                         <s.TextDescription>HP: {character.hp}</s.TextDescription>
-                        <s.TextDescription>Mana: {character.mana}</s.TextDescription>
+                        <s.TextDescription>Stamina: {character.stamina}</s.TextDescription>
                         <s.TextDescription>Attack: {character.attack}</s.TextDescription>
                         <s.TextDescription>Armor: {character.armor}</s.TextDescription>
-                        <s.TextDescription>Magic Attack: {character.magicAttack}</s.TextDescription>
-                        <s.TextDescription>Magic Resistance: {character.magicResistance}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 0)}: {character.attack1}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 1)}: {character.attack2}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 2)}: {character.attack3}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 3)}: {character.attack4}</s.TextDescription>
                         <s.TextDescription>Type: {typeCharacterName(character.typeCharacter)}</s.TextDescription>
-                        {character.hp < 100 &&
+                        <s.TextDescription>Type: {typeGenderName(character.genderCharacter)}</s.TextDescription>
+                        {character.stamina < 100 &&
                           <s.Button
                             disabled={loading ? 1 : 0}
-                            onClick={() => heal(character.id)}
+                            onClick={() => rest(character.id)}
                             primary={loading ? "" : "primary"}
                           >
-                            HEAL
+                            REST
                           </s.Button>
                         }
                       </s.Container>
@@ -268,7 +287,8 @@ const App = () => {
                 <select onChange={e => handleSelectedCharacter(e.target.value)}>
                   <option value="">--Please choose an option--</option>
                   {characters.map(character => (
-                    <option key={character.id} value={`{"id":${character.id},"mana":${character.mana}}`}>ID #{character.id}</option>
+                    // <option key={character.id} value={`{"id":${character.id},"mana":${character.mana}}`}>ID #{character.id}</option>
+                    <option key={character.id} value={`{"id":${character.id}}`}>ID #{character.id}</option>
                   ))
                   }
                 </select></>
@@ -286,12 +306,15 @@ const App = () => {
                         <s.TextDescription>Level: {character.level}</s.TextDescription>
                         <s.TextDescription>XP: {character.xp}</s.TextDescription>
                         <s.TextDescription>HP: {character.hp}</s.TextDescription>
-                        <s.TextDescription>Mana: {character.mana}</s.TextDescription>
+                        <s.TextDescription>Stamina: {character.stamina}</s.TextDescription>
                         <s.TextDescription>Attack: {character.attack}</s.TextDescription>
                         <s.TextDescription>Armor: {character.armor}</s.TextDescription>
-                        <s.TextDescription>Magic Attack: {character.magicAttack}</s.TextDescription>
-                        <s.TextDescription>Magic Resistance: {character.magicResistance}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 0)}: {character.attack1}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 1)}: {character.attack2}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 2)}: {character.attack3}</s.TextDescription>
+                        <s.TextDescription>{attacks(character.typeCharacter, 3)}: {character.attack4}</s.TextDescription>
                         <s.TextDescription>Type: {typeCharacterName(character.typeCharacter)}</s.TextDescription>
+                        <s.TextDescription>Type: {typeGenderName(character.genderCharacter)}</s.TextDescription>
 
                         {characters && characters.length > 0 && selectedCharacter &&
                           <s.Container fd="row" jc="center">
@@ -303,7 +326,7 @@ const App = () => {
                               FIGHT
                             </s.Button>
                           
-                            { selectedCharacter.mana >= 10 &&
+                            {/* { selectedCharacter.mana >= 10 &&
                               <s.Button
                                 disabled={loading ? 1 : 0}
                                 onClick={() => spell(selectedCharacter.id, character.id)}
@@ -311,7 +334,7 @@ const App = () => {
                               >
                                 SPELL
                               </s.Button>
-                            }
+                            } */}
                           </s.Container>
                         }
                       </s.Container>

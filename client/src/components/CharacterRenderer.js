@@ -1,7 +1,7 @@
 import React from "react";
 import parts from "./parts";
 
-const CharacterRenderer = ({ character = null, size = 200, style }) => {
+const CharacterRenderer = ({ character = null, size, style }) => {
   if (!character) {
     return null;
   }
@@ -10,13 +10,29 @@ const CharacterRenderer = ({ character = null, size = 200, style }) => {
 
   while (dnaStr.length < 16) dnaStr = "0" + dnaStr;
 
+  const attribution = (dna, first, end) => { // 50%, 35%, 10% et 5%
+    let res = dna.substring(first, end) % 20
+    if (res === 0) return 0;
+    if (res === 1 || res === 2) return 1
+    if (res > 2 && res < 10) return 2
+    if (res > 9 && res < 20) return 3
+  }
+
+  // TESTS
+  // console.log("dna: ", dnaStr)
+  // console.log(attribution(dnaStr, 2, 4))
+  // console.log(attribution(dnaStr, 4, 6))
+  // console.log(attribution(dnaStr, 6, 8))
+  // console.log(attribution(dnaStr, 8, 10))
+  // console.log(attribution(dnaStr, 10, 12))
+
   let characterDetails = {
     bg: character.typeCharacter,
-    hair: dnaStr.substring(2, 4) % 4,
-    head: dnaStr.substring(4, 6) % 4,
-    upbody: dnaStr.substring(6, 8) % 4,
-    lowbody: dnaStr.substring(8, 10) % 4,
-    shoes: dnaStr.substring(10, 12) % 4,
+    hair: attribution(dnaStr, 2, 4),
+    head: attribution(dnaStr, 4, 6),
+    upbody: attribution(dnaStr, 6, 8),
+    lowbody: attribution(dnaStr, 8, 10),
+    shoes: attribution(dnaStr, 10, 12),
   };
 
   const characterStyle = {

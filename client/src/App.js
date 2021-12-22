@@ -247,7 +247,7 @@ const App = () => {
                   return (
                     <div key={character.id}>
                       <s.Container ai="center" style={{ minWidth: "200px", margin:10 }}>
-                        <CharacterRenderer character={character} />
+                        <CharacterRenderer character={character} size={300} />
                         <s.TextDescription>ID: {character.id}</s.TextDescription>
                         {/* <s.TextDescription>DNA: {character.dna}</s.TextDescription> */}
                         <s.TextDescription>Level: {character.level}</s.TextDescription>
@@ -261,7 +261,7 @@ const App = () => {
                         <s.TextDescription>{attacks(character.typeCharacter, 2)}: {character.attack3}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 3)}: {character.attack4}</s.TextDescription>
                         <s.TextDescription>Type: {typeCharacterName(character.typeCharacter)}</s.TextDescription>
-                        <s.TextDescription>Type: {typeGenderName(character.genderCharacter)}</s.TextDescription>
+                        <s.TextDescription>Gender: {typeGenderName(character.genderCharacter)}</s.TextDescription>
                         {character.stamina < 100 &&
                           <s.Button
                             disabled={loading ? 1 : 0}
@@ -300,7 +300,7 @@ const App = () => {
                   return (
                     <div key={character.id}>
                       <s.Container ai="center" style={{ minWidth: "200px", margin:10 }}>
-                        <CharacterRenderer character={character} />
+                        <CharacterRenderer character={character} size={300} />
                         <s.TextDescription>ID: {character.id}</s.TextDescription>
                         {/* <s.TextDescription>DNA: {character.dna}</s.TextDescription> */}
                         <s.TextDescription>Level: {character.level}</s.TextDescription>
@@ -314,7 +314,7 @@ const App = () => {
                         <s.TextDescription>{attacks(character.typeCharacter, 2)}: {character.attack3}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 3)}: {character.attack4}</s.TextDescription>
                         <s.TextDescription>Type: {typeCharacterName(character.typeCharacter)}</s.TextDescription>
-                        <s.TextDescription>Type: {typeGenderName(character.genderCharacter)}</s.TextDescription>
+                        <s.TextDescription>Gender: {typeGenderName(character.genderCharacter)}</s.TextDescription>
 
                         {characters && characters.length > 0 && selectedCharacter &&
                           <s.Container fd="row" jc="center">

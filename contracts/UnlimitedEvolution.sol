@@ -35,6 +35,7 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         uint24 attack2;
         uint24 attack3;
         uint24 attack4;
+        uint24 attributePoints;
         uint256 lastFight;
         type_character typeCharacter;
         gender_character genderCharacter;
@@ -51,10 +52,6 @@ contract UnlimitedEvolution is ERC1155, Ownable {
     event LevelUp(uint256 tokenId, uint256 level);
     event FeeUpdated(uint256 mintFee);
     event LimitUpdated(uint256 limitMint);
-
-    function _ownerOf(uint256 tokenId) private view returns (bool) {
-        return balanceOf(msg.sender, tokenId) != 0;
-    }
     
     function updateFee(uint256 _mintFee) external onlyOwner() {
         mintFee = _mintFee;
@@ -70,12 +67,16 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         payable(owner()).transfer(address(this).balance);
     }
 
+    function _ownerOf(uint256 tokenId) private view returns (bool) {
+        return balanceOf(msg.sender, tokenId) != 0;
+    }
+
     // Helpers
-    function _generateRandomNumber(uint256 _mod, uint8 num) internal view returns(uint256) {
+    function _generateRandomNumber(uint256 _mod, uint8 num) private view returns(uint256) {
         return uint256(keccak256(abi.encodePacked(num, block.timestamp, block.difficulty, msg.sender))) % _mod;
     }
 
-    function _attributesDistribution() public view returns(uint8[] memory) {
+    function _attributesDistribution() private view returns(uint8[] memory) {
         uint8[] memory _attributes = new uint8[](4);
         for(uint8 i=0; i<4; i++) {
             _attributes[i] = 3 + uint8(_generateRandomNumber(3, i)); // idée nft: la lose ou la win, tu obtiens 0 ou 10 points bonus
@@ -83,7 +84,7 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         return _attributes;
     }
     
-    function substrateLife(uint256 id1, uint256 id2) private view returns(uint256) {
+    function _substrateLife(uint256 id1, uint256 id2) private view returns(uint256) {
         uint256 op1 = uint256(_characterDetails[id1].attack).mul((1 + _characterDetails[id1].xp));
         uint256 op2 = uint256(_characterDetails[id2].armor).mul(((1 + uint256(_characterDetails[id2].xp)).div(2)));
         if (op1 < op2) {
@@ -93,36 +94,50 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         }
     }
 
-    function XpLevelUp(uint256 _tokenId) private {
+    function _xpLevelUp(uint256 _tokenId) private {
         _characterDetails[_tokenId].xp++;
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
+            _characterDetails[_tokenId].attributePoints += 10;
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
     }
 
-    function sustrateLifeOperation(uint256 _myTokenId, uint256 _rivalTokenId, uint256 substrateLifeToRival, uint256 substrateLifeToMe) private {
-        if(substrateLifeToRival >= _characterDetails[_rivalTokenId].hp) {
+    function attributesLevelUp(uint256 _tokenId, uint24 _hp, uint24 _stamina, uint24 _attack, uint24 _armor, uint24 _attack1, uint24 _attack2, uint24 _attack3, uint24 _attack4) external {
+        uint256 totalPoints = _hp + _stamina + _attack + _armor + _attack1 + _attack2 + _attack3 + _attack4;
+        require(_characterDetails[_tokenId].attributePoints == totalPoints, "Wrong amount of points to attribute");
+        _characterDetails[_tokenId].hp += _hp * 20;
+        _characterDetails[_tokenId].stamina += _stamina * 20;
+        _characterDetails[_tokenId].attack += _attack;
+        _characterDetails[_tokenId].armor += _armor;
+        _characterDetails[_tokenId].attack1 += _attack1;
+        _characterDetails[_tokenId].attack2 += _attack2;
+        _characterDetails[_tokenId].attack3 += _attack3;
+        _characterDetails[_tokenId].attack4 += _attack4;
+    }
+
+    function _subtrateLifeOperation(uint256 _myTokenId, uint256 _rivalTokenId, uint256 _substrateLifeToRival, uint256 _substrateLifeToMe) private {
+        if(_substrateLifeToRival >= _characterDetails[_rivalTokenId].hp) {
             _characterDetails[_rivalTokenId].hp = 0;
-            XpLevelUp(_myTokenId);
+            _xpLevelUp(_myTokenId);
         } else {
-            _characterDetails[_rivalTokenId].hp = _characterDetails[_rivalTokenId].hp - uint24(substrateLifeToRival);
-            if(substrateLifeToMe >= _characterDetails[_myTokenId].hp) {
+            _characterDetails[_rivalTokenId].hp = _characterDetails[_rivalTokenId].hp - uint24(_substrateLifeToRival);
+            if(_substrateLifeToMe >= _characterDetails[_myTokenId].hp) {
                 _characterDetails[_myTokenId].hp = 0;
-                XpLevelUp(_rivalTokenId);
+                _xpLevelUp(_rivalTokenId);
             } else {
-                _characterDetails[_myTokenId].hp = _characterDetails[_myTokenId].hp - uint24(substrateLifeToMe);
-                if (substrateLifeToRival > substrateLifeToMe) {
-                    XpLevelUp(_myTokenId);
-                } else if (substrateLifeToMe > substrateLifeToRival) {
-                    XpLevelUp(_rivalTokenId);
+                _characterDetails[_myTokenId].hp = _characterDetails[_myTokenId].hp - uint24(_substrateLifeToMe);
+                if (_substrateLifeToRival > _substrateLifeToMe) {
+                    _xpLevelUp(_myTokenId);
+                } else if (_substrateLifeToMe > _substrateLifeToRival) {
+                    _xpLevelUp(_rivalTokenId);
                 } else {
-                    XpLevelUp(_myTokenId);
-                    XpLevelUp(_rivalTokenId);
+                    _xpLevelUp(_myTokenId);
+                    _xpLevelUp(_rivalTokenId);
                 }
             }
         }
-        emit Fighted(_myTokenId, _rivalTokenId, substrateLifeToRival, substrateLifeToMe);
+        emit Fighted(_myTokenId, _rivalTokenId, _substrateLifeToRival, _substrateLifeToMe);
     }
 
     function createCharacter(type_character _typeCharacter, gender_character _genderCharacter) external payable {
@@ -130,7 +145,7 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
         require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
         uint8[] memory _attributes = _attributesDistribution();
-        _characterDetails[nextId] = Character(nextId, uint56(_generateRandomNumber(10**16, 1)), 1, 1, 100, 100, 5, 3, _attributes[0], _attributes[1], _attributes[2], _attributes[3], block.timestamp, _typeCharacter, _genderCharacter);
+        _characterDetails[nextId] = Character(nextId, uint56(_generateRandomNumber(10**16, 1)), 1, 1, 100, 100, 5, 3, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, block.timestamp, _typeCharacter, _genderCharacter);
         _balanceOfCharacters[msg.sender]++;
         countMints[uint8(_typeCharacter)]++;
         _mint(msg.sender, nextId, 1, "");
@@ -168,11 +183,11 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         require(_characterDetails[_myTokenId].hp > 0 && _characterDetails[_rivalTokenId].hp > 0, "One of the NFTs is dead");
 
         _characterDetails[_myTokenId].lastFight = block.timestamp;
-        uint256 substrateLifeToRival = substrateLife(_myTokenId, _rivalTokenId);
-        uint256 substrateLifeToMe = substrateLife(_rivalTokenId, _myTokenId);
+        uint256 _substrateLifeToRival = _substrateLife(_myTokenId, _rivalTokenId);
+        uint256 _substrateLifeToMe = _substrateLife(_rivalTokenId, _myTokenId);
 
         _characterDetails[_myTokenId].stamina = _characterDetails[_myTokenId].stamina - 10;
-        sustrateLifeOperation(_myTokenId, _rivalTokenId, substrateLifeToRival, substrateLifeToMe);
+        _subtrateLifeOperation(_myTokenId, _rivalTokenId, _substrateLifeToRival, _substrateLifeToMe);
     }
     
     // Getters

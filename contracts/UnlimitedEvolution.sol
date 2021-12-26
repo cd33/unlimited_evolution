@@ -3,7 +3,6 @@ pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract UnlimitedEvolution is ERC1155, Ownable {
 
@@ -12,8 +11,6 @@ contract UnlimitedEvolution is ERC1155, Ownable {
     function setURI(string memory newuri) external onlyOwner {
         _setURI(newuri);
     }
-
-    using SafeMath for uint256;
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
@@ -71,12 +68,12 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         return balanceOf(msg.sender, tokenId) != 0;
     }
 
-    // Helpers
+    // to change with an oracle
     function _generateRandomNumber(uint256 _mod, uint8 num) private view returns(uint256) {
         return uint256(keccak256(abi.encodePacked(num, block.timestamp, block.difficulty, msg.sender))) % _mod;
     }
 
-    function _attributesDistribution() private view returns(uint8[] memory) {
+    function _attributesMintDistribution() private view returns(uint8[] memory) {
         uint8[] memory _attributes = new uint8[](4);
         for(uint8 i=0; i<4; i++) {
             _attributes[i] = 3 + uint8(_generateRandomNumber(3, i)); // idée nft: la lose ou la win, tu obtiens 0 ou 10 points bonus
@@ -85,12 +82,12 @@ contract UnlimitedEvolution is ERC1155, Ownable {
     }
     
     function _substrateLife(uint256 id1, uint256 id2) private view returns(uint256) {
-        uint256 op1 = uint256(_characterDetails[id1].attack).mul((1 + _characterDetails[id1].xp));
-        uint256 op2 = uint256(_characterDetails[id2].armor).mul(((1 + uint256(_characterDetails[id2].xp)).div(2)));
+        uint256 op1 = _characterDetails[id1].attack * (1 + _characterDetails[id1].xp);
+        uint256 op2 = _characterDetails[id2].armor * ((1 + _characterDetails[id2].xp) / 2);
         if (op1 < op2) {
             return 0;
         } else {
-            return op1.sub(op2);
+            return op1 - op2;
         }
     }
 
@@ -144,8 +141,8 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         require(msg.value == mintFee, "Wrong amount of fees");
         require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
         require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
-        uint8[] memory _attributes = _attributesDistribution();
-        _characterDetails[nextId] = Character(nextId, uint56(_generateRandomNumber(10**16, 1)), 1, 1, 100, 100, 5, 3, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, block.timestamp, _typeCharacter, _genderCharacter);
+        uint8[] memory _attributes = _attributesMintDistribution();
+        _characterDetails[nextId] = Character(nextId, uint56(_generateRandomNumber(10**16, 1)), 1, 1, 100, 100, 5, 3, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 10, block.timestamp, _typeCharacter, _genderCharacter);
         _balanceOfCharacters[msg.sender]++;
         countMints[uint8(_typeCharacter)]++;
         _mint(msg.sender, nextId, 1, "");
@@ -153,7 +150,7 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         nextId++;
     }
 
-    // function heal(uint256 _tokenId) external payable {
+    // function heal(uint256 _tokenId) external {
     //     require(_ownerOf(_tokenId), "You're not the owner of the NFT");
     //     require(_characterDetails[_tokenId].lastHeal + 60 < block.timestamp, "To soon to heal (1 min)");
     //     require(_characterDetails[_tokenId].hp < 100, "You're character is already healed");
@@ -167,14 +164,14 @@ contract UnlimitedEvolution is ERC1155, Ownable {
     //     emit Healed(_tokenId);
     // }
 
-    function rest(uint256 _tokenId) external payable {
+    function rest(uint256 _tokenId) external {
         require(_ownerOf(_tokenId), "You're not the owner of the NFT");
         require(_characterDetails[_tokenId].stamina < 100, "You're character is already rested");
         _characterDetails[_tokenId].stamina = 100;
         emit Rested(_tokenId);
     }
 
-    function fight(uint256 _myTokenId, uint256 _rivalTokenId) external payable {
+    function fight(uint256 _myTokenId, uint256 _rivalTokenId) external {
         require(_ownerOf(_myTokenId), "You're not the owner of the NFT");
         require(_ownerOf(_myTokenId) != _ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
         require(_characterDetails[_myTokenId].lastFight + 60 < block.timestamp, "To soon to fight (1 min)");

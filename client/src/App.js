@@ -21,6 +21,14 @@ const App = () => {
   const [modalShow, setModalShow] = useState(false);
   const [titleModal, setTitleModal] = useState(false);
   const [contentModal, setContentModal] = useState(false);
+  const [countAttributesHp, setCountAttributesHp] = useState(0);
+  const [countAttributesStamina, setCountAttributesStamina] = useState(0);
+  const [countAttributesAttack, setCountAttributesAttack] = useState(0);
+  const [countAttributesArmor, setCountAttributesArmor] = useState(0);
+  // const [countAttributesAttack1, setCountAttributesAttack1] = useState(0);
+  // const [countAttributesAttack2, setCountAttributesAttack2] = useState(0);
+  // const [countAttributesAttack3, setCountAttributesAttack3] = useState(0);
+  // const [countAttributesAttack4, setCountAttributesAttack4] = useState(0);
 
   useEffect(() => {
     const init = async () => {
@@ -201,7 +209,19 @@ const App = () => {
     if(type === "1") return (attacksType.spiritual[nb])
     if(type === "2") return (attacksType.elementary[nb])
   }
-  
+
+  // TRAVAIL EN COURS : ATTRIBUTION POINTS NOUVEAU NIVEAU
+  const ButtonAttributes = ({character, sign, state, setter}) => {
+    if (character.attributePoints > 0) {
+      return (
+        <button style={{marginRight: 5, marginLeft: 5}} onClick={() =>
+          sign == "+" ? setter(state+1) : (state == 0 ? 0 : setter(state-1))} >
+          {sign}
+        </button>
+      )
+    } else return ""
+  }
+
 
   return (
     <s.Screen>
@@ -249,10 +269,19 @@ const App = () => {
                       <s.Container ai="center" style={{ minWidth: "200px", margin:10 }}>
                         <CharacterRenderer character={character} size={300} />
                         <s.TextDescription>ID: {character.id}</s.TextDescription>
-                        {/* <s.TextDescription>DNA: {character.dna}</s.TextDescription> */}
                         <s.TextDescription>Level: {character.level}</s.TextDescription>
                         <s.TextDescription>XP: {character.xp}</s.TextDescription>
-                        <s.TextDescription>HP: {character.hp}</s.TextDescription>
+
+                        {/* TRAVAIL EN COURS : ATTRIBUTION POINTS NOUVEAU NIVEAU */}
+                        <s.Container fd="row" jc="center" ai="center">
+                          <s.TextDescription>HP: {character.hp}</s.TextDescription>
+                          <div style={{marginTop: 15}}>
+                            <ButtonAttributes character={character} sign="-" state={countAttributesHp} setter={setCountAttributesHp} />
+                            {character.attributePoints > 0 && <>{countAttributesHp}</>}
+                            <ButtonAttributes character={character} sign="+" state={countAttributesHp} setter={setCountAttributesHp} />
+                          </div>
+                        </s.Container>
+
                         <s.TextDescription>Stamina: {character.stamina}</s.TextDescription>
                         <s.TextDescription>Attack: {character.attack}</s.TextDescription>
                         <s.TextDescription>Armor: {character.armor}</s.TextDescription>

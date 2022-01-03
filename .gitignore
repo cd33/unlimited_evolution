@@ -6,3 +6,5 @@ package-lock.json
 /test/UnlimitedEvolutionERC721.test.js
 /contracts/UnlimitedEvolutionERC721.sol
 testAlgo.js
+.vscode
+test/FuturTests.js

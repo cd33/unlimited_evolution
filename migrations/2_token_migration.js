@@ -1,8 +1,11 @@
+const RandomNumberGenerator = artifacts.require("RandomNumberGenerator");
 const UnlimitedEvolution = artifacts.require("UnlimitedEvolution");
 
 module.exports = async function (deployer) {
+  await deployer.deploy(RandomNumberGenerator);
   await deployer.deploy(UnlimitedEvolution);
-  // let tokenInstance = await Token.deployed();
-  // await tokenInstance.createCaracter();
-  // console.log(await tokenInstance.getCaracterDetails(0));
+
+  // TESTS GANACHE
+  const ue = await UnlimitedEvolution.deployed();
+  await ue.testModeSwitch();
 };

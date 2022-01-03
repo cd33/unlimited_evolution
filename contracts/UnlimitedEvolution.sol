@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./RandomNumberGenerator.sol";
 
-contract UnlimitedEvolution is ERC1155, Ownable {
+contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
 
     constructor() ERC1155("") {}
 
@@ -15,9 +16,11 @@ contract UnlimitedEvolution is ERC1155, Ownable {
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
     uint256 mintFee = 0.001 ether;
+    uint256 randomNumber;
     uint24 nextId;
     uint24 limitMint = 4000;
     uint24[] countMints = new uint8[](3);
+    bool public testMode;
 
     struct Character {
         uint24 id;
@@ -49,6 +52,10 @@ contract UnlimitedEvolution is ERC1155, Ownable {
     event LevelUp(uint256 tokenId, uint256 level);
     event FeeUpdated(uint256 mintFee);
     event LimitUpdated(uint256 limitMint);
+
+    function testModeSwitch() external onlyOwner {
+        testMode = !testMode;
+    }
     
     function updateFee(uint256 _mintFee) external onlyOwner() {
         mintFee = _mintFee;
@@ -64,19 +71,26 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         payable(owner()).transfer(address(this).balance);
     }
 
+    function withdrawLINK(uint256 value) external onlyOwner {
+        LINK.transfer(owner(), value);
+    }
+
     function _ownerOf(uint256 tokenId) private view returns (bool) {
         return balanceOf(msg.sender, tokenId) != 0;
     }
 
-    // to change with an oracle
-    function _generateRandomNumber(uint256 _mod, uint8 num) private view returns(uint256) {
-        return uint256(keccak256(abi.encodePacked(num, block.timestamp, block.difficulty, msg.sender))) % _mod;
+    function _generateRandomNumber(uint256 _mod) internal {
+        if (!testMode) {
+            randomNumber = uint256(getRandomNumber()) % _mod;
+        } else {
+            randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % _mod;
+        }
     }
 
     function _attributesMintDistribution() private view returns(uint8[] memory) {
         uint8[] memory _attributes = new uint8[](4);
         for(uint8 i=0; i<4; i++) {
-            _attributes[i] = 3 + uint8(_generateRandomNumber(3, i)); // idée nft: la lose ou la win, tu obtiens 0 ou 10 points bonus
+            _attributes[i] = 3 + uint8(randomNumber % 3); // idée nft: la lose ou la win, tu obtiens 0 ou 10 points bonus
         }
         return _attributes;
     }
@@ -141,8 +155,9 @@ contract UnlimitedEvolution is ERC1155, Ownable {
         require(msg.value == mintFee, "Wrong amount of fees");
         require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
         require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
+        _generateRandomNumber(10**16);
         uint8[] memory _attributes = _attributesMintDistribution();
-        _characterDetails[nextId] = Character(nextId, uint56(_generateRandomNumber(10**16, 1)), 1, 1, 100, 100, 5, 3, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 10, block.timestamp, _typeCharacter, _genderCharacter);
+        _characterDetails[nextId] = Character(nextId, uint56(randomNumber), 1, 1, 100, 100, 5, 3, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, block.timestamp, _typeCharacter, _genderCharacter);
         _balanceOfCharacters[msg.sender]++;
         countMints[uint8(_typeCharacter)]++;
         _mint(msg.sender, nextId, 1, "");

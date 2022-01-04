@@ -6,6 +6,6 @@ module.exports = async function (deployer) {
   await deployer.deploy(UnlimitedEvolution);
 
   // TESTS GANACHE
-  const ue = await UnlimitedEvolution.deployed();
-  await ue.testModeSwitch();
+  // const ue = await UnlimitedEvolution.deployed();
+  // await ue.testModeSwitch();
 };

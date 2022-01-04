@@ -32,7 +32,7 @@ contract('UnlimitedEvolution', function (accounts) {
       let mintFee = eventOwner.logs[0].args[0].toString()
       expect(readable('0.01')).to.equal(mintFee)
 
-      expectEvent(eventOwner, 'FeeUpdated', { mintFee: mintFee })
+      await expectEvent(eventOwner, 'FeeUpdated', { mintFee: mintFee })
     })
 
     it('REVERT: updateFee() owner', async function () {
@@ -49,7 +49,7 @@ contract('UnlimitedEvolution', function (accounts) {
       let limitMint = eventOwner.logs[0].args[0].toString()
       expect(10).to.equal(parseInt(limitMint))
 
-      expectEvent(eventOwner, 'LimitUpdated', { limitMint: limitMint })
+      await expectEvent(eventOwner, 'LimitUpdated', { limitMint: limitMint })
     })
 
     it('REVERT: updateLimitMint() owner', async function () {
@@ -105,7 +105,7 @@ contract('UnlimitedEvolution', function (accounts) {
         balance = await ue.getBalanceOfCharacters(investor)
         expect(balance).to.be.bignumber.equal('1')
 
-        expectEvent(eventInvestor, 'CharacterCreated', { id: tokenIdInvestor })
+        await expectEvent(eventInvestor, 'CharacterCreated', { id: tokenIdInvestor })
       })
 
       it('REVERT: createCharacter() Wrong amount of fees', async function () {
@@ -222,11 +222,17 @@ contract('UnlimitedEvolution', function (accounts) {
           parseInt(investorDetailsBefore[4] - substrateLifeToInvestor),
         ).to.equal(parseInt(investorDetailsAfter[4]))
 
-        expect(parseInt(ownerDetailsBefore[3]) + 1).to.equal(
-          parseInt(ownerDetailsAfter[3]),
-        )
+        if ((investorDetailsBefore[6] + investorDetailsBefore[7]) > (ownerDetailsBefore[6] + ownerDetailsBefore[7])) {
+          expect(parseInt(investorDetailsBefore[3]) + 1).to.equal(
+            parseInt(investorDetailsAfter[3]),
+          )
+        } else {
+          expect(parseInt(ownerDetailsBefore[3]) + 1).to.equal(
+            parseInt(ownerDetailsAfter[3]),
+          )
+        }
 
-        expectEvent(receipt, 'Fighted', {
+        await expectEvent(receipt, 'Fighted', {
           myTokenId: tokenIdOwner,
           rivalTokenId: tokenIdInvestor,
           substrateLifeToRival: receipt.logs[0].args[2],
@@ -345,47 +351,113 @@ contract('UnlimitedEvolution', function (accounts) {
         let tokenDetailsInvestor3 = await ue.getTokenDetails(tokenIdInvestor3)
 
         let tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
-        while (tokenDetailsInvestor2[4] > 0) {
-          await ue.fight(tokenIdOwner, tokenIdInvestor2, {
-            from: owner,
-          })
-          await time.increase(61)
-          tokenDetailsInvestor2 = await ue.getTokenDetails(tokenIdInvestor2)
-        }
         let receipt
-        while (tokenDetailsInvestor3[4] > 0) {
-          if (tokenDetailsOwner[2] > 1) {
-            expectEvent(receipt, 'LevelUp', {
-              tokenId: tokenIdOwner,
-              level: tokenDetailsOwner[2],
+
+        if ((tokenDetailsInvestor2[6] + tokenDetailsInvestor2[7]) > (tokenDetailsOwner[6] + tokenDetailsOwner[7])) {
+          while (tokenDetailsOwner[4] > 0) {
+            if (tokenDetailsInvestor2[2] > 1) {
+              await expectEvent(receipt, 'LevelUp', {
+                tokenId: tokenIdInvestor2,
+                level: tokenDetailsInvestor2[2],
+              })
+              await expectRevert(
+                ue.fight(tokenIdInvestor2, tokenIdOwner, {
+                  from: investor,
+                }),
+                'Fight someone your own size!',
+              )
+            }
+            receipt = await ue.fight(tokenIdInvestor2, tokenIdOwner, {
+              from: investor,
             })
-            break
+            await time.increase(61)
+            tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+            tokenDetailsInvestor2 = await ue.getTokenDetails(tokenIdInvestor2)
           }
-          receipt = await ue.fight(tokenIdOwner, tokenIdInvestor3, {
+
+          await time.increase(61)
+          let eventOwner2 = await ue.createCharacter(0, 0, {
+            value: readable('0.001'),
             from: owner,
           })
-          await time.increase(61)
-          tokenDetailsInvestor3 = await ue.getTokenDetails(tokenIdInvestor3)
-          tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
-        }
+          let tokenIdOwner2 = eventOwner2.logs[1].args[0].toString()
+          let tokenDetailsOwner2 = await ue.getTokenDetails(tokenIdOwner2)
 
-        await expectRevert(
-          ue.fight(tokenIdOwner, tokenIdInvestor, {
-            from: owner,
-          }),
-          'Fight someone your own size!',
-        )
+          while (tokenDetailsOwner2[4] > 0) {
+            if (tokenDetailsInvestor2[2] > 1) {
+              await expectEvent(receipt, 'LevelUp', {
+                tokenId: tokenIdInvestor2,
+                level: tokenDetailsInvestor2[2],
+              })
+              await expectRevert(
+                ue.fight(tokenIdInvestor2, tokenIdOwner2, {
+                  from: investor,
+                }),
+                'Fight someone your own size!',
+              )
+            }
+            receipt = await ue.fight(tokenIdInvestor2, tokenIdOwner2, {
+              from: investor,
+            })
+            await time.increase(61)
+            tokenDetailsOwner2 = await ue.getTokenDetails(tokenIdOwner2)
+            tokenDetailsInvestor2 = await ue.getTokenDetails(tokenIdInvestor2)
+          }
+        } else {
+          while (tokenDetailsInvestor2[4] > 0) {
+            if (tokenDetailsOwner[2] > 1) {
+              await expectEvent(receipt, 'LevelUp', {
+                tokenId: tokenIdOwner,
+                level: tokenDetailsOwner[2],
+              })
+              await expectRevert(
+                ue.fight(tokenIdOwner, tokenIdInvestor, {
+                  from: owner,
+                }),
+                'Fight someone your own size!',
+              )
+            }
+            receipt = await ue.fight(tokenIdOwner, tokenIdInvestor2, {
+              from: owner,
+            })
+            await time.increase(61)
+            tokenDetailsInvestor2 = await ue.getTokenDetails(tokenIdInvestor2)
+            tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+          }
+          while (tokenDetailsInvestor3[4] > 0) {
+            if (tokenDetailsOwner[2] > 1) {
+              await expectEvent(receipt, 'LevelUp', {
+                tokenId: tokenIdOwner,
+                level: tokenDetailsOwner[2],
+              })
+              await expectRevert(
+                ue.fight(tokenIdOwner, tokenIdInvestor, {
+                  from: owner,
+                }),
+                'Fight someone your own size!',
+              )
+            }
+            receipt = await ue.fight(tokenIdOwner, tokenIdInvestor3, {
+              from: owner,
+            })
+            await time.increase(61)
+            tokenDetailsInvestor3 = await ue.getTokenDetails(tokenIdInvestor3)
+            tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+          }
+        }
       })
 
       it('REVERT: fight() dead one', async function () {
         await time.increase(61)
         let tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
-        while (tokenDetailsInvestor[4] > 0) {
+        let tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+        while (tokenDetailsInvestor[4] > 0 && tokenDetailsOwner[4] > 0) {
           await ue.fight(tokenIdOwner, tokenIdInvestor, {
             from: owner,
           })
           await time.increase(61)
           tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
+          tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
         }
         await expectRevert(
           ue.fight(tokenIdOwner, tokenIdInvestor, {
@@ -435,7 +507,7 @@ contract('UnlimitedEvolution', function (accounts) {
           parseInt(tokenDetailsInvestorAfter[5]),
         )
 
-        expectEvent(receipt, 'Rested', { tokenId: tokenIdInvestor })
+        await expectEvent(receipt, 'Rested', { tokenId: tokenIdInvestor })
       })
 
       it('REVERT: rest() Not Owner', async function () {

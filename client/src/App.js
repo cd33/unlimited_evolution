@@ -21,11 +21,7 @@ const App = () => {
   const [modalShow, setModalShow] = useState(false);
   const [titleModal, setTitleModal] = useState(false);
   const [contentModal, setContentModal] = useState(false);
-  const [countAttributesHp, setCountAttributesHp] = useState(0);
-  const [countAttributesStamina, setCountAttributesStamina] = useState(0);
-  const [countAttributesAttack, setCountAttributesAttack] = useState(0);
-  const [countAttributesArmor, setCountAttributesArmor] = useState(0);
-  // const [countAttributesAttack1, setCountAttributesAttack1] = useState(0);
+  const [countAttributesAttack1, setCountAttributesAttack1] = useState(0);
   // const [countAttributesAttack2, setCountAttributesAttack2] = useState(0);
   // const [countAttributesAttack3, setCountAttributesAttack3] = useState(0);
   // const [countAttributesAttack4, setCountAttributesAttack4] = useState(0);
@@ -211,17 +207,12 @@ const App = () => {
   }
 
   // TRAVAIL EN COURS : ATTRIBUTION POINTS NOUVEAU NIVEAU
-  const ButtonAttributes = ({character, sign, state, setter}) => {
-    if (character.attributePoints > 0) {
-      return (
-        <button style={{marginRight: 5, marginLeft: 5}} onClick={() =>
-          sign == "+" ? setter(state+1) : (state == 0 ? 0 : setter(state-1))} >
-          {sign}
-        </button>
-      )
-    } else return ""
-  }
-
+  const ButtonAttributes = ({sign, state, setter}) => (
+    <button style={{marginRight: 5, marginLeft: 5}} onClick={() =>
+      sign == "+" ? setter(state+1) : (state == 0 ? 0 : setter(state-1))} >
+      {sign}
+    </button>
+  )
 
   return (
     <s.Screen>
@@ -271,21 +262,21 @@ const App = () => {
                         <s.TextDescription>ID: {character.id}</s.TextDescription>
                         <s.TextDescription>Level: {character.level}</s.TextDescription>
                         <s.TextDescription>XP: {character.xp}</s.TextDescription>
-
+                        <s.TextDescription>HP: {character.hp}</s.TextDescription>
+                        <s.TextDescription>Stamina: {character.stamina}</s.TextDescription>
+                        
                         {/* TRAVAIL EN COURS : ATTRIBUTION POINTS NOUVEAU NIVEAU */}
                         <s.Container fd="row" jc="center" ai="center">
-                          <s.TextDescription>HP: {character.hp}</s.TextDescription>
-                          <div style={{marginTop: 15}}>
-                            <ButtonAttributes character={character} sign="-" state={countAttributesHp} setter={setCountAttributesHp} />
-                            {character.attributePoints > 0 && <>{countAttributesHp}</>}
-                            <ButtonAttributes character={character} sign="+" state={countAttributesHp} setter={setCountAttributesHp} />
-                          </div>
+                          <s.TextDescription>{attacks(character.typeCharacter, 0)}: {character.attack1}</s.TextDescription>
+                          {character.attributePoints > 0 &&
+                            <div style={{marginTop: 15}}>
+                              <ButtonAttributes sign="-" state={countAttributesAttack1} setter={setCountAttributesAttack1} />
+                              {countAttributesAttack1}
+                              <ButtonAttributes sign="+" state={countAttributesAttack1} setter={setCountAttributesAttack1} />
+                            </div>
+                          }
                         </s.Container>
 
-                        <s.TextDescription>Stamina: {character.stamina}</s.TextDescription>
-                        <s.TextDescription>Attack: {character.attack}</s.TextDescription>
-                        <s.TextDescription>Armor: {character.armor}</s.TextDescription>
-                        <s.TextDescription>{attacks(character.typeCharacter, 0)}: {character.attack1}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 1)}: {character.attack2}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 2)}: {character.attack3}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 3)}: {character.attack4}</s.TextDescription>
@@ -336,8 +327,6 @@ const App = () => {
                         <s.TextDescription>XP: {character.xp}</s.TextDescription>
                         <s.TextDescription>HP: {character.hp}</s.TextDescription>
                         <s.TextDescription>Stamina: {character.stamina}</s.TextDescription>
-                        <s.TextDescription>Attack: {character.attack}</s.TextDescription>
-                        <s.TextDescription>Armor: {character.armor}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 0)}: {character.attack1}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 1)}: {character.attack2}</s.TextDescription>
                         <s.TextDescription>{attacks(character.typeCharacter, 2)}: {character.attack3}</s.TextDescription>

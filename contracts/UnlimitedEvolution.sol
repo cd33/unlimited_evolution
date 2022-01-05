@@ -4,6 +4,7 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RandomNumberGenerator.sol";
+import "./UnlimitedToken.sol";
 
 /** @title Unlimited Evolution */
 contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
@@ -22,15 +23,17 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     // Only for tests, to avoid chainlink
     bool public testMode;
     
-    // Interface to mint for lvl up
-    
-    interface Itoken{
-        function levelUpMint(address receiver, uint amount) public;
-    }
-    
-    Itoken token;
-    address public tokenAddress;
-
+    // PARTIE ERC20 A INTEGRER
+    // // Interface to mint for lvl up
+    // interface Itoken {
+    //     function levelUpMint(address receiver, uint amount) public;
+    // }
+    // Itoken token;
+    // address public tokenAddress;
+    // function setTokenAddress(address _tokenAddress) external onlyOwner{
+    //     tokenAddress=_tokenAddress;
+    //     token=Itoken(tokenAddress);
+    // }
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
@@ -227,7 +230,8 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
             
-            token.levelUpMint(_ownerOf(_tokenId), (100+10*_characterDetails[_tokenId].level)*10**18);
+            // PARTIE ERC20 A INTEGRER
+            // token.levelUpMint(_ownerOf(_tokenId), (100+10*_characterDetails[_tokenId].level)*10**18);
             
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
@@ -479,9 +483,4 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     // function getCountMints(uint8 _class) external view returns(uint24) {
     //     return countMints[_class];
     // }
-    
-   function setTokenAddress(address _tokenAddress) external onlyOwner{
-        tokenAddress=_tokenAddress;
-        token=Itoken(tokenAddress);
-   }
 }

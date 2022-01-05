@@ -25,7 +25,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     // Interface to mint for lvl up
     
     interface Itoken{
-        function mint(address receiver, uint amount) public;
+        function levelUpMint(address receiver, uint amount) public;
     }
     
     Itoken token;
@@ -167,7 +167,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
             
-            token.mint(_ownerOf(_tokenId), (100+10*_characterDetails[_tokenId].level)*10**18);
+            token.levelUpMint(_ownerOf(_tokenId), (100+10*_characterDetails[_tokenId].level)*10**18);
             
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }

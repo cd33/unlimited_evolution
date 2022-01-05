@@ -1,9 +1,14 @@
 ## Avoiding Common Attacks
 
 
-### Withdraw
+### Withdraw function
 
 The withdraw function is protected with onlyOwner
+
+
+### Mint function of the token
+
+Only possible at token deployment and when level up
 
 
 ### Re-Entrancy

@@ -3,7 +3,10 @@
 Dans les tests, nous simulons les différents cas d'utilisation du contrat UnlimitedEvolution.  
 
 Pour les fonctions suivantes, nous vérifions si :
-* Fonction UpdateFee
+* Fonction UpdateMintFee
+  - Le fee change
+  - L'événement est émis
+* Fonction UpdateStuffFee
   - Le fee change
   - L'événement est émis
 * Fonction UpdateLimitMint
@@ -12,14 +15,25 @@ Pour les fonctions suivantes, nous vérifions si :
 * Fonction Withdraw
   - Le solde du propriétaire augmente
 * Fonction Mint
-  - Le nft est créé et le demandeur est le propriétaire.
+  - Le NFT Character et les NFTs Stuff sont créés et le demandeur en est le propriétaire.
   - L'événement est émis
 * Fonction Combat
   - Pour les deux protagonistes, s'ils perdent des points de vie et gagnent de l'expérience
   - L'événement est émis
-  - Le NFT augmente de niveau si les conditions sont remplis, puis l'événement est émis
+  - Le NFT augmente de niveau si les conditions sont remplies, puis l'événement est émis
 * Fonction Repos
-  - Les points d'endurance ont augmentés
+  - Les points de vie et d'endurance ont augmentés
+  - L'événement est émis
+* Le Construteur
+  - Les différents NFT Stuff sont mintés et que le smart contrat les possède
+* Fonction BuyStuff
+  - Le NFT Stuff est acheté puis transféré au demandeur
+  - L'événement est émis
+* Fonction EquipStuff
+  - Le NFT Stuff est équipé à son Character (référencé dans le champ weapon ou shield du Character)
+  - L'événement est émis
+* Fonction UsePotion
+  - Le NFT Potion est burn puis les champs hp et stamina du Character ont augmentés.
   - L'événement est émis
 
 **Tous les différents Reverts possibles sont également testés.**
@@ -33,20 +47,34 @@ For the following functions, we check if :
 * UpdateFee function
   - The fee change
   - The event is emitted
-* UpdateLimitMint function
-  - The limit of nft mintable change
+* UpdateStuffFee function
+  - The fee changes
+  - The event is emitted
+* Function UpdateLimitMint
+  - The limit of NFT mintable changes
   - The event is emitted
 * Withdraw function
-  - The balance of the owner increases
+  - The owner's balance increases
 * Mint function
-  - The nft is created and the requester is the owner
+  - The NFT Character and NFTs Stuff are created and the requester is the owner.
   - The event is emitted
 * Fight function
-  - For the both protagonists, if they lose health points and gain experience
+  - For both protagonists, if they lose health points and gain experience
   - The event is emitted
-  - The NFT increases in level if the conditions are met, then the event is issued
+  - The NFT increases in level if the conditions are met, then the event is emitted
 * Rest function
-  - The stamina points have increased
+  - Life and stamina points have increased
+  - The event is emitted
+* The Constructor
+  - The different NFT Stuff are minted and the smart contract own them
+* BuyStuff function
+  - The NFT Stuff is bought and transferred to the requester
+  - The event is emitted
+* Function EquipStuff
+  - The NFT Stuff is equipped with its Character (referenced in the weapon or shield field of the Character)
+  - The event is emitted
+* UsePotion function
+  - The NFT Potion is burned and then the Character's hp and stamina fields are increased.
   - The event is emitted
 
 **All the different possible Reverts are also tested.**

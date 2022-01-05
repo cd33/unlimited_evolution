@@ -20,7 +20,7 @@ module.exports = {
      network_id: 1337,       // Any network (default: none)
     },
     kovan: {
-      provider: () => new HDWalletProvider(process.env.MNEMONIC, "wss://kovan.infura.io/ws/v3/8e41edf2c0484bee972e5db5433e0b32"),
+      provider: () => new HDWalletProvider(process.env.MNEMONIC, process.env.INFURA),
       network_id: 42,
       gas: 5500000,
       gasPrice: 45000000000,

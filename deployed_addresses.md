@@ -1,3 +1,3 @@
 # Kovan
-RandomNumberGenerator: [0xe3c851EdCf910677C34E9dC5876B74885654Ed49](https://kovan.etherscan.io/address/0xe3c851EdCf910677C34E9dC5876B74885654Ed49)  
-UnlimitedEvolution: [0x025b9C01Fc0f1B6917B0917dfF21ED9077Dd597a](https://kovan.etherscan.io/address/0x025b9C01Fc0f1B6917B0917dfF21ED9077Dd597a)
+RandomNumberGenerator: [0xb779e0b0F57576419E471e173A51A5FC8930C892](https://kovan.etherscan.io/address/0xb779e0b0F57576419E471e173A51A5FC8930C892)  
+UnlimitedEvolution: [0xA1227Daa7098d342Ce279CB2008141f16F6af105](https://kovan.etherscan.io/address/0xA1227Daa7098d342Ce279CB2008141f16F6af105)

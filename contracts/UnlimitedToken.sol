@@ -29,11 +29,18 @@ contract UnlimitedToken{
         name=_name;
         symbol=_symbol;
         owner=msg.sender;
-        mint(owner,nbTokens*10**decimals);
+        firstMint(owner,nbTokens*10**decimals);
     }
 
-    function mint(address receiver, uint amount) public {
-        require(msg.sender==gameContract || msg.sender==address(this));
+    function firstMint(address receiver, uint amount) private {
+        balanceOf[receiver] += amount;
+        totalSupply += amount;
+        
+        emit Transfer(address(0), receiver, amount);
+    }
+
+    function levelUpMint(address receiver, uint amount) external {
+        require(msg.sender==gameContract);
         
         balanceOf[receiver] += amount;
         totalSupply += amount;

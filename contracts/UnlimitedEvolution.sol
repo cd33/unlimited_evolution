@@ -21,6 +21,16 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     uint256 randomNumber;
     // Only for tests, to avoid chainlink
     bool public testMode;
+    
+    // Interface to mint for lvl up
+    
+    interface Itoken{
+        function levelUpMint(address receiver, uint amount) public;
+    }
+    
+    Itoken token;
+    address public tokenAddress;
+
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
@@ -216,6 +226,9 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
+            
+            token.levelUpMint(_ownerOf(_tokenId), (100+10*_characterDetails[_tokenId].level)*10**18);
+            
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
     }
@@ -466,4 +479,9 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     // function getCountMints(uint8 _class) external view returns(uint24) {
     //     return countMints[_class];
     // }
+    
+   function setTokenAddress(address _tokenAddress) external onlyOwner{
+        tokenAddress=_tokenAddress;
+        token=Itoken(tokenAddress);
+   }
 }

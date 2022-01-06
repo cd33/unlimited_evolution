@@ -6,15 +6,21 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RandomNumberGenerator.sol";
 import "./UnlimitedToken.sol";
 
+// Interface to mint for lvl up
+interface Itoken {
+    function levelUpMint(address receiver, uint amount) external;
+}
+
 /** @title Unlimited Evolution */
 contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
 
-    uint8 constant BASIC_SWORD = 0; // MARKET PLACE: RENDRE SES OBJETS INVENDABLE
-    uint8 constant BASIC_SHIELD = 1; // MARKET PLACE: RENDRE SES OBJETS INVENDABLE
-    uint8 constant EXCALIBUR = 2;
-    uint8 constant AEGIS = 3;
-    uint8 constant POTION = 4;
-    uint24 nextId = 5;
+    uint8 constant BASIC_SWORD = 1; // MARKET PLACE: RENDRE SES OBJETS INVENDABLE
+    uint8 constant BASIC_SHIELD = 2; // MARKET PLACE: RENDRE SES OBJETS INVENDABLE
+    uint8 constant EXCALIBUR = 3;
+    uint8 constant AEGIS = 4;
+    uint8 constant POTION = 5;
+    uint8 nextStuffId = 6;
+    uint24 nextCharacterId = 256;
     uint24 limitMint = 4000;
     uint24[] countMints = new uint8[](3);
     uint256 mintFee = 0.001 ether;
@@ -23,17 +29,8 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     // Only for tests, to avoid chainlink
     bool public testMode;
     
-    // PARTIE ERC20 A INTEGRER
-    // // Interface to mint for lvl up
-    // interface Itoken {
-    //     function levelUpMint(address receiver, uint amount) public;
-    // }
-    // Itoken token;
-    // address public tokenAddress;
-    // function setTokenAddress(address _tokenAddress) external onlyOwner{
-    //     tokenAddress=_tokenAddress;
-    //     token=Itoken(tokenAddress);
-    // }
+    Itoken token;
+    address public tokenAddress;
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
@@ -48,22 +45,22 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         uint24 stamina;
         uint24 attack1;
         uint24 attack2;
-        uint24 attack3;
-        uint24 attack4;
+        uint24 defence1;
+        uint24 defence2;
         uint24 attributePoints;
-        uint24 weapon;
+        uint8 weapon;
         uint24 shield;
-        uint256 lastFight;
+        uint256 lastRest;
         type_character typeCharacter;
         gender_character genderCharacter;
     }
 
     struct Stuff {
-        uint16 id;
-        uint16 bonusAttack1;
-        uint16 bonusAttack2;
-        uint16 bonusAttack3;
-        uint16 bonusAttack4;
+        uint8 id;
+        uint8 bonusAttack1;
+        uint8 bonusAttack2;
+        uint8 bonusDefence1;
+        uint8 bonusDefence2;
         type_stuff typeStuff;
     }
 
@@ -71,7 +68,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     mapping(uint24 => Character) private _characterDetails;
 
     // Mapping from token ID to token details
-    mapping(uint16 => Stuff) private _stuffDetails;
+    mapping(uint8 => Stuff) private _stuffDetails;
 
     // Mapping from account to his number of NFTs
     mapping(address => uint8) private _balanceOfCharacters;
@@ -80,15 +77,15 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @dev Constructor of the contract ERC1155, mint stuff and add it to the mapping
      */
     constructor() ERC1155("") {
-        _mint(address(this), BASIC_SWORD, 10**4, "");
-        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 1, 1, 0, 0, type_stuff.WEAPON);
-        _mint(address(this), BASIC_SHIELD, 10**4, "");
-        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 1, 1, type_stuff.SHIELD);
+        _mint(address(this), BASIC_SWORD, 10**5, "");
+        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, type_stuff.WEAPON);
+        _mint(address(this), BASIC_SHIELD, 10**5, "");
+        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 2, 2, type_stuff.SHIELD);
         _mint(address(this), EXCALIBUR, 1, "");
         _stuffDetails[EXCALIBUR] = Stuff(EXCALIBUR, 10, 10, 10, 10, type_stuff.WEAPON);
         _mint(address(this), AEGIS, 1, "");
         _stuffDetails[AEGIS] = Stuff(AEGIS, 10, 10, 10, 10, type_stuff.SHIELD); 
-        _mint(address(this), POTION, 10**5, "");
+        _mint(address(this), POTION, 10**6, "");
     }
 
     /**
@@ -129,24 +126,30 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     /**
      * @dev Emitted when the msg.sender buy a stuff ".
      */
-    event StuffBought(uint16 stuffId);
+    event StuffBought(uint8 stuffId);
 
     /**
      * @dev Emitted when the msg.sender burn a potion.
      */
-    event StuffEquiped(uint24 tokenId, uint16 stuffId);
+    event StuffEquiped(uint24 tokenId, uint8 stuffId);
 
     /**
      * @dev Emitted when the msg.sender burn a potion.
      */
     event PotionUsed(uint24 tokenId);
+
+    // TO COMMENT
+    function setTokenAddress(address _tokenAddress) external onlyOwner{
+        tokenAddress=_tokenAddress;
+        token=Itoken(tokenAddress);
+    }
     
     /**
      * @dev The function changes the ether fee for minting.
      * @param _mintFee New amount of fee.
      * Emits a "MintFeeUpdated" event.
      */
-    function updateMintFee(uint256 _mintFee) external onlyOwner() {
+    function updateMintFee(uint256 _mintFee) external onlyOwner {
         mintFee = _mintFee;
         emit MintFeeUpdated(mintFee);
     }
@@ -156,7 +159,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @param _stuffFee New amount of stuff fee.
      * Emits a "StuffFeeUpdated" event.
      */
-    function updateStuffFee(uint256 _stuffFee) external onlyOwner() {
+    function updateStuffFee(uint256 _stuffFee) external onlyOwner {
         stuffFee = _stuffFee;
         emit StuffFeeUpdated(stuffFee);
     }
@@ -166,7 +169,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @param _limitMint New limit of mintable NFT.
      * Emits a "LimitUpdated" event.
      */
-    function updateLimitMint(uint24 _limitMint) external onlyOwner() {
+    function updateLimitMint(uint24 _limitMint) external onlyOwner {
         limitMint = _limitMint;
         emit LimitUpdated(limitMint);
     }
@@ -174,7 +177,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     /**
      * @dev Owner withdraws the entire amount of ETH.
      */
-    function withdraw() external onlyOwner() {
+    function withdraw() external onlyOwner {
         payable(owner()).transfer(address(this).balance);
     }
 
@@ -197,9 +200,9 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
 
     /**
      * @dev The function uses the chainlink requestRandomness of VRFConsumerBase.
-     * @param _mod Length of number needed (modulo).
+     * @param _mod Length of number, needed (modulo).
      */
-    function _generateRandomNumber(uint256 _mod) internal {
+    function _generateRandomNumber(uint256 _mod) private {
         if (!testMode) { // Only for tests, to avoid chainlink
             randomNumber = uint256(getRandomNumber()) % _mod;
         } else {
@@ -214,7 +217,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     function _attributesMintDistribution() private view returns(uint8[] memory) {
         uint8[] memory _attributes = new uint8[](4);
         for(uint8 i=0; i<4; i++) {
-            _attributes[i] = 3 + uint8((randomNumber % (10+i)) % 3); // idée nft: la lose ou la win, tu obtiens 0 ou 10 points bonus
+            _attributes[i] = 3 + uint8((randomNumber % (10+i)) % 3);
         }
         return _attributes;
     }
@@ -229,10 +232,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
-            
-            // PARTIE ERC20 A INTEGRER
-            // token.levelUpMint(_ownerOf(_tokenId), (100+10*_characterDetails[_tokenId].level)*10**18);
-            
+            token.levelUpMint(msg.sender, (100+10*_characterDetails[_tokenId].level)*10**18);
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
     }
@@ -242,18 +242,16 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @param _tokenId Id of the token.
      * @param _attack1 Attack number 1 of the token.
      * @param _attack2 Attack number 2 of the token.
-     * @param _attack3 Attack number 3 of the token.
-     * @param _attack4 Attack number 4 of the token.
+     * @param _defence1 Defence number 1 of the token.
+     * @param _defence2 Defence number 2 of the token.
      */
-    function attributesLevelUp(uint24 _tokenId, uint24 _attack1, uint24 _attack2, uint24 _attack3, uint24 _attack4) external {
-        uint256 totalPoints = _attack1 + _attack2 + _attack3 + _attack4;
+    function attributesLevelUp(uint24 _tokenId, uint24 _attack1, uint24 _attack2, uint24 _defence1, uint24 _defence2) external {
+        uint256 totalPoints = _attack1 + _attack2 + _defence1 + _defence2;
         require(_characterDetails[_tokenId].attributePoints == totalPoints, "Wrong amount of points to attribute");
-        // _characterDetails[_tokenId].hp += _hp * 20;
-        // _characterDetails[_tokenId].stamina += _stamina * 20;
         _characterDetails[_tokenId].attack1 += _attack1;
         _characterDetails[_tokenId].attack2 += _attack2;
-        _characterDetails[_tokenId].attack3 += _attack3;
-        _characterDetails[_tokenId].attack4 += _attack4;
+        _characterDetails[_tokenId].defence1 += _defence1;
+        _characterDetails[_tokenId].defence2 += _defence2;
     }
 
     /**
@@ -264,7 +262,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      */
     function _substrateLife(uint24 _id1, uint24 _id2) private view returns(uint256) {
         uint256 op1 = ((_characterDetails[_id1].attack1 + _characterDetails[_id1].attack2) / 2) * (1 + _characterDetails[_id1].xp);
-        uint256 op2 = ((_characterDetails[_id2].attack3 + _characterDetails[_id2].attack4) / 2) * ((1 + _characterDetails[_id2].xp) / 2);
+        uint256 op2 = ((_characterDetails[_id2].defence1 + _characterDetails[_id2].defence2 ) / 2) * ((1 + _characterDetails[_id2].xp) / 2);
         if (op1 < op2) {
             return 0;
         } else {
@@ -316,14 +314,12 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
         _generateRandomNumber(10**16);
         uint8[] memory _attributes = _attributesMintDistribution();
-        _characterDetails[nextId] = Character(nextId, uint56(randomNumber), 1, 1, 100, 100, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, BASIC_SWORD, BASIC_SHIELD, block.timestamp, _typeCharacter, _genderCharacter);
+        _characterDetails[nextCharacterId] = Character(nextCharacterId, uint56(randomNumber), 1, 1, 100, 100, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, 0, 0, 0, _typeCharacter, _genderCharacter);
         _balanceOfCharacters[msg.sender]++;
         countMints[uint8(_typeCharacter)]++;
-        this.safeTransferFrom(address(this), msg.sender, BASIC_SWORD, 1, "");
-        this.safeTransferFrom(address(this), msg.sender, BASIC_SHIELD, 1, "");
-        _mint(msg.sender, nextId, 1, "");
-        emit CharacterCreated(nextId);
-        nextId++;
+        _mint(msg.sender, nextCharacterId, 1, "");
+        emit CharacterCreated(nextCharacterId);
+        nextCharacterId++;
     }
 
     /**
@@ -349,15 +345,12 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     function fight(uint24 _myTokenId, uint24 _rivalTokenId) external {
         require(_ownerOf(_myTokenId), "You don't own this NFT");
         require(_ownerOf(_myTokenId) != _ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
-        require(_characterDetails[_myTokenId].lastFight + 60 < block.timestamp, "To soon to fight (1 min)");
+        // require(_characterDetails[_myTokenId].lastRest + 86400 < block.timestamp, "You're character is resting");
         require(_characterDetails[_myTokenId].stamina >= 10, "Not enough stamina");
         require(_characterDetails[_myTokenId].level <= _characterDetails[_rivalTokenId].level, "Fight someone your own size!");
         require(_characterDetails[_myTokenId].hp > 0 && _characterDetails[_rivalTokenId].hp > 0, "One of the NFTs is dead");
-
-        _characterDetails[_myTokenId].lastFight = block.timestamp;
         uint256 _substrateLifeToRival = _substrateLife(_myTokenId, _rivalTokenId);
         uint256 _substrateLifeToMe = _substrateLife(_rivalTokenId, _myTokenId);
-
         _characterDetails[_myTokenId].stamina = _characterDetails[_myTokenId].stamina - 10;
         _subtrateLifeOperation(_myTokenId, _rivalTokenId, _substrateLifeToRival, _substrateLifeToMe);
     }
@@ -367,9 +360,8 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @param stuffId Id of the stuff.
      * Emits a "StuffBought" event.
      */
-    function buyStuff(uint16 stuffId) external payable {
-        require(stuffId != 0 && stuffId != 1, "You can't buy the basic stuff");
-        require(stuffId < 5, "Wrong kind of NFT (Character)");
+    function buyStuff(uint8 stuffId) external payable {
+        require(stuffId != 0, "Non-existent stuff");
         require(balanceOf(address(this), stuffId) != 0, "Stuff no more available");
         require(msg.value == stuffFee, "Wrong amount of fees");
         this.safeTransferFrom(address(this), msg.sender, stuffId, 1, "");
@@ -382,11 +374,28 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @param stuffId Id of the stuff to equip.
      * Emits a "StuffEquiped" event.
      */
-    function equipStuff(uint24 tokenId, uint16 stuffId) external {
+    function equipStuff(uint24 tokenId, uint8 stuffId) external {
+        require(tokenId > 255, "Wrong kind of NFT (Stuff)");
         require(_ownerOf(tokenId), "You don't own this NFT");
-        require(tokenId > 4, "Wrong kind of NFT (Stuff)");
+        require(stuffId != POTION, "You can't equip a potion");
         require(_ownerOf(stuffId), "You don't own this weapon");
-        require(stuffId < 5, "Wrong kind of NFT (Character)");
+        uint8 tokenWeapon = _characterDetails[tokenId].weapon;
+        if (tokenWeapon == 0) {
+            _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
+            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack1;
+            _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
+            _characterDetails[tokenId].defence2 += _stuffDetails[stuffId].bonusDefence2;
+        } else {
+            _characterDetails[tokenId].attack1 -= _stuffDetails[tokenWeapon].bonusAttack1;
+            _characterDetails[tokenId].attack2 -= _stuffDetails[tokenWeapon].bonusAttack1;
+            _characterDetails[tokenId].defence1 -= _stuffDetails[tokenWeapon].bonusDefence1;
+            _characterDetails[tokenId].defence2 -= _stuffDetails[tokenWeapon].bonusDefence2;
+
+            _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
+            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack1;
+            _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
+            _characterDetails[tokenId].defence2 += _stuffDetails[stuffId].bonusDefence2;
+        }
         if (_stuffDetails[stuffId].typeStuff == type_stuff.WEAPON) {
             _characterDetails[tokenId].weapon = stuffId;
         } else {
@@ -401,8 +410,8 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * Emits a "PotionUsed" event.
      */
     function usePotion(uint24 tokenId) external {
+        require(tokenId > 255, "Wrong kind of NFT (Stuff)");
         require(_ownerOf(tokenId), "You don't own this NFT");
-        require(tokenId > 4, "Wrong kind of NFT (Stuff)");
         require(_ownerOf(POTION), "You don't own a potion");
         require(_characterDetails[tokenId].stamina < 100 && _characterDetails[tokenId].hp < 100, "You're character is already rested");
         _burn(msg.sender, POTION, 1);
@@ -425,7 +434,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @param stuffId Id of the stuff.
      * @return Stuff Details of stuffId.
      */
-    function getStuffDetails(uint16 stuffId) external view returns(Stuff memory) {
+    function getStuffDetails(uint8 stuffId) external view returns(Stuff memory) {
         return _stuffDetails[stuffId];
     }
 
@@ -436,7 +445,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     function getMyCharacters() external view returns (Character[] memory){
         uint8 count = 0;
         Character[] memory myCharacters = new Character[](_balanceOfCharacters[msg.sender]);
-        for (uint24 i = 0; i < nextId; i++) {
+        for (uint24 i = 0; i < nextCharacterId; i++) {
             if (_ownerOf(i)) {
                 myCharacters[count] = _characterDetails[i];
                 count++;
@@ -451,8 +460,8 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      */
     function getOthersCharacters() external view returns (Character[] memory){
         uint24 count = 0;
-        Character[] memory othersCharacters = new Character[](nextId - _balanceOfCharacters[msg.sender]);
-        for (uint24 i = 0; i < nextId; i++) {
+        Character[] memory othersCharacters = new Character[](nextCharacterId - _balanceOfCharacters[msg.sender]);
+        for (uint24 i = 0; i < nextCharacterId; i++) {
             if (!_ownerOf(i)) {
                 othersCharacters[count] = _characterDetails[i];
                 count++;
@@ -473,8 +482,8 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
     }
 
     // function getAllCharacters() external view returns (Character[] memory){
-    //     Character[] memory allCharacters = new Character[](nextId);
-    //     for (uint256 i = 0; i < nextId; i++) {
+    //     Character[] memory allCharacters = new Character[](nextCharacterId);
+    //     for (uint256 i = 0; i < nextCharacterId; i++) {
     //         allCharacters[i] = _characterDetails[i];
     //     }
     //     return allCharacters;

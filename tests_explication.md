@@ -17,7 +17,7 @@ Pour les fonctions suivantes, nous vérifions si :
 * Fonction Mint
   - Le NFT Character et les NFTs Stuff sont créés et le demandeur en est le propriétaire.
   - L'événement est émis
-* Fonction Combat
+* Fonction Fight
   - Pour les deux protagonistes, s'ils perdent des points de vie et gagnent de l'expérience
   - L'événement est émis
   - Le NFT augmente de niveau si les conditions sont remplies, puis l'événement est émis
@@ -30,7 +30,7 @@ Pour les fonctions suivantes, nous vérifions si :
   - Le NFT Stuff est acheté puis transféré au demandeur
   - L'événement est émis
 * Fonction EquipStuff
-  - Le NFT Stuff est équipé à son Character (référencé dans le champ weapon ou shield du Character)
+  - Le NFT Stuff est référencé dans le champ weapon ou shield du Character et ses stats d'attaques/defenses changent
   - L'événement est émis
 * Fonction UsePotion
   - Le NFT Potion est burn puis les champs hp et stamina du Character ont augmentés.

@@ -13,7 +13,7 @@ Only possible at token deployment and when level up
 
 ### Re-Entrancy
 
-The contract don't send ether to someone, except owner with transfer, and transfer don't allow re-entrancy
+The contract doesn't send ether to someone, except owner with transfer, and transfer don't allow re-entrancy
 
 
 ### Overflow

@@ -78,9 +78,9 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      */
     constructor() ERC1155("") {
         _mint(address(this), BASIC_SWORD, 10**5, "");
-        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, type_stuff.WEAPON);
+        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 3, 3, 0, 0, type_stuff.WEAPON);
         _mint(address(this), BASIC_SHIELD, 10**5, "");
-        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 2, 2, type_stuff.SHIELD);
+        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 3, 3, type_stuff.SHIELD);
         _mint(address(this), EXCALIBUR, 1, "");
         _stuffDetails[EXCALIBUR] = Stuff(EXCALIBUR, 10, 10, 10, 10, type_stuff.WEAPON);
         _mint(address(this), AEGIS, 1, "");
@@ -232,7 +232,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
-            token.levelUpMint(msg.sender, (100+10*_characterDetails[_tokenId].level)*10**18);
+            // token.levelUpMint(msg.sender, (100+10*_characterDetails[_tokenId].level)*10**18);
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
     }
@@ -382,17 +382,17 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         uint8 tokenWeapon = _characterDetails[tokenId].weapon;
         if (tokenWeapon == 0) {
             _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
-            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack1;
+            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack2;
             _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
             _characterDetails[tokenId].defence2 += _stuffDetails[stuffId].bonusDefence2;
         } else {
             _characterDetails[tokenId].attack1 -= _stuffDetails[tokenWeapon].bonusAttack1;
-            _characterDetails[tokenId].attack2 -= _stuffDetails[tokenWeapon].bonusAttack1;
+            _characterDetails[tokenId].attack2 -= _stuffDetails[tokenWeapon].bonusAttack2;
             _characterDetails[tokenId].defence1 -= _stuffDetails[tokenWeapon].bonusDefence1;
             _characterDetails[tokenId].defence2 -= _stuffDetails[tokenWeapon].bonusDefence2;
 
             _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
-            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack1;
+            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack2;
             _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
             _characterDetails[tokenId].defence2 += _stuffDetails[stuffId].bonusDefence2;
         }

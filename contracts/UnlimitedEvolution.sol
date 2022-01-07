@@ -2,6 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RandomNumberGenerator.sol";
 import "./UnlimitedToken.sol";
@@ -12,10 +13,18 @@ interface Itoken {
 }
 
 /** @title Unlimited Evolution */
-contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
+contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGenerator {
 
-    uint8 constant BASIC_SWORD = 1; // MARKET PLACE: RENDRE SES OBJETS INVENDABLE
-    uint8 constant BASIC_SHIELD = 2; // MARKET PLACE: RENDRE SES OBJETS INVENDABLE
+    /**
+     * @dev Allows you to receive ERC1155 tokens and therefore make external calls to mint.
+     * @param interfaceId Id of the interface.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC1155Receiver) returns(bool) {
+        return super.supportsInterface(interfaceId);
+    }
+
+    uint8 constant BASIC_SWORD = 1;
+    uint8 constant BASIC_SHIELD = 2;
     uint8 constant EXCALIBUR = 3;
     uint8 constant AEGIS = 4;
     uint8 constant POTION = 5;
@@ -49,7 +58,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         uint24 defence2;
         uint24 attributePoints;
         uint8 weapon;
-        uint24 shield;
+        uint8 shield;
         uint256 lastRest;
         type_character typeCharacter;
         gender_character genderCharacter;
@@ -78,9 +87,9 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      */
     constructor() ERC1155("") {
         _mint(address(this), BASIC_SWORD, 10**5, "");
-        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 3, 3, 0, 0, type_stuff.WEAPON);
+        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, type_stuff.WEAPON);
         _mint(address(this), BASIC_SHIELD, 10**5, "");
-        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 3, 3, type_stuff.SHIELD);
+        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 2, 2, type_stuff.SHIELD);
         _mint(address(this), EXCALIBUR, 1, "");
         _stuffDetails[EXCALIBUR] = Stuff(EXCALIBUR, 10, 10, 10, 10, type_stuff.WEAPON);
         _mint(address(this), AEGIS, 1, "");
@@ -138,8 +147,11 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      */
     event PotionUsed(uint24 tokenId);
 
-    // TO COMMENT
-    function setTokenAddress(address _tokenAddress) external onlyOwner{
+    /**
+     * @dev The function changes the ERC20 token address
+     * @param _tokenAddress New token address.
+     */
+    function setTokenAddress(address _tokenAddress) external onlyOwner {
         tokenAddress=_tokenAddress;
         token=Itoken(tokenAddress);
     }
@@ -194,8 +206,43 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @param _tokenId Id of the token.
      * @return Boolean, true of false.
      */
-    function _ownerOf(uint256 _tokenId) private view returns (bool) {
+    function _ownerOf(uint256 _tokenId) private view returns(bool) {
         return balanceOf(msg.sender, _tokenId) != 0;
+    }
+
+    /**
+     * @dev Allows you to create a new Stuff.
+     * Warning: Prefer to use createStuff() rather than manageStuff(), more secure with nextStuffId.
+     * @param amount Amount of NFT mintable.
+     * @param bonusAttack1 Bonus value attack1.
+     * @param bonusAttack2 Bonus value attack2.
+     * @param bonusDefence1 Bonus value defence1.
+     * @param bonusDefence2 Bonus value defence2.
+     * @param typeStuff Type of the stuff.
+     */
+    function createStuff(uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, type_stuff typeStuff) external onlyOwner {
+        require(nextStuffId < 256, "The NFT Stuff limit is reached");
+        _mint(address(this), nextStuffId, amount, "");
+        _stuffDetails[nextStuffId] = Stuff(nextStuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, typeStuff);
+        nextStuffId++;
+    }
+
+    /**
+     * @dev Allows you to create a new Stuff/Consumable and to modify the quantity, statistics and type of an existing NFT Stuff.
+     * Warning: Be extremely careful with this function ! If you want to create a new NFT Stuff, prefer to use createStuff() !
+     * @param stuffId Id of the stuff.
+     * @param amount Amount of NFT mintable.
+     * @param bonusAttack1 Bonus value attack1.
+     * @param bonusAttack2 Bonus value attack2.
+     * @param bonusDefence1 Bonus value defence1.
+     * @param bonusDefence2 Bonus value defence2.
+     * @param typeStuff Type of the stuff.
+     */
+    function manageStuff(uint8 stuffId, uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, type_stuff typeStuff) external onlyOwner {
+        _mint(address(this), stuffId, amount, "");
+        if (stuffId != 5) {
+            _stuffDetails[stuffId] = Stuff(stuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, typeStuff);
+        }
     }
 
     /**
@@ -380,7 +427,9 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         require(stuffId != POTION, "You can't equip a potion");
         require(_ownerOf(stuffId), "You don't own this weapon");
         uint8 tokenWeapon = _characterDetails[tokenId].weapon;
-        if (tokenWeapon == 0) {
+        uint8 tokenShield = _characterDetails[tokenId].shield;
+        type_stuff stuffType = _stuffDetails[stuffId].typeStuff;
+        if ((stuffType == type_stuff.WEAPON && tokenWeapon == 0) || (stuffType == type_stuff.SHIELD && tokenShield == 0)) {
             _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
             _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack2;
             _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
@@ -442,7 +491,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @dev The function returns an array with the characteristics of all my NFTs.
      * @return Array of characters.
      */
-    function getMyCharacters() external view returns (Character[] memory){
+    function getMyCharacters() external view returns(Character[] memory){
         uint8 count = 0;
         Character[] memory myCharacters = new Character[](_balanceOfCharacters[msg.sender]);
         for (uint24 i = 0; i < nextCharacterId; i++) {
@@ -458,7 +507,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
      * @dev The function returns an array with the characteristics of all the NFTs that don't belong to me.
      * @return Array of characters.
      */
-    function getOthersCharacters() external view returns (Character[] memory){
+    function getOthersCharacters() external view returns(Character[] memory){
         uint24 count = 0;
         Character[] memory othersCharacters = new Character[](nextCharacterId - _balanceOfCharacters[msg.sender]);
         for (uint24 i = 0; i < nextCharacterId; i++) {
@@ -481,7 +530,7 @@ contract UnlimitedEvolution is ERC1155, Ownable, RandomNumberGenerator {
         testMode = !testMode;
     }
 
-    // function getAllCharacters() external view returns (Character[] memory){
+    // function getAllCharacters() external view returns(Character[] memory){
     //     Character[] memory allCharacters = new Character[](nextCharacterId);
     //     for (uint256 i = 0; i < nextCharacterId; i++) {
     //         allCharacters[i] = _characterDetails[i];

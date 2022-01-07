@@ -7,10 +7,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RandomNumberGenerator.sol";
 import "./UnlimitedToken.sol";
 
-// Interface to mint for lvl up
-interface Itoken {
-    function levelUpMint(address receiver, uint amount) external;
-}
+// // Interface to mint for lvl up
+// interface UnlimitedToken {
+//     function levelUpMint(address receiver, uint amount) external;
+// }
 
 /** @title Unlimited Evolution */
 contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGenerator {
@@ -38,8 +38,8 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     // Only for tests, to avoid chainlink
     bool public testMode;
     
-    Itoken token;
-    address public tokenAddress;
+    UnlimitedToken public unlimitedToken;
+    // address public tokenAddress;
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
@@ -85,7 +85,8 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     /**
      * @dev Constructor of the contract ERC1155, mint stuff and add it to the mapping
      */
-    constructor() ERC1155("") {
+    constructor(UnlimitedToken _unlimitedTokenAddress) ERC1155("") {
+        unlimitedToken = _unlimitedTokenAddress;
         _mint(address(this), BASIC_SWORD, 10**5, "");
         _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, type_stuff.WEAPON);
         _mint(address(this), BASIC_SHIELD, 10**5, "");
@@ -152,8 +153,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
      * @param _tokenAddress New token address.
      */
     function setTokenAddress(address _tokenAddress) external onlyOwner {
-        tokenAddress=_tokenAddress;
-        token=Itoken(tokenAddress);
+        unlimitedToken = UnlimitedToken(_tokenAddress);
     }
     
     /**
@@ -279,7 +279,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
-            // token.levelUpMint(msg.sender, (100+10*_characterDetails[_tokenId].level)*10**18);
+            unlimitedToken.levelUpMint(msg.sender, (100+10*_characterDetails[_tokenId].level)*10**18);
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
     }
@@ -529,16 +529,4 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     function testModeSwitch() external onlyOwner {
         testMode = !testMode;
     }
-
-    // function getAllCharacters() external view returns(Character[] memory){
-    //     Character[] memory allCharacters = new Character[](nextCharacterId);
-    //     for (uint256 i = 0; i < nextCharacterId; i++) {
-    //         allCharacters[i] = _characterDetails[i];
-    //     }
-    //     return allCharacters;
-    // }
-
-    // function getCountMints(uint8 _class) external view returns(uint24) {
-    //     return countMints[_class];
-    // }
 }

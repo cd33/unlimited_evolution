@@ -1,35 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0
-
 pragma solidity 0.8.7;
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract UnlimitedToken{
+contract UnlimitedToken is Ownable {
 
     mapping (address => uint) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
 
-    string public symbol;
-    string public name;
+    string public name = "Unlimited Token";
+    string public symbol = "ULT";
     uint8 public decimals = 18;
     uint256 public totalSupply;
 
     uint8 public tax;
     address public taxWallet;
-    mapping (address => bool) public isAMMPair ;
-    address public owner;
+    mapping (address => bool) public isAMMPair;
     address public gameContract;
-    modifier onlyOwner{
-        require(msg.sender==owner);
-        _;
-    }
     
     event Transfer (address indexed from, address indexed to, uint amount);
     event Approval (address indexed tokenOwner, address indexed spender, uint tokens);
 
-    constructor(string memory _name,string memory _symbol,uint nbTokens){
-        name=_name;
-        symbol=_symbol;
-        owner=msg.sender;
-        firstMint(owner,nbTokens*10**decimals);
+    constructor(){
+        firstMint(msg.sender, 21*10**6*10**decimals);
     }
 
     function firstMint(address receiver, uint amount) private {
@@ -47,10 +39,8 @@ contract UnlimitedToken{
         
         emit Transfer(address(0), receiver, amount);
     }
-    
 
     // ERC-20 //
-
     function transfer(address receiver, uint amount) external {
         require(balanceOf[msg.sender]>=amount, "Insufficient balance.");
         
@@ -104,7 +94,6 @@ contract UnlimitedToken{
     }
     
     // Owner parameters //
-
     function setTax(uint8 _tax) external onlyOwner{
         require(_tax>=0 && _tax<=5,"tax must be between 0 and 5 %");
         tax=_tax;
@@ -114,9 +103,9 @@ contract UnlimitedToken{
         taxWallet=_taxWallet;
     }
 
-    function setOwner(address _owner) external onlyOwner{
-        owner=_owner;
-    }
+    // function setOwner(address _owner) external onlyOwner{
+    //     owner=_owner;
+    // }
 
     function setAMMPair(address pair, bool taxed) external onlyOwner{
         isAMMPair[pair]=taxed;

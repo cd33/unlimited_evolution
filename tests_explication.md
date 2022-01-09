@@ -20,9 +20,10 @@ Pour les fonctions suivantes, nous vérifions si :
 * Fonction Fight
   - Pour les deux protagonistes, s'ils perdent des points de vie et gagnent de l'expérience
   - L'événement est émis
-  - Le NFT augmente de niveau si les conditions sont remplies, puis l'événement est émis
-* Fonction Repos
+  - Si les conditions sont remplies, le NFT augmente de niveau et le propriétaire recoit ses récompenses, l'événement est émis.
+* Fonction Rest
   - Les points de vie et d'endurance ont augmentés
+  - Le timestamp du dernier block est assigné à la variable lastRest
   - L'événement est émis
 * Le Construteur
   - Les différents NFT Stuff sont mintés et que le smart contrat les possède

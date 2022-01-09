@@ -495,7 +495,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     function getMyCharacters() external view returns(Character[] memory){
         uint8 count = 0;
         Character[] memory myCharacters = new Character[](_balanceOfCharacters[msg.sender]);
-        for (uint24 i = 0; i < nextCharacterId; i++) {
+        for (uint24 i = 256; i < nextCharacterId; i++) {
             if (_ownerOf(i)) {
                 myCharacters[count] = _characterDetails[i];
                 count++;
@@ -510,8 +510,8 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
      */
     function getOthersCharacters() external view returns(Character[] memory){
         uint24 count = 0;
-        Character[] memory othersCharacters = new Character[](nextCharacterId - _balanceOfCharacters[msg.sender]);
-        for (uint24 i = 0; i < nextCharacterId; i++) {
+        Character[] memory othersCharacters = new Character[](nextCharacterId - 256 - _balanceOfCharacters[msg.sender]);
+        for (uint24 i = 256; i < nextCharacterId; i++) {
             if (!_ownerOf(i)) {
                 othersCharacters[count] = _characterDetails[i];
                 count++;

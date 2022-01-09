@@ -279,7 +279,8 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
-            unlimitedToken.levelUpMint(msg.sender, (100+10*_characterDetails[_tokenId].level)*10**18);
+            unlimitedToken.levelUpMint(msg.sender, _characterDetails[_tokenId].level*10+100);
+            this.safeTransferFrom(address(this), msg.sender, POTION, 1, "");
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
     }

@@ -25,35 +25,38 @@ contract('UnlimitedToken', function (accounts) {
       await ue.testModeSwitch()
     })
 
-    describe('Unlimited Token', async () => {
-      it('a un nom', async function () {
-        expect(await ut.name()).to.equal('Unlimited Token')
-      })
+    it('a un nom', async function () {
+      expect(await ut.name()).to.equal('Unlimited Token')
+    })
 
-      it('a un symbole', async function () {
-        expect(await ut.symbol()).to.equal('ULT')
-      })
+    it('a un symbole', async function () {
+      expect(await ut.symbol()).to.equal('ULT')
+    })
 
-      it('a une valeur décimal', async function () {
-        expect(parseInt(await ut.decimals())).to.equal(18)
-      })
+    it('a une valeur décimal', async function () {
+      expect(parseInt(await ut.decimals())).to.equal(18)
+    })
 
-      it('Public variable each contract', async function () {
-        let unlimitedTokenVariable = await ue.unlimitedToken()
-        expect(unlimitedTokenVariable).to.equal(ut.address)
+    it('Total Supply et BalanceOf SC', async function () {
+      expect(parseInt(await ut.totalSupply())).to.equal(21 * 10 ** 24)
+      expect(parseInt(await ut.balanceOf(ut.address))).to.equal(21 * 10 ** 24)
+    })
 
-        let gameContract = await ut.gameContract()
-        expect(gameContract).to.equal(ue.address)
-      })
+    it('Public variable each contract', async function () {
+      let unlimitedTokenVariable = await ue.unlimitedToken()
+      expect(unlimitedTokenVariable).to.equal(ut.address)
 
-      it('SetTokenAddress', async function () {
-        let unlimitedTokenVariableBefore = await ue.unlimitedToken()
-        await ue.setTokenAddress(ue.address)
-        unlimitedTokenVariableAfter = await ue.unlimitedToken()
-        expect(unlimitedTokenVariableBefore).to.not.equal(unlimitedTokenVariableAfter)
-      })
+      let gameContract = await ut.gameContract()
+      expect(gameContract).to.equal(ue.address)
+    })
 
-
+    it('SetTokenAddress', async function () {
+      let unlimitedTokenVariableBefore = await ue.unlimitedToken()
+      await ue.setTokenAddress(ue.address)
+      unlimitedTokenVariableAfter = await ue.unlimitedToken()
+      expect(unlimitedTokenVariableBefore).to.not.equal(
+        unlimitedTokenVariableAfter,
+      )
     })
   })
 })

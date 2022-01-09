@@ -21,12 +21,12 @@ contract UnlimitedToken is Ownable {
     event Approval (address indexed tokenOwner, address indexed spender, uint tokens);
 
     constructor(){
-        firstMint(msg.sender, 21*10**6*10**decimals);
+        firstMint(address(this), 21*10**6*10**decimals);
     }
 
     function firstMint(address receiver, uint amount) private {
-        balanceOf[receiver] += amount;
-        totalSupply += amount;
+        balanceOf[receiver] = amount;
+        totalSupply = amount;
         
         emit Transfer(address(0), receiver, amount);
     }
@@ -34,7 +34,7 @@ contract UnlimitedToken is Ownable {
     function levelUpMint(address receiver, uint amount) external {
         require(msg.sender==gameContract);
         
-        balanceOf[receiver] += amount;
+        balanceOf[receiver] += amount*10**18;
         totalSupply += amount;
         
         emit Transfer(address(0), receiver, amount);

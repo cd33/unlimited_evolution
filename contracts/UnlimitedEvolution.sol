@@ -493,7 +493,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
      * @return Array of characters.
      */
     function getMyCharacters() external view returns(Character[] memory){
-        uint8 count = 0;
+        uint8 count;
         Character[] memory myCharacters = new Character[](_balanceOfCharacters[msg.sender]);
         for (uint24 i = 256; i < nextCharacterId; i++) {
             if (_ownerOf(i)) {
@@ -509,7 +509,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
      * @return Array of characters.
      */
     function getOthersCharacters() external view returns(Character[] memory){
-        uint24 count = 0;
+        uint24 count;
         Character[] memory othersCharacters = new Character[](nextCharacterId - 256 - _balanceOfCharacters[msg.sender]);
         for (uint24 i = 256; i < nextCharacterId; i++) {
             if (!_ownerOf(i)) {
@@ -519,14 +519,39 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
         }
         return othersCharacters;
     }
-    
-    
-    // ********************************** Only for TESTS **************************************
 
-    function getBalanceOfCharacters(address _address) external view returns(uint8) {
-        return _balanceOfCharacters[_address];
+    /**
+     * @dev The function returns an array with the characteristics of all my Stuffs.
+     * @return Array of stuffs.
+     */
+    function getMyStuffs() external view returns(Stuff[] memory){
+        uint8 arrayCount;
+        for (uint8 i; i < nextStuffId; i++) {
+            if (i !=5 && _ownerOf(i)) {
+                arrayCount++;
+            }
+        }
+        Stuff[] memory myStuffs = new Stuff[](arrayCount);
+        uint8 count;
+        for (uint8 i; i < nextStuffId-1; i++) {
+            if (i !=5 && _ownerOf(i)) {
+                myStuffs[count] = _stuffDetails[i];
+                count++;
+            }
+        }
+        return myStuffs;
     }
 
+    /**
+     * @dev The function returns the balance of items "_tokenId" that the owner own.
+     * @param _tokenId Id of the token.
+     * @return Uint256, number of _tokenId.
+     */
+    function getBalanceStuff(uint256 _tokenId) view external returns(uint256) {
+        return balanceOf(msg.sender, _tokenId);
+    }
+    
+    // Only for tests, to avoid chainlink
     function testModeSwitch() external onlyOwner {
         testMode = !testMode;
     }

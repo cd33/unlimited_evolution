@@ -10,7 +10,7 @@ const App = () => {
   const [web3, setWeb3] = useState(null)
   const [accounts, setAccounts] = useState(null)
   const [owner, setOwner] = useState(null)
-  const [ueContract, SetUeContract] = useState(null)
+  const [ueContract, setUeContract] = useState(null)
   const [characters, setCharacters] = useState(null)
   const [typeCharacter, setTypeCharacter] = useState(0)
   const [genderCharacter, setGenderCharacter] = useState(0)
@@ -24,7 +24,11 @@ const App = () => {
   // const [countAttributesAttack2, setCountAttributesAttack2] = useState(0);
   // const [countAttributesAttack3, setCountAttributesAttack3] = useState(0);
   // const [countAttributesAttack4, setCountAttributesAttack4] = useState(0);
-  const [typeStuff, setTypeStuff] = useState(0)
+  const [stuffs, setStuffs] = useState(null)
+  const [typeBuyStuff, setTypeBuyStuff] = useState(1)
+  const [typeEquipStuff, setTypeEquipStuff] = useState(0)
+  const [typeEquipChar, setTypeEquipChar] = useState(0)
+  const [balancePotion, setBalancePotion] = useState()
 
   useEffect(() => {
     const init = async () => {
@@ -59,7 +63,7 @@ const App = () => {
           UnlimitedEvolution.abi,
           ueNetwork && ueNetwork.address,
         )
-        SetUeContract(ueContract)
+        setUeContract(ueContract)
         await ueContract.methods
           .getMyCharacters()
           .call({ from: accounts[0] })
@@ -68,8 +72,18 @@ const App = () => {
           .getOthersCharacters()
           .call({ from: accounts[0] })
           .then((res) => setOthersCharacters(res))
+        await ueContract.methods
+          .getMyStuffs()
+          .call({ from: accounts[0] })
+          .then((res) => setStuffs(res))
+        await ueContract.methods
+          .getBalanceStuff(5)
+          .call({ from: accounts[0] })
+          .then((res) => setBalancePotion(res))
 
         setOwner(accounts[0] === (await ueContract.methods.owner().call()))
+
+        console.log(await web3.eth.getBlockNumber())
 
         // Subscribe to the contract states to update the front states
         web3.eth.subscribe('newBlockHeaders', async (err, res) => {
@@ -82,6 +96,14 @@ const App = () => {
               .getOthersCharacters()
               .call({ from: accounts[0] })
               .then((res) => setOthersCharacters(res))
+            await ueContract.methods
+              .getMyStuffs()
+              .call({ from: accounts[0] })
+              .then((res) => setStuffs(res))
+            await ueContract.methods
+              .getBalanceStuff(5)
+              .call({ from: accounts[0] })
+              .then((res) => setBalancePotion(res))
           }
         })
 
@@ -109,7 +131,7 @@ const App = () => {
         .on('data', (event) =>
           handleModal(
             `Character Created ID #${event.returnValues.id}`,
-            'Your caracter has just woken up and needs a one minute rest before interacting with other NFTs',
+            'Your caracter is ready, you can interacting with other NFTs',
           ),
         )
         .on('error', (err) => handleModal('Error', err.message))
@@ -119,7 +141,7 @@ const App = () => {
         .on('data', (event) =>
           handleModal(
             'Your Character Is Rested',
-            `Your character #${event.returnValues.tokenId} was rested of 50 points`,
+            `Your character #${event.returnValues.tokenId} is resting, your character will be available in 24 hours with all his hp and stamina`,
           ),
         )
         .on('error', (err) => handleModal('Error', err.message))
@@ -237,6 +259,33 @@ const App = () => {
       })
   }
 
+  const potionUse = (_myTokenId) => {
+    setLoading(true)
+    ueContract.methods
+      .usePotion(_myTokenId)
+      .send({ from: accounts[0] })
+      .once('error', (err) => {
+        setLoading(false)
+        console.log(err)
+      })
+      .then((res) => {
+        setLoading(false)
+        console.log(res)
+      })
+  }
+
+  // A REVOIR
+  // const getBalanceStuff = async (_tokenId) => {
+  //   if (accounts != null) {
+  //     await ueContract.methods
+  //       .getBalanceStuff(_tokenId)
+  //       .call({ from: accounts[0] })
+  //       .then(res => {
+  //         console.log("bite", res)
+  //       })
+  //   }
+  // }
+
   const typeCharacterName = (val) => {
     if (parseInt(val) === 0) {
       return 'BRUTE'
@@ -261,16 +310,6 @@ const App = () => {
     setTitleModal(title)
     setContentModal(content)
     setModalShow(true)
-  }
-
-  const handleSelectedCharacter = (e) => {
-    if (e === '') return null
-    // let tempArray = {id: null, mana: null};
-    let tempArray = { id: null }
-    let character = JSON.parse(e)
-    tempArray.id = character.id
-    // tempArray.mana = character.mana;
-    setSelectedCharacter(tempArray)
   }
 
   const attacks = (type, nb) => {
@@ -307,7 +346,7 @@ const App = () => {
 
   return (
     <s.Screen>
-      <s.Container ai="center" style={{ flex: 1, backgroundColor: '#DBAD6A' }}>
+      <s.Container ai="center" style={{ flex: 1, backgroundColor: '#6384BD' }}>
         {!web3 ? (
           <>
             <s.TextTitle>Loading Web3, accounts, and contract...</s.TextTitle>
@@ -433,14 +472,28 @@ const App = () => {
                             Shield: {stuffType[character.shield]}
                           </s.TextDescription>
                         )}
-                        {character.stamina < 100 && (
-                          <s.Button
-                            disabled={loading ? 1 : 0}
-                            onClick={() => rest(character.id)}
-                            primary={loading ? '' : 'primary'}
-                          >
-                            REST
-                          </s.Button>
+                        <s.TextDescription>
+                          Rest: {character.lastRest}
+                        </s.TextDescription>
+                        {(character.hp < 100 || character.stamina < 100) && (
+                          <>
+                            <s.Button
+                              disabled={loading ? 1 : 0}
+                              onClick={() => rest(character.id)}
+                              primary={loading ? '' : 'primary'}
+                            >
+                              REST
+                            </s.Button>
+                            {balancePotion > 0 && (
+                              <s.Button
+                                disabled={loading ? 1 : 0}
+                                onClick={() => potionUse(character.id)}
+                                primary={loading ? '' : 'primary'}
+                              >
+                                USE A POTION
+                              </s.Button>
+                            )}
+                          </>
                         )}
                       </s.Container>
                       <s.SpacerSmall />
@@ -450,116 +503,266 @@ const App = () => {
             </s.Container>
 
             <s.SpacerLarge />
-            <s.TextTitle style={{ margin: 0 }}>Mes Ennemis</s.TextTitle>
 
-            {characters && characters.length > 0 && (
-              <>
-                <s.TextSubTitle>
-                  Veuillez choisir un personnage pour combattre
-                </s.TextSubTitle>
-                <select
-                  onChange={(e) => handleSelectedCharacter(e.target.value)}
-                >
-                  <option value="">--Please choose an option--</option>
-                  {characters.map((character) => (
-                    // <option key={character.id} value={`{"id":${character.id},"mana":${character.mana}}`}>ID #{character.id}</option>
-                    <option key={character.id} value={`{"id":${character.id}}`}>
-                      ID #{character.id}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
+            <s.Container
+              ai="center"
+              style={{ flex: 1, backgroundColor: '#64E0E0' }}
+            >
+              <s.TextTitle>Mes Ennemis</s.TextTitle>
 
-            <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
-              {othersCharacters &&
-                othersCharacters.length > 0 &&
-                othersCharacters.map((character) => {
-                  return (
-                    <div key={character.id}>
-                      <s.Container
-                        ai="center"
-                        style={{ minWidth: '200px', margin: 10 }}
-                      >
-                        <CharacterRenderer character={character} size={300} />
-                        <s.TextDescription>
-                          ID: {character.id}
-                        </s.TextDescription>
-                        {/* <s.TextDescription>DNA: {character.dna}</s.TextDescription> */}
-                        <s.TextDescription>
-                          Level: {character.level}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          XP: {character.xp}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          HP: {character.hp}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          Stamina: {character.stamina}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          {attacks(character.typeCharacter, 0)}:{' '}
-                          {character.attack1}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          {attacks(character.typeCharacter, 1)}:{' '}
-                          {character.attack2}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          {attacks(character.typeCharacter, 2)}:{' '}
-                          {character.defence1}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          {attacks(character.typeCharacter, 3)}:{' '}
-                          {character.defence1}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          Type: {typeCharacterName(character.typeCharacter)}
-                        </s.TextDescription>
-                        <s.TextDescription>
-                          Gender: {typeGenderName(character.genderCharacter)}
-                        </s.TextDescription>
-                        {character.weapon !== '0' && (
+              {characters && characters.length > 0 && (
+                <>
+                  <s.TextSubTitle>
+                    Veuillez choisir un personnage pour combattre
+                  </s.TextSubTitle>
+                  <select
+                    onChange={(e) => setSelectedCharacter(e.target.value)}
+                  >
+                    <option value="">Please choose a character</option>
+                    {characters.map((character) => (
+                      // <option key={character.id} value={`{"id":${character.id},"mana":${character.mana}}`}>ID #{character.id}</option>
+                      <option key={character.id} value={character.id}>
+                        ID #{character.id}
+                      </option>
+                    ))}
+                  </select>
+                  {console.log(selectedCharacter)}
+                </>
+              )}
+
+              <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
+                {othersCharacters &&
+                  othersCharacters.length > 0 &&
+                  othersCharacters.map((character) => {
+                    return (
+                      <div key={character.id}>
+                        <s.Container
+                          ai="center"
+                          style={{ minWidth: '200px', margin: 10 }}
+                        >
+                          <CharacterRenderer character={character} size={300} />
                           <s.TextDescription>
-                            Weapon: {stuffType[character.weapon]}
+                            ID: {character.id}
                           </s.TextDescription>
-                        )}
-                        {character.shield !== '0' && (
+                          {/* <s.TextDescription>DNA: {character.dna}</s.TextDescription> */}
                           <s.TextDescription>
-                            Shield: {stuffType[character.shield]}
+                            Level: {character.level}
                           </s.TextDescription>
-                        )}
-
-                        {characters &&
-                          characters.length > 0 &&
-                          selectedCharacter && (
-                            <s.Container fd="row" jc="center">
-                              <s.Button
-                                disabled={loading ? 1 : 0}
-                                onClick={() =>
-                                  fight(selectedCharacter.id, character.id)
-                                }
-                                primary={loading ? '' : 'primary'}
-                              >
-                                FIGHT
-                              </s.Button>
-                            </s.Container>
+                          <s.TextDescription>
+                            XP: {character.xp}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            HP: {character.hp}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            Stamina: {character.stamina}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            {attacks(character.typeCharacter, 0)}:{' '}
+                            {character.attack1}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            {attacks(character.typeCharacter, 1)}:{' '}
+                            {character.attack2}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            {attacks(character.typeCharacter, 2)}:{' '}
+                            {character.defence1}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            {attacks(character.typeCharacter, 3)}:{' '}
+                            {character.defence1}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            Type: {typeCharacterName(character.typeCharacter)}
+                          </s.TextDescription>
+                          <s.TextDescription>
+                            Gender: {typeGenderName(character.genderCharacter)}
+                          </s.TextDescription>
+                          {character.weapon !== '0' && (
+                            <s.TextDescription>
+                              Weapon: {stuffType[character.weapon]}
+                            </s.TextDescription>
                           )}
-                      </s.Container>
-                      <s.SpacerSmall />
-                    </div>
-                  )
-                })}
+                          {character.shield !== '0' && (
+                            <s.TextDescription>
+                              Shield: {stuffType[character.shield]}
+                            </s.TextDescription>
+                          )}
+
+                          {characters &&
+                            characters.length > 0 &&
+                            selectedCharacter && (
+                              <s.Container fd="row" jc="center">
+                                <s.Button
+                                  disabled={loading ? 1 : 0}
+                                  onClick={() =>
+                                    fight(selectedCharacter, character.id)
+                                  }
+                                  primary={loading ? '' : 'primary'}
+                                >
+                                  FIGHT
+                                </s.Button>
+                              </s.Container>
+                            )}
+                        </s.Container>
+                        <s.SpacerSmall />
+                      </div>
+                    )
+                  })}
+              </s.Container>
+              <Modal
+                modalShow={modalShow}
+                setModalShow={setModalShow}
+                title={titleModal}
+                content={contentModal}
+              />
+              <s.SpacerLarge />
             </s.Container>
-            <Modal
-              modalShow={modalShow}
-              setModalShow={setModalShow}
-              title={titleModal}
-              content={contentModal}
-            />
           </>
         )}
+
+        {/* Partie équipement Achat et Equiper */}
+        {/* Partie Achat */}
+        <s.Container
+          ai="center"
+          style={{ flex: 1, backgroundColor: '#D7D6DE' }}
+        >
+          <s.TextTitle>Partie Equipement</s.TextTitle>
+          <div style={{ flexDirection: 'row' }}>
+            <select
+              onChange={(e) =>
+                setTypeBuyStuff(e.currentTarget.selectedIndex + 1)
+              }
+            >
+              {stuffType
+                .filter((stuff) => {
+                  if (stuff === '') {
+                    return false
+                  } else {
+                    return true
+                  }
+                })
+                .map((stuff, i) => (
+                  <option key={i} value={i}>
+                    {stuff}
+                  </option>
+                ))}
+            </select>
+
+            <s.Button
+              disabled={loading ? 1 : 0}
+              onClick={() => buyStuff(typeBuyStuff)}
+              primary={loading ? '' : 'primary'}
+            >
+              Achat équipement
+            </s.Button>
+          </div>
+
+          {/* Partie Equiper */}
+          <div style={{ flexDirection: 'row' }}>
+            {stuffs &&
+              stuffs.length > 0 &&
+              characters &&
+              characters.length > 0 && (
+                <>
+                  <s.TextSubTitle>
+                    Veuillez choisir un objet et un personnage à équiper
+                  </s.TextSubTitle>
+                  <select onChange={(e) => setTypeEquipStuff(e.target.value)}>
+                    <option value="">Please choose a stuff</option>
+                    {stuffs &&
+                      stuffs.map((stuff) => (
+                        <option key={stuff.id} value={stuff.id}>
+                          {stuffType[stuff.id]}
+                        </option>
+                      ))}
+                  </select>
+                  <select onChange={(e) => setTypeEquipChar(e.target.value)}>
+                    <option value="">Please choose a character</option>
+                    {characters.map((character) => (
+                      <option key={character.id} value={character.id}>
+                        ID #{character.id}
+                      </option>
+                    ))}
+                  </select>
+
+                  {typeEquipStuff != 0 && typeEquipChar != 0 && (
+                    <s.Button
+                      disabled={loading ? 1 : 0}
+                      onClick={() => equipStuff(typeEquipChar, typeEquipStuff)}
+                      primary={loading ? '' : 'primary'}
+                    >
+                      Equiper stuff
+                    </s.Button>
+                  )}
+                </>
+              )}
+          </div>
+          <s.SpacerLarge />
+        </s.Container>
+
+        <s.Container
+          ai="center"
+          style={{ flex: 1, backgroundColor: '#B68D8D' }}
+        >
+          <s.TextTitle>Mon Equipement</s.TextTitle>
+
+          <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
+            {balancePotion > 0 && (
+              <s.Container
+                ai="center"
+                style={{ minWidth: '200px', margin: 10 }}
+              >
+                <s.TextDescription>Name : POTION</s.TextDescription>
+                <s.TextDescription>HP : FULL</s.TextDescription>
+                <s.TextDescription>STAMINA : FULL</s.TextDescription>
+                <s.TextDescription>
+                  QUANTITY : {balancePotion}
+                </s.TextDescription>
+              </s.Container>
+            )}
+            {stuffs &&
+              stuffs.length > 0 &&
+              stuffs.map((stuff) => {
+                return (
+                  <div key={stuff.id}>
+                    <s.Container
+                      ai="center"
+                      style={{ minWidth: '200px', margin: 10 }}
+                    >
+                      {/* <CharacterRenderer character={character} size={300} /> */}
+                      <s.TextDescription>
+                        Name : {stuffType[stuff.id]}
+                      </s.TextDescription>
+                      <s.TextDescription>
+                        Bonus Attack 1 : {stuff.bonusAttack1}
+                      </s.TextDescription>
+                      <s.TextDescription>
+                        Bonus Attack 2 : {stuff.bonusAttack2}
+                      </s.TextDescription>
+                      <s.TextDescription>
+                        Bonus Defence 1 : {stuff.bonusDefence1}
+                      </s.TextDescription>
+                      <s.TextDescription>
+                        Bonus Defence 2 : {stuff.bonusDefence2}
+                      </s.TextDescription>
+                      <s.TextDescription>
+                        Type : {stuff.typeStuff === '0' ? 'WEAPON' : 'SHIELD'}
+                      </s.TextDescription>
+                      {/* <s.TextDescription>
+                      Quantity : 
+                    </s.TextDescription> */}
+                    </s.Container>
+                    <s.SpacerSmall />
+                  </div>
+                )
+              })}
+          </s.Container>
+
+          <s.SpacerLarge />
+        </s.Container>
+
         {owner && (
           <s.Button
             disabled={loading ? 1 : 0}
@@ -569,59 +772,6 @@ const App = () => {
             WITHDRAW
           </s.Button>
         )}
-
-        {/* Partie équipement Achat */}
-        <div style={{ flexDirection: 'row' }}>
-          <select onChange={(e) => setTypeStuff(e.target.value)}>
-            {stuffType
-              .filter((stuff) => {
-                if (stuff == '') {
-                  return false
-                } else {
-                  return true
-                }
-              })
-              .map((stuff, i) => (
-                <option value={i}>{stuff}</option>
-              ))}
-          </select>
-
-          <s.Button
-            disabled={loading ? 1 : 0}
-            onClick={() => buyStuff(typeStuff)}
-            primary={loading ? '' : 'primary'}
-          >
-            Achat équipement
-          </s.Button>
-        </div>
-
-        {/* Partie équipement Equiper */}
-        {/* {characters && characters.length > 0 && (
-              <>
-                <s.TextSubTitle>
-                  Veuillez choisir un personnage pour combattre
-                </s.TextSubTitle>
-                <select
-                  onChange={(e) => handleSelectedCharacter(e.target.value)}
-                >
-                  <option value="">--Please choose an option--</option>
-                  {characters.map((character) => (
-                    // <option key={character.id} value={`{"id":${character.id},"mana":${character.mana}}`}>ID #{character.id}</option>
-                    <option key={character.id} value={`{"id":${character.id}}`}>
-                      ID #{character.id}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )} */}
-
-        <s.Button
-          disabled={loading ? 1 : 0}
-          onClick={() => equipStuff(257, 3)}
-          primary={loading ? '' : 'primary'}
-        >
-          Equiper stuff
-        </s.Button>
       </s.Container>
     </s.Screen>
   )

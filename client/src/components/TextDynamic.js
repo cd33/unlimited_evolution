@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import '../style/Texte.css'
 
 const TextDynamic = () => {
   let array = ['Bitcoin', 'Ethereum', 'polygone', 'Combats']
@@ -52,20 +53,20 @@ const TextDynamic = () => {
           <span className="simply">Jeux de NFT</span>
           <span id="text-target"></span>
         </span>
-        {/* <div className="button">
-          <button type="button" className="btn btn-lg" id="btn1">
-            <Link to="/MyCharacters">MES PERSOS</Link>
-          </button>
-          <button type="button" className="btn btn-secondary btn-lg" id="btn2">
-            <Link to="/MyStuff">MON EQUIPEMENT</Link>
-          </button>
-          <button type="button" className="btn btn-secondary btn-lg" id="btn2">
-            <Link to="/MyEnemies">MES ENNEMIES</Link>
-          </button>
-          <button type="button" className="btn btn-secondary btn-lg" id="btn2">
-            <Link to="/ManageStuff">ACHETER/GERER EQUIPEMENT</Link>
-          </button>
-        </div> */}
+        <div className="button">
+          <Link to="/MyCharacters">
+            <div className="bouton">MES PERSOS</div>
+          </Link>
+          <Link to="/MyStuff">
+            <div className="bouton">MON EQUIPEMENT</div>
+          </Link>
+          <Link to="/MyEnemies">
+            <div className="bouton">MES ENNEMIES</div>
+          </Link>
+          <Link to="/ManageStuff">
+            <div className="bouton">ACHETER/GERER EQUIPEMENT</div>
+          </Link>
+        </div>
       </div>
     </div>
   )

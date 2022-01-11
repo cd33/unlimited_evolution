@@ -111,6 +111,9 @@ const App = () => {
               .getBalanceStuff(5)
               .call({ from: accounts[0] })
               .then((res) => setBalancePotion(res))
+            lastBlockNumber = await web3.eth.getBlockNumber()
+            lastBlockInfo = await web3.eth.getBlock(lastBlockNumber)
+            setTimeStamp(lastBlockInfo.timestamp)
           }
         })
 

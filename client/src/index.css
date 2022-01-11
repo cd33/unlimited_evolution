@@ -26,12 +26,13 @@ code {
 
 .home {
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  background-image: url(./img/backgroudUE.gif);
+  background-image: url(./img/monFond.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -41,33 +42,19 @@ code {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: rgba(0, 0, 0, 0.5);
+  background-color: #222;
 }
 
-.address {
-  width: 100%;
-  height: 15px;
-  display: flex;
-  justify-content: end;
-  color: var(--white);
+.navBar p {
   font-size: 12px;
-  background: #222;
-  padding: 0 10px;
+  color: var(--white);
+  margin: 15px 100px;
 }
 
 .titre {
   font-size: 60px;
   color: var(--white);
 }
-
-.hautDePage {
-  background-color: cadetblue;
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
 
 .choose {
   background-color: #222;

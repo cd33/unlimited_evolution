@@ -1,5 +1,6 @@
 import React from 'react'
 import * as s from '../globalStyles'
+import "../style/Navbar.css"
 
 const SocialNetwork = ({accounts}) => {
   const anim = () => {

@@ -13,6 +13,8 @@ const MyEnemies = ({
   selectedCharacter,
   fight,
   stuffType,
+  resting,
+  timeStamp,
 }) => {
   return (
     <s.Container ai="center" style={{ flex: 1, backgroundColor: '#64E0E0' }}>
@@ -25,13 +27,16 @@ const MyEnemies = ({
           </s.TextSubTitle>
           <select onChange={(e) => setSelectedCharacter(e.target.value)}>
             <option value="">Please choose a character</option>
-            {characters.map((character) => (
-              <option key={character.id} value={character.id}>
-                ID #{character.id}
-              </option>
-            ))}
+            {characters.map((character) => {
+              if (timeStamp - 86400 > character.lastRest) {
+                return (
+                  <option key={character.id} value={character.id}>
+                    ID #{character.id}
+                  </option>
+                )
+              }
+            })}
           </select>
-          {console.log(selectedCharacter)}
         </>
       )}
 
@@ -83,8 +88,11 @@ const MyEnemies = ({
                       Shield: {stuffType[character.shield]}
                     </s.TextDescription>
                   )}
+                  <s.TextDescription>
+                    {resting(character, timeStamp)}
+                  </s.TextDescription>
 
-                  {characters && characters.length > 0 && selectedCharacter && (
+                  {characters && characters.length > 0 && selectedCharacter && (timeStamp - 86400 > character.lastRest) && (
                     <s.Container fd="row" jc="center">
                       <s.Button
                         disabled={loading ? 1 : 0}

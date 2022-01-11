@@ -203,7 +203,7 @@ contract('UnlimitedEvolution', function (accounts) {
         eventInvestor = await ue.createCharacter(1, 1, {
           value: readable('0.001'),
           from: investor,
-          // gas: 3000000,
+          gas: 3000000,
         })
         tokenIdInvestor = eventInvestor.logs[1].args[0].toString()
 
@@ -394,6 +394,31 @@ contract('UnlimitedEvolution', function (accounts) {
           }),
           "You're character is resting",
         )
+      })
+
+      it('Fight resting after 24h', async function () {
+        await ue.fight(tokenIdOwner, tokenIdInvestor, {
+          from: owner,
+        })
+
+        let ownerDetails = await ue.getTokenDetails(tokenIdOwner)
+        expect(parseInt(ownerDetails[5])).to.equal(90)
+
+        await ue.rest(tokenIdOwner, {
+          from: owner,
+        })
+
+        ownerDetails = await ue.getTokenDetails(tokenIdOwner)
+        expect(parseInt(ownerDetails[5])).to.equal(100)
+
+        await time.increase(86401)
+
+        await ue.fight(tokenIdOwner, tokenIdInvestor, {
+          from: owner,
+        })
+
+        ownerDetails = await ue.getTokenDetails(tokenIdOwner)
+        expect(parseInt(ownerDetails[5])).to.equal(90)
       })
 
       it('REVERT: fight() not enough stamina', async function () {

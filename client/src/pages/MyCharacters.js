@@ -15,6 +15,8 @@ const MyCharacters = ({
   stuffType,
   balancePotion,
   potionUse,
+  resting,
+  timeStamp
 }) => {
   return (
     <s.Container ai="center" style={{ flex: 1 }}>
@@ -94,7 +96,7 @@ const MyCharacters = ({
                     </s.TextDescription>
                   )}
                   <s.TextDescription>
-                    Rest: {character.lastRest}
+                    {resting(character, timeStamp)}
                   </s.TextDescription>
                   {(character.hp < 100 || character.stamina < 100) && (
                     <>

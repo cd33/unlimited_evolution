@@ -21,6 +21,7 @@ const App = () => {
   const [web3, setWeb3] = useState(null)
   const [accounts, setAccounts] = useState(null)
   const [ueContract, setUeContract] = useState(null)
+  const [timeStamp, setTimeStamp] = useState(null)
   const [characters, setCharacters] = useState(null)
   const [typeCharacter, setTypeCharacter] = useState(0)
   const [genderCharacter, setGenderCharacter] = useState(0)
@@ -87,7 +88,9 @@ const App = () => {
           .call({ from: accounts[0] })
           .then((res) => setBalancePotion(res))
 
-        console.log(await web3.eth.getBlockNumber())
+        let lastBlockNumber = await web3.eth.getBlockNumber()
+        let lastBlockInfo = await web3.eth.getBlock(lastBlockNumber)
+        setTimeStamp(lastBlockInfo.timestamp)
 
         // Subscribe to the contract states to update the front states
         web3.eth.subscribe('newBlockHeaders', async (err, res) => {
@@ -321,6 +324,12 @@ const App = () => {
     'POTION',
   ]
 
+  const resting = (character, timeStamp) => {
+    if (timeStamp - 86400 < character.lastRest) {
+      return `ID#${character.id} is Resting (can't fight)`
+    }
+  }
+
   return (
     <s.Screen>
       <s.Container ai="center" style={{ flex: 1 }} className="hautDePage">
@@ -361,6 +370,8 @@ const App = () => {
                     stuffType={stuffType}
                     balancePotion={balancePotion}
                     potionUse={potionUse}
+                    resting={resting}
+                    timeStamp={timeStamp}
                   />
                 }
               />
@@ -378,6 +389,8 @@ const App = () => {
                     selectedCharacter={selectedCharacter}
                     fight={fight}
                     stuffType={stuffType}
+                    resting={resting}
+                    timeStamp={timeStamp}
                   />
                 }
               />

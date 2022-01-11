@@ -1,9 +1,15 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import * as s from '../globalStyles'
+import "../style/Navbar.css"
+import logo from '../img/logo.png'
 
-const NavbarCustom = () => {
+const NavbarCustom = ({ accounts }) => {
   return (
-    <div>
+    <div className="navBar">
+      <Link to="/">
+        <img className="logo" src={logo} alt="Logo Unlimited Evolution" />
+      </Link>
       <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container-fluid">
           <button
@@ -31,63 +37,15 @@ const NavbarCustom = () => {
               <li className="nav-item">
                 <Link to="/MyEnemies">Mes Ennemies</Link>
               </li>
-              <li className="nav-item">
-                <Link to="/ManageStuff">Acheter/Gerer Equipement</Link>
-              </li>
-              {/* <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle"
-                  id="navbarDropdownMenuLink"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Personnages
-                </a>
-                <ul
-                  className="dropdown-menu"
-                  aria-labelledby="navbarDropdownMenuLink"
-                >
-                  <li>
-                    <a className="dropdown-item" href="../pages/MesPerso.js">
-                      Mes Personnages
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="../pages/MesEnnemie.js">
-                      Mes Ennemies
-                    </a>
-                  </li>
-                </ul>
-              </li> */}
             </ul>
           </div>
-          {/* <s.NavbarText float="right" margin={10}>{accounts !== null && accounts[0]}</s.NavbarText> */}
         </div>
       </nav>
+      <s.NavbarText float="right" margin={10} style={{ color: 'white' }}>
+        {accounts !== null && accounts[0]}
+      </s.NavbarText>
     </div>
   )
 }
 
 export default NavbarCustom
-
-// import React from 'react'
-// import * as s from '../globalStyles'
-
-// const NavbarCustom = ({ accounts }) => {
-//   return (
-//     <s.Navbar>
-//       <s.NavbarText float="right" margin={10}>
-//         Mes Personnages
-//       </s.NavbarText>
-//       <s.NavbarText float="right" margin={10}>
-//         Mes Ennemies
-//       </s.NavbarText>
-//       <s.NavbarText float="right" margin={10}>
-//         {accounts !== null && accounts[0]}
-//       </s.NavbarText>
-//     </s.Navbar>
-//   )
-// }
-
-// export default NavbarCustom

@@ -5,14 +5,12 @@ import CharacterRenderer from '../components/CharacterRenderer'
 const MyEnemies = ({
   loading,
   characters,
-  attacks,
   typeCharacterName,
   typeGenderName,
   setSelectedCharacter,
   othersCharacters,
   selectedCharacter,
   fight,
-  stuffType,
   resting,
   timeStamp,
 }) => {

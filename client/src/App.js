@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import UnlimitedEvolution from './contracts/UnlimitedEvolution.json'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import getWeb3 from './getWeb3'
@@ -10,12 +10,7 @@ import MyCharacters from './pages/MyCharacters'
 import MyEnemies from './pages/MyEnemies'
 import ManageStuff from './pages/ManageStuff'
 import MyStuff from './pages/MyStuff'
-
 import NavbarCustom from './components/Navbar'
-import SocialNetwork from './components/SocialNetwork'
-import logo from './img/logo.png'
-import './style/Navbar.css'
-import './style/Texte.css'
 
 const App = () => {
   const [web3, setWeb3] = useState(null)
@@ -33,7 +28,6 @@ const App = () => {
   const [contentModal, setContentModal] = useState(false)
   const [stuffs, setStuffs] = useState(null)
   const [typeBuyStuff, setTypeBuyStuff] = useState(1)
-  const [typeEquipStuff, setTypeEquipStuff] = useState(0)
   const [typeEquipChar, setTypeEquipChar] = useState(0)
   const [balancePotion, setBalancePotion] = useState()
 
@@ -348,13 +342,8 @@ const App = () => {
           </>
         ) : (
           <>
-            <div className="navBar">
-              <Link to="/">
-                <img className="logo" src={logo} alt="Logo Unlimited Evolution"/>
-              </Link>
-              <NavbarCustom />
-              <SocialNetwork accounts={accounts} />
-            </div>
+            <NavbarCustom accounts={accounts} />
+
             <Routes>
               <Route path="/" element={<TextDynamic />} />
               <Route
@@ -401,16 +390,6 @@ const App = () => {
                 path="/MyStuff"
                 element={
                   <MyStuff
-                    stuffs={stuffs}
-                    stuffType={stuffType}
-                    balancePotion={balancePotion}
-                  />
-                }
-              />
-              <Route
-                path="/ManageStuff"
-                element={
-                  <ManageStuff
                     loading={loading}
                     characters={characters}
                     stuffs={stuffs}
@@ -419,10 +398,9 @@ const App = () => {
                     equipStuff={equipStuff}
                     setTypeBuyStuff={setTypeBuyStuff}
                     typeBuyStuff={typeBuyStuff}
-                    setTypeEquipStuff={setTypeEquipStuff}
-                    typeEquipStuff={typeEquipStuff}
                     setTypeEquipChar={setTypeEquipChar}
                     typeEquipChar={typeEquipChar}
+                    balancePotion={balancePotion}
                   />
                 }
               />

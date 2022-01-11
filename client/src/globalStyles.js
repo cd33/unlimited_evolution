@@ -79,7 +79,9 @@ export const StyledClickable = styled.div`
 export const Navbar = styled.div`
   min-height: 3em;
   width: 100%;
-  color: #333;
+  background-color: #000;
+  color: #FFF;
+  height: 60px;
 `;
 
 export const NavbarText = styled.div`

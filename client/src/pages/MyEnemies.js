@@ -42,42 +42,46 @@ const MyEnemies = ({
         {othersCharacters &&
           othersCharacters.length > 0 &&
           othersCharacters.map((character) => {
-            return (
-              <div key={character.id}>
-                <s.Container
-                  ai="center"
-                  style={{ minWidth: '200px', margin: 10 }}
-                >
-                  <CharacterRenderer character={character} size={300} />
-                  <s.TextDescription>ID: {character.id}</s.TextDescription>
-                  <s.TextDescription>
-                    Level: {character.level}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Type: {typeCharacterName(character.typeCharacter)}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Gender: {typeGenderName(character.genderCharacter)}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    {resting(character, timeStamp)}
-                  </s.TextDescription>
+            if (timeStamp - 86400 > character.lastRest) {
+              return (
+                <div key={character.id}>
+                  <s.Container
+                    ai="center"
+                    style={{ minWidth: '200px', margin: 10 }}
+                  >
+                    <CharacterRenderer character={character} size={300} />
+                    <s.TextDescription>ID: {character.id}</s.TextDescription>
+                    <s.TextDescription>
+                      Level: {character.level}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Type: {typeCharacterName(character.typeCharacter)}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Gender: {typeGenderName(character.genderCharacter)}
+                    </s.TextDescription>
 
-                  {characters && characters.length > 0 && selectedCharacter && (timeStamp - 86400 > character.lastRest) && (
-                    <s.Container fd="row" jc="center">
-                      <s.Button
-                        disabled={loading ? 1 : 0}
-                        onClick={() => fight(selectedCharacter, character.id)}
-                        primary={loading ? '' : 'primary'}
-                      >
-                        FIGHT
-                      </s.Button>
-                    </s.Container>
-                  )}
-                </s.Container>
-                <s.SpacerSmall />
-              </div>
-            )
+                    {characters &&
+                      characters.length > 0 &&
+                      selectedCharacter &&
+                      timeStamp - 86400 > character.lastRest && (
+                        <s.Container fd="row" jc="center">
+                          <s.Button
+                            disabled={loading ? 1 : 0}
+                            onClick={() =>
+                              fight(selectedCharacter, character.id)
+                            }
+                            primary={loading ? '' : 'primary'}
+                          >
+                            FIGHT
+                          </s.Button>
+                        </s.Container>
+                      )}
+                  </s.Container>
+                  <s.SpacerSmall />
+                </div>
+              )
+            }
           })}
       </s.Container>
       <s.SpacerLarge />

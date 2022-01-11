@@ -48,6 +48,14 @@ const MyStuff = ({
       <s.SpacerLarge />
 
       <s.TextTitle>Mon Equipement</s.TextTitle>
+      <select onChange={(e) => setTypeEquipChar(e.target.value)}>
+        <option value="">Please choose a character</option>
+        {characters.map((character) => (
+          <option key={character.id} value={character.id}>
+            ID #{character.id}
+          </option>
+        ))}
+      </select>
       <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
         {balancePotion > 0 && (
           <s.Container ai="center" style={{ minWidth: '200px', margin: 10 }}>
@@ -85,14 +93,6 @@ const MyStuff = ({
                   <s.TextDescription>
                     Type : {stuff.typeStuff === '0' ? 'WEAPON' : 'SHIELD'}
                   </s.TextDescription>
-                  <select onChange={(e) => setTypeEquipChar(e.target.value)}>
-                    <option value="">Please choose a character</option>
-                    {characters.map((character) => (
-                      <option key={character.id} value={character.id}>
-                        ID #{character.id}
-                      </option>
-                    ))}
-                  </select>
 
                   {typeEquipChar !== '0' && (
                     <s.Button

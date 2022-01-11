@@ -8,7 +8,6 @@ import TextDynamic from './components/TextDynamic'
 import Modal from './components/Modal'
 import MyCharacters from './pages/MyCharacters'
 import MyEnemies from './pages/MyEnemies'
-import ManageStuff from './pages/ManageStuff'
 import MyStuff from './pages/MyStuff'
 import NavbarCustom from './components/Navbar'
 

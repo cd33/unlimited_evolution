@@ -1,0 +1,58 @@
+.texteAccueil {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+.titre {
+    font-size: 80px;
+    margin-top: 100px;
+    text-align: center;
+}
+
+.dynamicText {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+.simply {
+    font-size: 50px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--blue);
+}
+
+#text-target {
+    color: var(--blue);
+}
+
+.button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 60px;
+}
+
+.button .btn {
+    margin-left: 40px;
+    font-weight: 700;
+    background-color: var(--red);
+    color: var(--blue);
+}
+
+.btn:hover{
+    background-color: var(--white);
+    color: var(--red);
+}
+
+.homeChoix {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

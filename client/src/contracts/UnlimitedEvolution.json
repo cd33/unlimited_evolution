@@ -82656,12 +82656,6 @@
     "version": "0.8.7+commit.e28d00a7.Emscripten.clang"
   },
   "networks": {
-    "42": {
-      "events": {},
-      "links": {},
-      "address": "0xA1227Daa7098d342Ce279CB2008141f16F6af105",
-      "transactionHash": "0xe54431a3539c636567818d836a626bf07359adb609c867048d9cde3f5c1ef30d"
-    },
     "1337": {
       "events": {
         "0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31": {
@@ -83018,51 +83012,6 @@
           "name": "Rested",
           "type": "event"
         },
-        "0x57ca8393d2bcb7efb9cd0cffa59d66f74ec75560c850e4c57047da44162a7762": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint16",
-              "name": "stuffId",
-              "type": "uint16"
-            }
-          ],
-          "name": "StuffBought",
-          "type": "event"
-        },
-        "0x23a1072f13aa609b5da58b7ed2878c5d10dc7a869762243320d0a64613fc86ba": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint24",
-              "name": "tokenId",
-              "type": "uint24"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint16",
-              "name": "stuffId",
-              "type": "uint16"
-            }
-          ],
-          "name": "StuffEquiped",
-          "type": "event"
-        },
-        "0x38f4067adf1477c6ed59234d75dfe320c18a2373bd9a839a489794e207148bbb": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "stuffFee",
-              "type": "uint256"
-            }
-          ],
-          "name": "StuffFeeUpdated",
-          "type": "event"
-        },
         "0x4afa87c6ddce4f5aa8b4ca6a375ecd27ea57ee7fec3e1648ceeea5c9dd19a2c8": {
           "anonymous": false,
           "inputs": [
@@ -83094,15 +83043,274 @@
           ],
           "name": "StuffEquiped",
           "type": "event"
+        },
+        "0x38f4067adf1477c6ed59234d75dfe320c18a2373bd9a839a489794e207148bbb": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "stuffFee",
+              "type": "uint256"
+            }
+          ],
+          "name": "StuffFeeUpdated",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x84BEe3b8A18efD59CD49587AD2350d12ACCba4e4",
-      "transactionHash": "0x00dcc91254826dd37f179ef7f4dfdaaa4490cd741aec6cb1d3e32ab743836f35"
+      "address": "0xeae22841745e1573bb42eC663a253C3c890FaEDd",
+      "transactionHash": "0xe5c75551b9353a497b7fdf9b2273ddab5cbe71e26c5a742063f38dd43198fae0"
+    },
+    "5777": {
+      "events": {
+        "0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "approved",
+              "type": "bool"
+            }
+          ],
+          "name": "ApprovalForAll",
+          "type": "event"
+        },
+        "0x7f0777865312bae358531b42d9c405a59bfd31beba1973946dc0ce134cad418a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            }
+          ],
+          "name": "CharacterCreated",
+          "type": "event"
+        },
+        "0x8c4d35e54a3f2ef1134138fd8ea3daee6a3c89e10d2665996babdf70261e2c76": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "mintFee",
+              "type": "uint256"
+            }
+          ],
+          "name": "FeeUpdated",
+          "type": "event"
+        },
+        "0x8c796248b1f953c9c8c0ed19eddf3a98eebe2c84390fe57e75f222dc677a1411": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "myTokenId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rivalTokenId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "substrateLifeToRival",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "substrateLifeToMe",
+              "type": "uint256"
+            }
+          ],
+          "name": "Fighted",
+          "type": "event"
+        },
+        "0x3b7ca85b5e3d1ebb3a81e8d9e27bfeb9ef2f447026c115421132a20b0733b73f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "level",
+              "type": "uint256"
+            }
+          ],
+          "name": "LevelUp",
+          "type": "event"
+        },
+        "0x824bdce4cbdec6e790596be3c1ac027ebd2747f3b4f72e8e9b50a9ce5479fe40": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "limitMint",
+              "type": "uint256"
+            }
+          ],
+          "name": "LimitUpdated",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x0a6cdc448db9889012c5e9b19cbf91c821ef49c37d804cfd15bb70665768e38a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "name": "Rested",
+          "type": "event"
+        },
+        "0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "ids",
+              "type": "uint256[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "values",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "TransferBatch",
+          "type": "event"
+        },
+        "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "TransferSingle",
+          "type": "event"
+        },
+        "0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "value",
+              "type": "string"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            }
+          ],
+          "name": "URI",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x38CEbe4a27fAc4C835eB8E86c1937433CA5044f4",
+      "transactionHash": "0x1763aaeca9e23fd5c37177fb32da3882b21f94e11721f11dc56db0825fbbcb7f"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2022-01-10T12:01:07.472Z",
+  "updatedAt": "2022-01-11T09:24:05.470Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

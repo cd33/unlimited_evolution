@@ -48,12 +48,13 @@ export const Container = styled.div`
   background-image: ${({ image }) => (image ? `url(${image})` : "none")};
   background-size: cover;
   background-position: center;
+
 `;
 
 export const TextTitle = styled.p`
   color: var(--white);
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 25px;
+  font-weight: 600;
 `;
 
 export const TextSubTitle = styled.p`
@@ -66,7 +67,6 @@ export const TextDescription = styled.p`
   color: var(--white);
   font-size: 14px;
   font-weight: 600;
-  line-height: 5px;
   margin-bottom: 0px;
 `;
 
@@ -79,8 +79,7 @@ export const StyledClickable = styled.div`
 export const Navbar = styled.div`
   min-height: 3em;
   width: 100%;
-  background-color: black;
-  color: white;
+  color: #333;
 `;
 
 export const NavbarText = styled.div`

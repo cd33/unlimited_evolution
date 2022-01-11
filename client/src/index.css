@@ -1,3 +1,15 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style-type: none;
+  outline: none;
+  border: none;
+  text-decoration: none;
+  --white: #fff;
+  --blue: cadetblue;
+  --red: #FF1493;
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -10,4 +22,85 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.home {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background-image: url(./img/backgroudUE.gif);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.navBar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.address {
+  width: 100%;
+  height: 15px;
+  display: flex;
+  justify-content: end;
+  color: var(--white);
+  font-size: 12px;
+  background: #222;
+  padding: 0 10px;
+}
+
+.titre {
+  font-size: 60px;
+  color: var(--white);
+}
+
+.hautDePage {
+  background-color: cadetblue;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+.choose {
+  background-color: #222;
+  width: 100%;
+  padding: 20px 50px;
+}
+
+.choose .choose1 {
+  width: 200px;
+  height: 50px;
+  margin-right: 40px;
+  font-weight: 800;
+  color: #666;
+  background-color: #222;
+  border: 2px solid #666;
+}
+
+.choose .choose2 {
+  width: 200px;
+  height: 50px;
+  font-weight: 800;
+  color: #777;
+  background-color: #222;
+  border: 2px solid #777;
+  margin-right: 50px;
+}
+
+.valider {
+  width: 200px;
+  height: 50px;
+  font-weight: 800;
+  color: #222;
+  background-color: cadetblue;
+  border: 2px solid #777;
+  margin-left: 50px;
 }

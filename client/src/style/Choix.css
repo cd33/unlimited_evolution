@@ -1,0 +1,20 @@
+.choix {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: auto;
+    margin: 70px 400px;
+}
+
+.choix .navbar {
+    padding: 20px 80px;
+}
+
+.choix h2 {
+    margin-left: 140px;
+}
+
+.choix .btn {
+    width: 300px;
+}
+

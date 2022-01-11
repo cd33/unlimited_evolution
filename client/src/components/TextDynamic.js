@@ -53,7 +53,7 @@ const TextDynamic = () => {
           <span className="simply">Jeux de NFT</span>
           <span id="text-target"></span>
         </span>
-        <div className="button">
+        {/* <div className="button">
           <Link to="/MyCharacters">
             <div className="bouton">MES PERSOS</div>
           </Link>
@@ -66,7 +66,7 @@ const TextDynamic = () => {
           <Link to="/ManageStuff">
             <div className="bouton">ACHETER/GERER EQUIPEMENT</div>
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   )

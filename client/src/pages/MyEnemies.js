@@ -55,39 +55,12 @@ const MyEnemies = ({
                   <s.TextDescription>
                     Level: {character.level}
                   </s.TextDescription>
-                  <s.TextDescription>XP: {character.xp}</s.TextDescription>
-                  <s.TextDescription>HP: {character.hp}</s.TextDescription>
-                  <s.TextDescription>
-                    Stamina: {character.stamina}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    {attacks(character.typeCharacter, 0)}: {character.attack1}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    {attacks(character.typeCharacter, 1)}: {character.attack2}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    {attacks(character.typeCharacter, 2)}: {character.defence1}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    {attacks(character.typeCharacter, 3)}: {character.defence1}
-                  </s.TextDescription>
                   <s.TextDescription>
                     Type: {typeCharacterName(character.typeCharacter)}
                   </s.TextDescription>
                   <s.TextDescription>
                     Gender: {typeGenderName(character.genderCharacter)}
                   </s.TextDescription>
-                  {character.weapon !== '0' && (
-                    <s.TextDescription>
-                      Weapon: {stuffType[character.weapon]}
-                    </s.TextDescription>
-                  )}
-                  {character.shield !== '0' && (
-                    <s.TextDescription>
-                      Shield: {stuffType[character.shield]}
-                    </s.TextDescription>
-                  )}
                   <s.TextDescription>
                     {resting(character, timeStamp)}
                   </s.TextDescription>

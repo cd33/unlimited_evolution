@@ -394,6 +394,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
         require(_ownerOf(_myTokenId), "You don't own this NFT");
         require(_ownerOf(_myTokenId) != _ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
         require(_characterDetails[_myTokenId].lastRest + 86400 < block.timestamp, "You're character is resting");
+        require(_characterDetails[_rivalTokenId].lastRest + 86400 < block.timestamp, "You're rival is resting");
         require(_characterDetails[_myTokenId].stamina >= 10, "Not enough stamina");
         require(_characterDetails[_myTokenId].level <= _characterDetails[_rivalTokenId].level, "Fight someone your own size!");
         require(_characterDetails[_myTokenId].hp > 0 && _characterDetails[_rivalTokenId].hp > 0, "One of the NFTs is dead");

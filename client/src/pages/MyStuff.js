@@ -1,6 +1,7 @@
 import React from 'react'
-import * as s from '../globalStyles'
+import * as s from '../styles/globalStyles'
 import StuffRenderer from '../components/StuffRenderer'
+import img from '../img/MyStuff.jpg'
 
 const MyStuff = ({
   loading,
@@ -29,6 +30,7 @@ const MyStuff = ({
   
   return (
     <s.Container
+      image={img}
       ai="center"
       style={{ flex: 1, backgroundColor: '#B68D8D', paddingTop: 80 }}
     >

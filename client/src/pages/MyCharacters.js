@@ -1,6 +1,7 @@
 import React from 'react'
-import * as s from '../globalStyles'
+import * as s from '../styles/globalStyles'
 import CharacterRenderer from '../components/CharacterRenderer'
+import img from '../img/MyCharacters.jpg'
 
 const MyCharacters = ({
   loading,
@@ -16,11 +17,11 @@ const MyCharacters = ({
   balancePotion,
   potionUse,
   resting,
-  timeStamp
+  timeStamp,
 }) => {
   return (
-    <s.Container ai="center" style={{ backgroundColor: '#6384BD', paddingTop: 80 }}>
-      <s.TextTitle>Mes Persos</s.TextTitle>
+    <s.Container image={img} ai="center" style={{ paddingTop: 80 }}>
+      <s.TextTitle>Mes Personnages</s.TextTitle>
       <s.TextSubTitle>Veuillez choisir un type de personnage</s.TextSubTitle>
 
       <div style={{ flexDirection: 'row' }}>

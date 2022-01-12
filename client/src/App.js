@@ -3,8 +3,8 @@ import { Route, Routes } from 'react-router-dom'
 import UnlimitedEvolution from './contracts/UnlimitedEvolution.json'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import getWeb3 from './getWeb3'
-import * as s from './globalStyles'
-import TextDynamic from './components/TextDynamic'
+import * as s from './styles/globalStyles'
+import Home from './pages/Home'
 import Modal from './components/Modal'
 import MyCharacters from './pages/MyCharacters'
 import MyEnemies from './pages/MyEnemies'
@@ -371,7 +371,7 @@ const App = () => {
             <Navbar accounts={accounts} />
 
             <Routes>
-              <Route path="/" element={<TextDynamic />} />
+              <Route path="/" element={<Home />} />
               <Route
                 path="/MyCharacters"
                 element={

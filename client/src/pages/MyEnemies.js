@@ -1,6 +1,7 @@
 import React from 'react'
-import * as s from '../globalStyles'
+import * as s from '../styles/globalStyles'
 import CharacterRenderer from '../components/CharacterRenderer'
+import img from '../img/Arena.jpg'
 
 const MyEnemies = ({
   loading,
@@ -14,7 +15,7 @@ const MyEnemies = ({
   timeStamp,
 }) => {
   return (
-    <s.Container ai="center" style={{ flex: 1, backgroundColor: '#64E0E0', paddingTop: 80 }}>
+    <s.Container image={img} ai="center" style={{ flex: 1, backgroundColor: '#64E0E0', paddingTop: 80 }}>
       <s.TextTitle>Mes Ennemis</s.TextTitle>
 
       {characters && characters.length > 0 && (

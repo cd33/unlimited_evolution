@@ -38,7 +38,6 @@ export const SpacerLarge = styled.div`
 
 // Used for providing a wrapper around a component
 export const Container = styled.div`
-  // padding-top: 80px;
   display: flex;
   flex: ${({ flex }) => (flex ? flex : 0)};
   flex-direction: ${({ fd }) => (fd ? fd : "column")};
@@ -49,19 +48,20 @@ export const Container = styled.div`
   background-image: ${({ image }) => (image ? `url(${image})` : "none")};
   background-size: cover;
   background-position: center;
-
 `;
 
 export const TextTitle = styled.p`
   color: var(--white);
-  font-size: 25px;
-  font-weight: 600;
+  font-size: 40px;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px black;
 `;
 
 export const TextSubTitle = styled.p`
   color: var(--white);
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 30px;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px black;
 `;
 
 export const TextDescription = styled.p`

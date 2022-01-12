@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import '../style/TextDynamic.css'
+import '../styles/TextDynamic.css'
 import { Link } from 'react-router-dom'
 
-const TextDynamic = () => {
+const Home = () => {
   useEffect(() => {
     let array = ['Bitcoin', 'Ethereum', 'polygone', 'Combats']
     let wordIndex = 0
@@ -54,7 +54,7 @@ const TextDynamic = () => {
           <span id="text-target"></span>
         </span>
         <h2 className="pres">
-          Jeu play-to-earn de combat avec des NFTs ERC-1155.
+          Jeu play-to-earn de combat avec des NFTs
           <br />
           Mesure-toi à d'autres joueurs, détruit les et obtiens des récompenses
           !<br />
@@ -69,4 +69,4 @@ const TextDynamic = () => {
   )
 }
 
-export default TextDynamic
+export default Home

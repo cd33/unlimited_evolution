@@ -19,7 +19,7 @@ const MyCharacters = ({
   timeStamp
 }) => {
   return (
-    <s.Container ai="center" style={{ flex: 1, backgroundColor: '#6384BD' }}>
+    <s.Container ai="center" style={{ backgroundColor: '#6384BD', paddingTop: 80 }}>
       <s.TextTitle>Mes Persos</s.TextTitle>
       <s.TextSubTitle>Veuillez choisir un type de personnage</s.TextSubTitle>
 

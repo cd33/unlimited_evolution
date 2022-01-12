@@ -9,7 +9,7 @@ import Modal from './components/Modal'
 import MyCharacters from './pages/MyCharacters'
 import MyEnemies from './pages/MyEnemies'
 import MyStuff from './pages/MyStuff'
-import NavbarCustom from './components/Navbar'
+import Navbar from './components/Navbar'
 
 const App = () => {
   const [web3, setWeb3] = useState(null)
@@ -328,7 +328,6 @@ const App = () => {
 
   return (
     <s.Screen>
-      <s.Container ai="center" style={{ flex: 1 }} className="hautDePage">
         {!web3 ? (
           <>
             <s.TextTitle>Loading Web3, accounts, and contract...</s.TextTitle>
@@ -341,7 +340,7 @@ const App = () => {
           </>
         ) : (
           <>
-            <NavbarCustom accounts={accounts} />
+            <Navbar accounts={accounts} />
 
             <Routes>
               <Route path="/" element={<TextDynamic />} />
@@ -413,7 +412,6 @@ const App = () => {
             />
           </>
         )}
-      </s.Container>
     </s.Screen>
   )
 }

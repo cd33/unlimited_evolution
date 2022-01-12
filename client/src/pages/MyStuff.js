@@ -15,7 +15,7 @@ const MyStuff = ({
   equipStuff,
 }) => {
   return (
-    <s.Container ai="center" style={{ flex: 1, backgroundColor: '#B68D8D' }}>
+    <s.Container ai="center" style={{ flex: 1, backgroundColor: '#B68D8D', paddingTop: 80 }}>
       <s.TextTitle>Boutique</s.TextTitle>
       <div style={{ flexDirection: 'row' }}>
         <select

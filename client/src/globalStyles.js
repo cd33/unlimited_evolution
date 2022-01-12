@@ -38,6 +38,7 @@ export const SpacerLarge = styled.div`
 
 // Used for providing a wrapper around a component
 export const Container = styled.div`
+  // padding-top: 80px;
   display: flex;
   flex: ${({ flex }) => (flex ? flex : 0)};
   flex-direction: ${({ fd }) => (fd ? fd : "column")};
@@ -74,20 +75,6 @@ export const StyledClickable = styled.div`
   :active {
     opacity: 0.6;
   }
-`;
-
-export const Navbar = styled.div`
-  min-height: 3em;
-  width: 100%;
-  background-color: #000;
-  color: #FFF;
-  height: 60px;
-`;
-
-export const NavbarText = styled.div`
-  position: relative;
-  float: ${({ float }) => float ? float : "left"};
-  margin: ${({ margin }) => margin ? `${margin}px` : "none"}
 `;
 
 export const ModalBackground = styled.div`

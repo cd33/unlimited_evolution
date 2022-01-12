@@ -1,51 +1,46 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import * as s from '../globalStyles'
-import "../style/Navbar.css"
+import * as nav from'../style/Navbar.style.js'
 import logo from '../img/logo.png'
 
-const NavbarCustom = ({ accounts }) => {
+const Navbar = ({ accounts }) => {
+  const [isOpen, setIsOpen] = useState(false)
   return (
-    <div className="navBar">
-      <Link to="/">
-        <img className="logo" src={logo} alt="Logo Unlimited Evolution" />
-      </Link>
-      <nav className="navbar navbar-expand-lg navbar-light">
-        <div className="container-fluid">
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul className="navbar-nav">
-              <li className="nav-item">
-                <Link to="/">Accueil</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/MyCharacters">Mes Personnages</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/MyStuff">Mon Equipement</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/MyEnemies">Mes Ennemies</Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <s.NavbarText float="right" margin={10} style={{ color: 'white' }}>
+    <nav.Nav>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+        <Link to="/">
+          <img
+            style={{ width: 50, height: 50, margin: 5 }}
+            src={logo}
+            alt="Logo Unlimited Evolution"
+          />
+        </Link>
+        <nav.Menu isOpen={isOpen}>
+          <Link to="/">
+          <nav.MenuLink href="">Accueil</nav.MenuLink>
+        </Link>
+          <Link to="/MyCharacters">
+            <nav.MenuLink href="">Mes Personnages</nav.MenuLink>
+          </Link>
+          <Link to="/MyStuff">
+            <nav.MenuLink href="">Mon Equipement</nav.MenuLink>
+          </Link>
+          <Link to="/MyEnemies">
+            <nav.MenuLink href="">Mes Ennemies</nav.MenuLink>
+          </Link>
+        </nav.Menu>
+      </div>
+      <nav.NavbarAddress margin={10} style={{color:"white"}}>
         {accounts !== null && accounts[0]}
-      </s.NavbarText>
-    </div>
+      </nav.NavbarAddress>
+      <nav.Hamburger onClick={() => setIsOpen(!isOpen)}>
+        <span />
+        <span />
+        <span />
+      </nav.Hamburger>
+    </nav.Nav>
   )
 }
 
-export default NavbarCustom
+export default Navbar
+

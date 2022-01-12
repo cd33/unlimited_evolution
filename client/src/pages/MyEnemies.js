@@ -15,7 +15,7 @@ const MyEnemies = ({
   timeStamp,
 }) => {
   return (
-    <s.Container ai="center" style={{ flex: 1, backgroundColor: '#64E0E0' }}>
+    <s.Container ai="center" style={{ flex: 1, backgroundColor: '#64E0E0', paddingTop: 80 }}>
       <s.TextTitle>Mes Ennemis</s.TextTitle>
 
       {characters && characters.length > 0 && (

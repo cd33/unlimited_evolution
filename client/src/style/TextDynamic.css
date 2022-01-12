@@ -11,6 +11,13 @@
   text-align: center;
 }
 
+.pres {
+  font-size: 35px;
+  margin-top: 50px;
+  text-align: center;
+  color: #FFF;
+}
+
 .dynamicText {
   display: flex;
   flex-direction: row;
@@ -34,26 +41,22 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 
 .bouton {
   background-color: #46bcb9;
-  width: 160px;
-  height: 160px;
-  margin-left: 20px;
-  border-radius: 50%;
+  width: 300px;
+  height: 60px;
+  margin-top: 25px;
+  border-radius: 5%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-decoration: none;
   text-align: center;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 500;
-  margin-top: 60px;
+  font-weight: bold;
 }
 
 a {
@@ -66,8 +69,6 @@ a:hover {
 }
 
 .bouton:hover {
-  background-color: var(--red);
-  font-weight: bold;
-  font-size: 16px;
+  background-color: #ff00ff;
   border: 2px solid var(--white);
 }

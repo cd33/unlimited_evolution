@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import '../style/TextDynamic.css'
+import { Link } from 'react-router-dom'
 
 const TextDynamic = () => {
-  let array = ['Bitcoin', 'Ethereum', 'polygone', 'Combats']
-  let wordIndex = 0
-  let letterIndex = 0
-
   useEffect(() => {
+    let array = ['Bitcoin', 'Ethereum', 'polygone', 'Combats']
+    let wordIndex = 0
+    let letterIndex = 0
     const target = document.getElementById('text-target')
 
     const createLetter = () => {
@@ -53,6 +53,17 @@ const TextDynamic = () => {
           <span className="simply">Gaming NFT</span>
           <span id="text-target"></span>
         </span>
+        <h2 className="pres">
+          Jeu play-to-earn de combat avec des NFTs ERC-1155.
+          <br />
+          Mesure-toi à d'autres joueurs, détruit les et obtiens des récompenses
+          !<br />
+        </h2>
+        <div className="button">
+          <div className="bouton">
+            <Link to="/MyCharacters">Commencer l'aventure !</Link>
+          </div>
+        </div>
       </div>
     </div>
   )

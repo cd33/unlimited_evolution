@@ -31,7 +31,7 @@ const MyEnemies = ({
                     ID #{character.id}
                   </option>
                 )
-              }
+              } else return ""
             })}
           </select>
         </>
@@ -80,7 +80,7 @@ const MyEnemies = ({
                   <s.SpacerSmall />
                 </div>
               )
-            }
+            } else return ""
           })}
       </s.Container>
       <s.SpacerLarge />

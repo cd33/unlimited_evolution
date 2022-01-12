@@ -11,7 +11,6 @@ const MyEnemies = ({
   othersCharacters,
   selectedCharacter,
   fight,
-  resting,
   timeStamp,
 }) => {
   return (

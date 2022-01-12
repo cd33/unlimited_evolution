@@ -427,6 +427,7 @@ const App = () => {
                     setTypeEquipChar={setTypeEquipChar}
                     typeEquipChar={typeEquipChar}
                     balancePotion={balancePotion}
+                    potionUse={potionUse}
                   />
                 }
               />

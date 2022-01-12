@@ -160,12 +160,40 @@ const App = () => {
         )
         .on('error', (err) => handleModal('Error', err.message))
 
-      ueContract.events
+        ueContract.events
         .LevelUp()
         .on('data', (event) =>
           handleModal(
             'Congratulations !',
             `Your character #${event.returnValues.tokenId} is now level #${event.returnValues.level}.`,
+          ),
+        )
+        .on('error', (err) => handleModal('Error', err.message))
+
+        ueContract.events
+        .StuffBought()
+        .on('data', (event) =>
+          handleModal(
+            'Congratulations !',
+            `You bought the stuff #${event.returnValues.stuffId}.`,
+          ),
+        )
+        .on('error', (err) => handleModal('Error', err.message))
+        ueContract.events
+        .StuffEquiped()
+        .on('data', (event) =>
+          handleModal(
+            'Congratulations !',
+            `Your character #${event.returnValues.tokenId} is now equiped with the stuff #${event.returnValues.stuffId}.`,
+          ),
+        )
+        .on('error', (err) => handleModal('Error', err.message))
+        ueContract.events
+        .PotionUsed()
+        .on('data', (event) =>
+          handleModal(
+            'Congratulations !',
+            `Your character #${event.returnValues.tokenId} used a potion and just recovered 100 hp and stamina.`,
           ),
         )
         .on('error', (err) => handleModal('Error', err.message))

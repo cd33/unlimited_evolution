@@ -33,11 +33,11 @@ export const MenuLink = styled.div`
   cursor: pointer;
   text-align: center;
   text-decoration: none;
-  color: #67bc98;
+  color: #46bcb9;
   transition: all 0.3s ease-in;
   font-size: 1.2rem;
   &:hover {
-    color: #7b7fda;
+    color: #ff00ff;
   }
 `
 

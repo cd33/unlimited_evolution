@@ -22,11 +22,11 @@
   font-size: 50px;
   font-weight: 700;
   text-align: center;
-  color: var(--blue);
+  color: #46bcb9;
 }
 
 #text-target {
-  color: var(--blue);
+  color: #46bcb9;
 }
 
 .button {
@@ -40,7 +40,7 @@
 }
 
 .bouton {
-  background-color: var(--blue);
+  background-color: #46bcb9;
   width: 160px;
   height: 160px;
   margin-left: 20px;

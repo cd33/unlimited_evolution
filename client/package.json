@@ -12,14 +12,11 @@
     "styled-components": "^5.3.3",
     "web3": "1.2.2"
   },
-  "homepage": "https://cd33.github.io/unlimited_evolution/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build", 
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

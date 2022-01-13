@@ -734,16 +734,34 @@ contract('UnlimitedEvolution', function (accounts) {
         )
 
         await ue.buyStuff(1, { value: readable('0.001'), from: investor })
-        await ue.equipStuff(tokenIdInvestor, 1, { from: investor })
-
-        await ue.buyStuff(3, { value: readable('0.001'), from: investor })
-        eventInvestor = await ue.equipStuff(tokenIdInvestor, 3, {
+        eventInvestor = await ue.equipStuff(tokenIdInvestor, 1, {
           from: investor,
         })
 
         let tokenDetailsInvestorAfter = await ue.getTokenDetails(
           tokenIdInvestor,
         )
+
+        expect(parseInt(tokenDetailsInvestorAfter.attack1)).to.equal(
+          parseInt(tokenDetailsInvestorWithoutStuff.attack1) + 2,
+        )
+        expect(parseInt(tokenDetailsInvestorAfter.attack2)).to.equal(
+          parseInt(tokenDetailsInvestorWithoutStuff.attack2) + 2,
+        )
+        expect(parseInt(tokenDetailsInvestorAfter.defence1)).to.equal(
+          parseInt(tokenDetailsInvestorWithoutStuff.defence1),
+        )
+        expect(parseInt(tokenDetailsInvestorAfter.defence2)).to.equal(
+          parseInt(tokenDetailsInvestorWithoutStuff.defence2),
+        )
+        expect(parseInt(tokenDetailsInvestorAfter.weapon)).to.equal(1)
+
+        await ue.buyStuff(3, { value: readable('0.001'), from: investor })
+        eventInvestor = await ue.equipStuff(tokenIdInvestor, 3, {
+          from: investor,
+        })
+
+        tokenDetailsInvestorAfter = await ue.getTokenDetails(tokenIdInvestor)
 
         expect(parseInt(tokenDetailsInvestorAfter.attack1)).to.equal(
           parseInt(tokenDetailsInvestorWithoutStuff.attack1) + 10,
@@ -757,7 +775,6 @@ contract('UnlimitedEvolution', function (accounts) {
         expect(parseInt(tokenDetailsInvestorAfter.defence2)).to.equal(
           parseInt(tokenDetailsInvestorWithoutStuff.defence2) + 10,
         )
-
         expect(parseInt(tokenDetailsInvestorAfter.weapon)).to.equal(3)
 
         let stuffId = eventInvestor.logs[0].args[1].toString()
@@ -781,7 +798,7 @@ contract('UnlimitedEvolution', function (accounts) {
         )
       })
 
-      it('REVERT: equiStuff() Not owner NFT', async function () {
+      it('REVERT: equiStuff() equip potion', async function () {
         await ue.buyStuff(5, { value: readable('0.001'), from: investor })
         await expectRevert(
           ue.equipStuff(tokenIdInvestor, 5, { from: investor }),
@@ -789,10 +806,10 @@ contract('UnlimitedEvolution', function (accounts) {
         )
       })
 
-      it('REVERT: equiStuff() Not owner weapon', async function () {
+      it('REVERT: equiStuff() Not owner stuff', async function () {
         await expectRevert(
           ue.equipStuff(tokenIdInvestor, 0, { from: investor }),
-          "You don't own this weapon",
+          "You don't own this stuff",
         )
       })
 
@@ -842,7 +859,7 @@ contract('UnlimitedEvolution', function (accounts) {
         })
       })
 
-      it('REVERT: equiStuff() Wrong kind of NFT', async function () {
+      it('REVERT: usePotion() Wrong kind of NFT', async function () {
         await expectRevert(
           ue.usePotion(2, { from: investor }),
           'Wrong kind of NFT (Stuff)',
@@ -863,7 +880,7 @@ contract('UnlimitedEvolution', function (accounts) {
         )
       })
 
-      it('REVERT: rest() Already rested', async function () {
+      it('REVERT: usePotion() Already rested', async function () {
         await ue.buyStuff(5, { value: readable('0.001'), from: investor })
         await expectRevert(
           ue.usePotion(tokenIdInvestor, { from: investor }),
@@ -878,7 +895,6 @@ contract('UnlimitedEvolution', function (accounts) {
           value: readable('0.001'),
           from: owner,
         })
-
         let test = await ue.getTokenDetails(256, { from: owner })
         expect(parseInt(test.length)).to.equal(16)
       })

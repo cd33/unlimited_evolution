@@ -38,6 +38,7 @@ Pour les fonctions suivantes, nous vérifions si :
   - L'événement est émis
 * Fonction EquipStuff
   - Le NFT Stuff est référencé dans le champ weapon ou shield du Character et ses stats d'attaques/defenses changent
+  - Le NFT Character ne peut pas être équipé de plusieurs NFTs Stuff du même type (ex: 2 boucliers).
   - L'événement est émis
 * Fonction UsePotion
   - Le NFT Potion est burn puis les champs hp et stamina du Character ont augmentés

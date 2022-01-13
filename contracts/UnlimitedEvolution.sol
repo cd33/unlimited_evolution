@@ -7,11 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RandomNumberGenerator.sol";
 import "./UnlimitedToken.sol";
 
-// // Interface to mint for lvl up
-// interface UnlimitedToken {
-//     function levelUpMint(address receiver, uint amount) external;
-// }
-
 /** @title Unlimited Evolution */
 contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGenerator {
 
@@ -39,7 +34,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     bool public testMode;
     
     UnlimitedToken public unlimitedToken;
-    // address public tokenAddress;
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
@@ -294,8 +288,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
      * @param _defence2 Defence number 2 of the token.
      */
     function attributesLevelUp(uint24 _tokenId, uint24 _attack1, uint24 _attack2, uint24 _defence1, uint24 _defence2) external {
-        uint256 totalPoints = _attack1 + _attack2 + _defence1 + _defence2;
-        require(_characterDetails[_tokenId].attributePoints == totalPoints, "Wrong amount of points to attribute");
+        require(_characterDetails[_tokenId].attributePoints == _attack1 + _attack2 + _defence1 + _defence2, "Wrong amount of points to attribute");
         _characterDetails[_tokenId].attack1 += _attack1;
         _characterDetails[_tokenId].attack2 += _attack2;
         _characterDetails[_tokenId].defence1 += _defence1;
@@ -375,7 +368,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
      * @param _tokenId Id of the token.
      * Emits a "Rested" event.
      */
-    // TODO: ajouter timestamp et système d'immobilisation, faire les tests et ajouter l'explication au fichier tests_explication
     function rest(uint24 _tokenId) external {
         require(_ownerOf(_tokenId), "You don't own this NFT");
         require(_characterDetails[_tokenId].stamina < 100 || _characterDetails[_tokenId].hp < 100, "You're character is already rested");
@@ -427,27 +419,25 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
         require(tokenId > 255, "Wrong kind of NFT (Stuff)");
         require(_ownerOf(tokenId), "You don't own this NFT");
         require(stuffId != POTION, "You can't equip a potion");
-        require(_ownerOf(stuffId), "You don't own this weapon");
-        uint8 tokenWeapon = _characterDetails[tokenId].weapon;
-        uint8 tokenShield = _characterDetails[tokenId].shield;
+        require(_ownerOf(stuffId), "You don't own this stuff");
         type_stuff stuffType = _stuffDetails[stuffId].typeStuff;
-        if ((stuffType == type_stuff.WEAPON && tokenWeapon == 0) || (stuffType == type_stuff.SHIELD && tokenShield == 0)) {
-            _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
-            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack2;
-            _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
-            _characterDetails[tokenId].defence2 += _stuffDetails[stuffId].bonusDefence2;
+        uint8 idStuffEquiped;
+        if (stuffType == type_stuff.WEAPON) {
+            idStuffEquiped = _characterDetails[tokenId].weapon;
         } else {
-            _characterDetails[tokenId].attack1 -= _stuffDetails[tokenWeapon].bonusAttack1;
-            _characterDetails[tokenId].attack2 -= _stuffDetails[tokenWeapon].bonusAttack2;
-            _characterDetails[tokenId].defence1 -= _stuffDetails[tokenWeapon].bonusDefence1;
-            _characterDetails[tokenId].defence2 -= _stuffDetails[tokenWeapon].bonusDefence2;
-
-            _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
-            _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack2;
-            _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
-            _characterDetails[tokenId].defence2 += _stuffDetails[stuffId].bonusDefence2;
+            idStuffEquiped = _characterDetails[tokenId].shield;
         }
-        if (_stuffDetails[stuffId].typeStuff == type_stuff.WEAPON) {
+        if (idStuffEquiped != 0) {
+            _characterDetails[tokenId].attack1 -= _stuffDetails[idStuffEquiped].bonusAttack1;
+            _characterDetails[tokenId].attack2 -= _stuffDetails[idStuffEquiped].bonusAttack2;
+            _characterDetails[tokenId].defence1 -= _stuffDetails[idStuffEquiped].bonusDefence1;
+            _characterDetails[tokenId].defence2 -= _stuffDetails[idStuffEquiped].bonusDefence2;
+        }
+        _characterDetails[tokenId].attack1 += _stuffDetails[stuffId].bonusAttack1;
+        _characterDetails[tokenId].attack2 += _stuffDetails[stuffId].bonusAttack2;
+        _characterDetails[tokenId].defence1 += _stuffDetails[stuffId].bonusDefence1;
+        _characterDetails[tokenId].defence2 += _stuffDetails[stuffId].bonusDefence2;
+        if (stuffType == type_stuff.WEAPON) {
             _characterDetails[tokenId].weapon = stuffId;
         } else {
             _characterDetails[tokenId].shield = stuffId;

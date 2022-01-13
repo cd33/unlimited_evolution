@@ -118,7 +118,7 @@ const MyStuff = ({
               <div key={stuff.id}>
                 <s.Container
                   ai="center"
-                  style={{ minWidth: '200px', margin: 50 }}
+                  style={{ minWidth: '200px', marginTop: 50, marginRight: 50 }}
                 >
                   <StuffRenderer stuffId={stuff.id} size={200} />
                   <s.TextDescription>

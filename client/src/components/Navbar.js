@@ -1,44 +1,43 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import * as nav from'../styles/Navbar.style.js'
+import * as n from'../styles/Navbar.style.js'
 import logo from '../img/logo.png'
 
 const Navbar = ({ accounts }) => {
   const [isOpen, setIsOpen] = useState(false)
   return (
-    <nav.Nav>
+    <n.Nav>
       <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-        <Link to="/">
+        <n.NavLink to="/">
           <img
             style={{ width: 50, height: 50, margin: 5 }}
             src={logo}
             alt="Logo Unlimited Evolution"
           />
-        </Link>
-        <nav.Menu isOpen={isOpen}>
-          <Link to="/">
-          <nav.MenuLink href="">Accueil</nav.MenuLink>
-        </Link>
-          <Link to="/MyCharacters">
-            <nav.MenuLink href="">Mes Personnages</nav.MenuLink>
-          </Link>
-          <Link to="/MyStuff">
-            <nav.MenuLink href="">Mon Equipement</nav.MenuLink>
-          </Link>
-          <Link to="/MyEnemies">
-            <nav.MenuLink href="">Mes Ennemies</nav.MenuLink>
-          </Link>
-        </nav.Menu>
+        </n.NavLink>
+        <n.Menu isOpen={isOpen}>
+          <n.NavLink to="/">
+          <n.MenuLink href="">Accueil</n.MenuLink>
+        </n.NavLink>
+          <n.NavLink to="/MyCharacters">
+            <n.MenuLink href="">Mes Personnages</n.MenuLink>
+          </n.NavLink>
+          <n.NavLink to="/MyStuff">
+            <n.MenuLink href="">Mon Equipement</n.MenuLink>
+          </n.NavLink>
+          <n.NavLink to="/MyEnemies">
+            <n.MenuLink href="">Mes Ennemies</n.MenuLink>
+          </n.NavLink>
+        </n.Menu>
       </div>
-      <nav.NavbarAddress margin={10} style={{color:"white"}}>
+      <n.NavbarAddress margin={10} style={{color:"white"}}>
         {accounts !== null && accounts[0]}
-      </nav.NavbarAddress>
-      <nav.Hamburger onClick={() => setIsOpen(!isOpen)}>
+      </n.NavbarAddress>
+      <n.Hamburger onClick={() => setIsOpen(!isOpen)}>
         <span />
         <span />
         <span />
-      </nav.Hamburger>
-    </nav.Nav>
+      </n.Hamburger>
+    </n.Nav>
   )
 }
 

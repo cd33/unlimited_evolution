@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import '../styles/TextDynamic.css'
-import { Link } from 'react-router-dom'
+import * as s from '../styles/globalStyles'
+import img from '../img/home.jpg'
 
 const Home = () => {
   useEffect(() => {
@@ -46,26 +46,24 @@ const Home = () => {
   }, [])
 
   return (
-    <div className="home">
-      <div className="texteAccueil">
-        <h1 className="titre">Unlimited Evolution</h1>
-        <span className="dynamicText">
-          <span className="simply">Gaming NFT</span>
-          <span id="text-target"></span>
-        </span>
-        <h2 className="pres">
-          Jeu play-to-earn de combat avec des NFTs
-          <br />
-          Mesure-toi à d'autres joueurs, détruit les et obtiens des récompenses
-          !<br />
-        </h2>
-        <div className="button">
-          <div className="bouton">
-            <Link to="/MyCharacters">Commencer l'aventure !</Link>
-          </div>
-        </div>
-      </div>
-    </div>
+    <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
+      <s.TextTitle fs="80" style={{ marginTop: 80 }}>
+        Unlimited Evolution
+      </s.TextTitle>
+      <span style={{display: "flex"}}>
+        <s.TextSubTitle fs="50" color="#46bcb9">Gaming NFT</s.TextSubTitle>
+        <span id="text-target"></span>  
+      </span>
+      <s.TextSubTitle fs="35" style={{ marginTop: 50, textAlign: 'center' }}>
+        Jeu play-to-earn de combat avec des NFTs
+        <br />
+        Mesure-toi à d'autres joueurs, détruit les et obtiens des récompenses !
+        <br />
+      </s.TextSubTitle>
+      <s.ButtonHome>
+        <s.ButtonLink to="/MyCharacters">Commencer l'aventure !</s.ButtonLink>
+      </s.ButtonHome>
+    </s.Container>
   )
 }
 

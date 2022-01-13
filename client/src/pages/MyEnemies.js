@@ -15,7 +15,7 @@ const MyEnemies = ({
   timeStamp,
 }) => {
   return (
-    <s.Container image={img} ai="center" style={{ flex: 1, backgroundColor: '#64E0E0', paddingTop: 80 }}>
+    <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Mes Ennemis</s.TextTitle>
 
       {characters && characters.length > 0 && (
@@ -32,7 +32,7 @@ const MyEnemies = ({
                     ID #{character.id}
                   </option>
                 )
-              } else return ""
+              } else return ''
             })}
           </select>
         </>
@@ -81,7 +81,7 @@ const MyEnemies = ({
                   <s.SpacerSmall />
                 </div>
               )
-            } else return ""
+            } else return ''
           })}
       </s.Container>
       <s.SpacerLarge />

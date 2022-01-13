@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import UnlimitedEvolution from './contracts/UnlimitedEvolution.json'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import getWeb3 from './getWeb3'
 import * as s from './styles/globalStyles'
+import UnlimitedEvolution from './contracts/UnlimitedEvolution.json'
+import getWeb3 from './getWeb3'
 import Home from './pages/Home'
 import Modal from './components/Modal'
 import MyCharacters from './pages/MyCharacters'
@@ -358,7 +358,7 @@ const App = () => {
     <s.Screen>
         {!web3 ? (
           <>
-            <s.TextTitle>Loading Web3, accounts, and contract...</s.TextTitle>
+            <s.TextTitle color="black" style={{alignSelf: 'center'}}>Loading Web3, accounts, and contract...</s.TextTitle>
             <Modal
               modalShow={modalShow}
               setModalShow={setModalShow}

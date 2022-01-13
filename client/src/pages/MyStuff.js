@@ -15,25 +15,23 @@ const MyStuff = ({
   typeEquipChar,
   equipStuff,
   balancePotion,
-  potionUse
+  potionUse,
 }) => {
-
   const handleSelectedCharacter = (e) => {
-    if (e === "") {setTypeEquipChar(null); return null};
-    let tempArray = {id: null, hp: null, stamina: null};
-    let character = JSON.parse(e);
-    tempArray.id = character.id;
-    tempArray.hp = character.hp;
-    tempArray.stamina = character.stamina;
-    setTypeEquipChar(tempArray);
+    if (e === '') {
+      setTypeEquipChar(null)
+      return null
+    }
+    let tempArray = { id: null, hp: null, stamina: null }
+    let character = JSON.parse(e)
+    tempArray.id = character.id
+    tempArray.hp = character.hp
+    tempArray.stamina = character.stamina
+    setTypeEquipChar(tempArray)
   }
-  
+
   return (
-    <s.Container
-      image={img}
-      ai="center"
-      style={{ flex: 1, backgroundColor: '#B68D8D', paddingTop: 80 }}
-    >
+    <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Boutique</s.TextTitle>
       <div style={{ flexDirection: 'row' }}>
         <select
@@ -71,14 +69,21 @@ const MyStuff = ({
           <s.TextSubTitle>
             Veuillez choisir un personnage à équiper
           </s.TextSubTitle>
-          <select onChange={(e) => {handleSelectedCharacter(e.target.value); console.log(e.target.value) }}>
+          <select
+            onChange={(e) => {
+              handleSelectedCharacter(e.target.value)
+              console.log(e.target.value)
+            }}
+          >
             <option value="">Please choose a character</option>
             {characters.map((character) => (
-              <option key={character.id} value={`{"id":${character.id},"hp":${character.hp},"stamina":${character.stamina}}`}>
+              <option
+                key={character.id}
+                value={`{"id":${character.id},"hp":${character.hp},"stamina":${character.stamina}}`}
+              >
                 ID #{character.id}
               </option>
             ))}
-            
           </select>
         </>
       )}
@@ -91,18 +96,21 @@ const MyStuff = ({
             <s.TextDescription>STAMINA : FULL</s.TextDescription>
             <s.TextDescription>QUANTITY : {balancePotion}</s.TextDescription>
 
-            {characters && characters.length > 0 && typeEquipChar && (typeEquipChar.hp < 100 || typeEquipChar.stamina < 100) ? (
-            <s.Button
-            disabled={loading ? 1 : 0}
-            onClick={() => potionUse(typeEquipChar.id)}
-            primary={loading ? '' : 'primary'}
-            >
-            USE A POTION
-            </s.Button>
-            ): ""}
-
+            {characters &&
+            characters.length > 0 &&
+            typeEquipChar &&
+            (typeEquipChar.hp < 100 || typeEquipChar.stamina < 100) ? (
+              <s.Button
+                disabled={loading ? 1 : 0}
+                onClick={() => potionUse(typeEquipChar.id)}
+                primary={loading ? '' : 'primary'}
+              >
+                USE A POTION
+              </s.Button>
+            ) : (
+              ''
+            )}
           </s.Container>
-          
         )}
         {stuffs &&
           stuffs.length > 0 &&

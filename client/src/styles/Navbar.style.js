@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from 'react-router-dom'
 
 export const Nav = styled.div`
   padding: 0 2rem;
@@ -64,5 +65,15 @@ export const NavbarAddress = styled.div`
 
   @media (max-width: 750px) {
     display: none;
+  }
+`
+
+export const NavLink = styled(Link)`
+  color: #fff;
+  text-decoration: none;
+
+  :hover {
+    color: #fff;
+    text-decoration: none;
   }
 `

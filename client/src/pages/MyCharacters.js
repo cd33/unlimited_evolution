@@ -20,7 +20,7 @@ const MyCharacters = ({
   timeStamp,
 }) => {
   return (
-    <s.Container image={img} ai="center" style={{ paddingTop: 80 }}>
+    <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Mes Personnages</s.TextTitle>
       <s.TextSubTitle>Veuillez choisir un type de personnage</s.TextSubTitle>
 

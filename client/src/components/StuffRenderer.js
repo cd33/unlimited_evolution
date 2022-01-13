@@ -5,7 +5,6 @@ import s_3 from "../img/stuffs/swordExcalibur.png";
 import s_4 from "../img/stuffs/shieldAegis.png";
 import s_5 from "../img/stuffs/potion.png";
 
-
 const StuffRenderer = ({ stuffId, size, style }) => {
   const stuffs = ["", s_1, s_2, s_3, s_4, s_5,]
 

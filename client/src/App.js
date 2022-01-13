@@ -407,7 +407,6 @@ const App = () => {
                     selectedCharacter={selectedCharacter}
                     fight={fight}
                     stuffType={stuffType}
-                    resting={resting}
                     timeStamp={timeStamp}
                   />
                 }

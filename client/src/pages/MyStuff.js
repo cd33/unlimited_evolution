@@ -72,7 +72,6 @@ const MyStuff = ({
           <select
             onChange={(e) => {
               handleSelectedCharacter(e.target.value)
-              console.log(e.target.value)
             }}
           >
             <option value="">Please choose a character</option>

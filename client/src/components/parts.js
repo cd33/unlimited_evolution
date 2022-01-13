@@ -27,6 +27,11 @@ import f_2 from "../assets/foots/rainbow.png";
 import f_3 from "../assets/foots/red.png";
 import f_4 from "../assets/foots/white.png";
 
+import s_1 from "../assets/stuffs/swordBasic.png";
+import s_2 from "../assets/stuffs/shieldBasic.png";
+import s_3 from "../assets/stuffs/swordExcalibur.png";
+import s_4 from "../assets/stuffs/shieldAegis.png";
+
 const parts = {
   bg: [b_1, b_2, b_3],
   hair: [h_1, h_2, h_3, h_4],
@@ -34,6 +39,7 @@ const parts = {
   upbody: [ub_1, ub_2, ub_3, ub_4],
   lowbody: [lb_1, lb_2, lb_3, lb_4],
   shoes: [f_1, f_2, f_3, f_4],
+  stuffs: ["", s_1, s_2, s_3, s_4]
 };
 
 export default parts;

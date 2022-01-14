@@ -19,6 +19,23 @@ module.exports = {
      port: 7545,            // Standard Ethereum port (default: none)
      network_id: 1337,       // Any network (default: none)
     },
+    // matic: {
+    //   provider: () => new HDWalletProvider(process.env.MNEMONIC, process.env.MATICVIGIL),
+    //   network_id: 80001,
+    //   confirmations: 2,
+    //   timeoutBlocks: 200,
+    //   skipDryRun: true
+    // },
+    matic: {
+      provider: () => new HDWalletProvider(process.env.MNEMONIC, 
+      `https://rpc-mumbai.matic.today`),
+      network_id: 80001,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+      gas: 6000000,
+      gasPrice: 10000000000,
+    },
     kovan: {
       provider: () => new HDWalletProvider(process.env.MNEMONIC, process.env.INFURA),
       network_id: 42,

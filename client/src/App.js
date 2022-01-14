@@ -53,8 +53,8 @@ const App = () => {
         }
 
         const networkId = await web3.eth.net.getId()
-        if (networkId !== 1337 && networkId !== 42) {
-          handleModal('Wrong Network', 'Please Switch to the Kovan Network')
+        if (networkId !== 1337 && networkId !== 80001) {
+          handleModal('Wrong Network', 'Please Switch to the Mumbai Polygon Network')
           return
         }
 
@@ -156,7 +156,7 @@ const App = () => {
         .on('data', (event) =>
           handleModal(
             `Character Created ID #${event.returnValues.id}`,
-            'Your caracter is ready, you can interacting with other NFTs',
+            'Your character is ready, you can interacting with other NFTs',
           ),
         )
         .on('error', (err) => handleModal('Error', err.message))

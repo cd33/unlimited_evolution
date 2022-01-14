@@ -101,6 +101,14 @@ const MyEnemies = ({
             } else return ''
           })    
         }
+
+{/* MESSAGE d'erreur quand aucun ennemie n'est disponible */}
+{/* <s.TextSubTitle style={{ textAlign: 'center' }}>
+    Aucun Ennemies disponible
+    <br />
+    (niveau trop faible, mort ou en repos)
+    </s.TextSubTitle> */}
+
       </s.Container>
       <s.SpacerLarge />
     </s.Container>

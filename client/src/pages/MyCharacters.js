@@ -14,10 +14,10 @@ const MyCharacters = ({
   typeCharacterName,
   typeGenderName,
   stuffType,
-  balancePotion,
   potionUse,
   resting,
   timeStamp,
+  balancesMyStuff
 }) => {
   return (
     <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
@@ -108,7 +108,7 @@ const MyCharacters = ({
                       >
                         REST
                       </s.Button>
-                      {balancePotion > 0 && (
+                      {balancesMyStuff[5] > 0 && (
                         <s.Button
                           disabled={loading ? 1 : 0}
                           onClick={() => potionUse(character.id)}

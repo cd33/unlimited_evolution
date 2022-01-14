@@ -11,5 +11,5 @@ module.exports = async function (deployer) {
   unlimitedToken.setGameContract(unlimitedEvolution.address)
 
   // TESTS GANACHE
-  // await unlimitedEvolution.testModeSwitch();
+  await unlimitedEvolution.testModeSwitch();
 };

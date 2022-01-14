@@ -930,7 +930,7 @@ contract('UnlimitedEvolution', function (accounts) {
         expect(parseInt(test.length)).to.equal(1)
       })
 
-      it('GetMyStuffs & getBalanceStuff', async function () {
+      it('GetMyStuffs', async function () {
         await ue.buyStuff(1, {
           value: readable('0.001'),
           from: owner,
@@ -943,10 +943,10 @@ contract('UnlimitedEvolution', function (accounts) {
           value: readable('0.001'),
           from: owner,
         })
-        let balance = await ue.getBalanceStuff(1)
+        let balance = await ue.balanceOf(owner, 1)
         expect(parseInt(balance)).to.equal(3)
 
-        balance = await ue.getBalanceStuff(4)
+        balance = await ue.balanceOf(owner, 4)
         expect(parseInt(balance)).to.equal(0)
 
         await ue.buyStuff(5, {
@@ -957,7 +957,7 @@ contract('UnlimitedEvolution', function (accounts) {
           value: readable('0.001'),
           from: owner,
         })
-        balance = await ue.getBalanceStuff(5)
+        balance = await ue.balanceOf(owner, 5)
         expect(parseInt(balance)).to.equal(2)
 
         let test = await ue.getMyStuffs({ from: owner })

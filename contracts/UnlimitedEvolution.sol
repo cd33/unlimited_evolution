@@ -532,15 +532,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
         }
         return myStuffs;
     }
-
-    /**
-     * @dev The function returns the balance of items "_tokenId" that the owner own.
-     * @param _tokenId Id of the token.
-     * @return Uint256, number of _tokenId.
-     */
-    function getBalanceStuff(uint256 _tokenId) view external returns(uint256) {
-        return balanceOf(msg.sender, _tokenId);
-    }
     
     // Only for tests, to avoid chainlink
     function testModeSwitch() external onlyOwner {

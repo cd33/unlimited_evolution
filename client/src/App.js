@@ -26,9 +26,10 @@ const App = () => {
   const [titleModal, setTitleModal] = useState(false)
   const [contentModal, setContentModal] = useState(false)
   const [stuffs, setStuffs] = useState(null)
+  const [balancesContractStuff, setBalancesContractStuff] = useState([])
+  const [balancesMyStuff, setBalancesMyStuff] = useState([])
   const [typeBuyStuff, setTypeBuyStuff] = useState(1)
   const [typeEquipChar, setTypeEquipChar] = useState(0)
-  const [balancePotion, setBalancePotion] = useState()
 
   useEffect(() => {
     const init = async () => {
@@ -76,10 +77,6 @@ const App = () => {
           .getMyStuffs()
           .call({ from: accounts[0] })
           .then((res) => setStuffs(res))
-        await ueContract.methods
-          .getBalanceStuff(5)
-          .call({ from: accounts[0] })
-          .then((res) => setBalancePotion(res))
 
         let lastBlockNumber = await web3.eth.getBlockNumber()
         let lastBlockInfo = await web3.eth.getBlock(lastBlockNumber)
@@ -100,10 +97,6 @@ const App = () => {
               .getMyStuffs()
               .call({ from: accounts[0] })
               .then((res) => setStuffs(res))
-            await ueContract.methods
-              .getBalanceStuff(5)
-              .call({ from: accounts[0] })
-              .then((res) => setBalancePotion(res))
             lastBlockNumber = await web3.eth.getBlockNumber()
             lastBlockInfo = await web3.eth.getBlock(lastBlockNumber)
             setTimeStamp(lastBlockInfo.timestamp)
@@ -125,6 +118,35 @@ const App = () => {
     }
     init()
   }, [])
+
+  useEffect(() => {
+    const balanceContractStuff = async () => {
+      if (ueContract !== null && web3 !== null && accounts !== null) {
+        let tempArray = []
+        for (let i=0; i < 6; i++) {
+          await ueContract.methods
+          .balanceOf(ueContract._address, i)
+          .call({ from: accounts[0] })
+          .then((res) => tempArray.push(res))
+        }
+        setBalancesContractStuff(tempArray)
+      }
+    }
+    const balanceMyStuff = async () => {
+      if (ueContract !== null && web3 !== null && accounts !== null) {
+        let tempArray = []
+        for (let i=0; i < 6; i++) {
+          await ueContract.methods
+          .balanceOf(accounts[0], i)
+          .call({ from: accounts[0] })
+          .then((res) => tempArray.push(res))
+        }
+        setBalancesMyStuff(tempArray)
+      }
+    }
+    balanceContractStuff()
+    balanceMyStuff()
+  }, [ueContract, web3, accounts])
 
   // EVENTS
   useEffect(() => {
@@ -160,7 +182,7 @@ const App = () => {
         )
         .on('error', (err) => handleModal('Error', err.message))
 
-        ueContract.events
+      ueContract.events
         .LevelUp()
         .on('data', (event) =>
           handleModal(
@@ -170,7 +192,7 @@ const App = () => {
         )
         .on('error', (err) => handleModal('Error', err.message))
 
-        ueContract.events
+      ueContract.events
         .StuffBought()
         .on('data', (event) =>
           handleModal(
@@ -179,7 +201,7 @@ const App = () => {
           ),
         )
         .on('error', (err) => handleModal('Error', err.message))
-        ueContract.events
+      ueContract.events
         .StuffEquiped()
         .on('data', (event) =>
           handleModal(
@@ -188,7 +210,7 @@ const App = () => {
           ),
         )
         .on('error', (err) => handleModal('Error', err.message))
-        ueContract.events
+      ueContract.events
         .PotionUsed()
         .on('data', (event) =>
           handleModal(
@@ -290,18 +312,6 @@ const App = () => {
       })
   }
 
-  // A REVOIR
-  // const getBalanceStuff = async (_tokenId) => {
-  //   if (accounts != null) {
-  //     await ueContract.methods
-  //       .getBalanceStuff(_tokenId)
-  //       .call({ from: accounts[0] })
-  //       .then(res => {
-  //         console.log(res)
-  //       })
-  //   }
-  // }
-
   const typeCharacterName = (val) => {
     if (parseInt(val) === 0) {
       return 'BRUTE'
@@ -356,90 +366,93 @@ const App = () => {
 
   return (
     <s.Screen>
-        {!web3 ? (
-          <>
-            <s.TextTitle color="black" style={{alignSelf: 'center'}}>Loading Web3, accounts, and contract...</s.TextTitle>
-            <Modal
-              modalShow={modalShow}
-              setModalShow={setModalShow}
-              title={titleModal}
-              content={contentModal}
-            />
-          </>
-        ) : (
-          <>
-            <Navbar accounts={accounts} />
+      {!web3 ? (
+        <>
+          <s.TextTitle color="black" style={{ alignSelf: 'center' }}>
+            Loading Web3, accounts, and contract...
+          </s.TextTitle>
+          <Modal
+            modalShow={modalShow}
+            setModalShow={setModalShow}
+            title={titleModal}
+            content={contentModal}
+          />
+        </>
+      ) : (
+        <>
+          <Navbar accounts={accounts} />
 
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route
-                path="/MyCharacters"
-                element={
-                  <MyCharacters
-                    loading={loading}
-                    rest={rest}
-                    createCharacter={createCharacter}
-                    setTypeCharacter={setTypeCharacter}
-                    setGenderCharacter={setGenderCharacter}
-                    characters={characters}
-                    attacks={attacks}
-                    typeCharacterName={typeCharacterName}
-                    typeGenderName={typeGenderName}
-                    stuffType={stuffType}
-                    balancePotion={balancePotion}
-                    potionUse={potionUse}
-                    resting={resting}
-                    timeStamp={timeStamp}
-                  />
-                }
-              />
-              <Route
-                path="/MyEnemies"
-                element={
-                  <MyEnemies
-                    loading={loading}
-                    characters={characters}
-                    attacks={attacks}
-                    typeCharacterName={typeCharacterName}
-                    typeGenderName={typeGenderName}
-                    setSelectedCharacter={setSelectedCharacter}
-                    othersCharacters={othersCharacters}
-                    selectedCharacter={selectedCharacter}
-                    fight={fight}
-                    stuffType={stuffType}
-                    timeStamp={timeStamp}
-                  />
-                }
-              />
-              <Route
-                path="/MyStuff"
-                element={
-                  <MyStuff
-                    loading={loading}
-                    characters={characters}
-                    stuffs={stuffs}
-                    stuffType={stuffType}
-                    buyStuff={buyStuff}
-                    equipStuff={equipStuff}
-                    setTypeBuyStuff={setTypeBuyStuff}
-                    typeBuyStuff={typeBuyStuff}
-                    setTypeEquipChar={setTypeEquipChar}
-                    typeEquipChar={typeEquipChar}
-                    balancePotion={balancePotion}
-                    potionUse={potionUse}
-                  />
-                }
-              />
-            </Routes>
-
-            <Modal
-              modalShow={modalShow}
-              setModalShow={setModalShow}
-              title={titleModal}
-              content={contentModal}
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route
+              path="/MyCharacters"
+              element={
+                <MyCharacters
+                  loading={loading}
+                  rest={rest}
+                  createCharacter={createCharacter}
+                  setTypeCharacter={setTypeCharacter}
+                  setGenderCharacter={setGenderCharacter}
+                  characters={characters}
+                  attacks={attacks}
+                  typeCharacterName={typeCharacterName}
+                  typeGenderName={typeGenderName}
+                  stuffType={stuffType}
+                  potionUse={potionUse}
+                  resting={resting}
+                  timeStamp={timeStamp}
+                  balancesMyStuff={balancesMyStuff}
+                />
+              }
             />
-          </>
-        )}
+            <Route
+              path="/MyEnemies"
+              element={
+                <MyEnemies
+                  loading={loading}
+                  characters={characters}
+                  attacks={attacks}
+                  typeCharacterName={typeCharacterName}
+                  typeGenderName={typeGenderName}
+                  othersCharacters={othersCharacters}
+                  setSelectedCharacter={setSelectedCharacter}
+                  selectedCharacter={selectedCharacter}
+                  fight={fight}
+                  stuffType={stuffType}
+                  timeStamp={timeStamp}
+                />
+              }
+            />
+            <Route
+              path="/MyStuff"
+              element={
+                <MyStuff
+                  loading={loading}
+                  characters={characters}
+                  stuffs={stuffs}
+                  stuffType={stuffType}
+                  buyStuff={buyStuff}
+                  equipStuff={equipStuff}
+                  setTypeBuyStuff={setTypeBuyStuff}
+                  typeBuyStuff={typeBuyStuff}
+                  setTypeEquipChar={setTypeEquipChar}
+                  typeEquipChar={typeEquipChar}
+                  potionUse={potionUse}
+                  balancesContractStuff={balancesContractStuff}
+                  balancesMyStuff={balancesMyStuff}
+                />
+              }
+            />
+          </Routes>
+
+          <Modal
+            modalShow={modalShow}
+            setModalShow={setModalShow}
+            title={titleModal}
+            content={contentModal}
+          />
+        </>
+      )}
     </s.Screen>
   )
 }

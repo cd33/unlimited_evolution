@@ -14,6 +14,17 @@ const MyEnemies = ({
   fight,
   timeStamp,
 }) => {
+  const handleSelectedCharacter = (e) => {
+    if (e === '') {
+      setSelectedCharacter(null)
+      return null
+    }
+    let tempArray = { id: null, level: null }
+    let character = JSON.parse(e)
+    tempArray.id = character.id
+    tempArray.level = character.level
+    setSelectedCharacter(tempArray)
+  }
   return (
     <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Mes Ennemis</s.TextTitle>
@@ -23,12 +34,17 @@ const MyEnemies = ({
           <s.TextSubTitle>
             Veuillez choisir un personnage pour combattre
           </s.TextSubTitle>
-          <select onChange={(e) => setSelectedCharacter(e.target.value)}>
+          {/* <select onChange={(e) => setSelectedCharacter(e.target.value)}> */}
+          <select onChange={(e) => handleSelectedCharacter(e.target.value)}>
             <option value="">Please choose a character</option>
             {characters.map((character) => {
               if (timeStamp - 86400 > character.lastRest) {
                 return (
-                  <option key={character.id} value={character.id}>
+                  <option
+                    key={character.id}
+                    // value={character.id}
+                    value={`{"id":${character.id},"level":${character.level}}`}
+                  >
                     ID #{character.id}
                   </option>
                 )
@@ -42,7 +58,11 @@ const MyEnemies = ({
         {othersCharacters &&
           othersCharacters.length > 0 &&
           othersCharacters.map((character) => {
-            if (timeStamp - 86400 > character.lastRest) {
+            if (
+              timeStamp - 86400 > character.lastRest &&
+              character.hp > 0 && selectedCharacter &&
+              selectedCharacter.level <= character.level
+            ) {
               return (
                 <div key={character.id}>
                   <s.Container
@@ -61,28 +81,26 @@ const MyEnemies = ({
                       Gender: {typeGenderName(character.genderCharacter)}
                     </s.TextDescription>
 
-                    {characters &&
-                      characters.length > 0 &&
-                      selectedCharacter &&
-                      timeStamp - 86400 > character.lastRest && (
-                        <s.Container fd="row" jc="center">
-                          <s.Button
-                            disabled={loading ? 1 : 0}
-                            onClick={() =>
-                              fight(selectedCharacter, character.id)
-                            }
-                            primary={loading ? '' : 'primary'}
-                          >
-                            FIGHT
-                          </s.Button>
-                        </s.Container>
-                      )}
+                    {characters && characters.length > 0 && (
+                      <s.Container fd="row" jc="center">
+                        <s.Button
+                          disabled={loading ? 1 : 0}
+                          onClick={() =>
+                            fight(selectedCharacter.id, character.id)
+                          }
+                          primary={loading ? '' : 'primary'}
+                        >
+                          FIGHT
+                        </s.Button>
+                      </s.Container>
+                    )}
                   </s.Container>
                   <s.SpacerSmall />
                 </div>
               )
             } else return ''
-          })}
+          })    
+        }
       </s.Container>
       <s.SpacerLarge />
     </s.Container>

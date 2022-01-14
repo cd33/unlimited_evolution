@@ -14,8 +14,9 @@ const MyStuff = ({
   setTypeEquipChar,
   typeEquipChar,
   equipStuff,
-  balancePotion,
   potionUse,
+  balancesContractStuff,
+  balancesMyStuff,
 }) => {
   const handleSelectedCharacter = (e) => {
     if (e === '') {
@@ -35,21 +36,17 @@ const MyStuff = ({
       <s.TextTitle>Boutique</s.TextTitle>
       <div style={{ flexDirection: 'row' }}>
         <select
-          onChange={(e) => setTypeBuyStuff(e.currentTarget.selectedIndex + 1)}
+          onChange={(e) => setTypeBuyStuff(e.target.value)}
         >
-          {stuffType
-            .filter((stuff) => {
-              if (stuff === '') {
-                return false
-              } else {
-                return true
-              }
-            })
-            .map((stuff, i) => (
-              <option key={i} value={i}>
-                {stuff}
-              </option>
-            ))}
+          {stuffType.map((stuff, i) => {
+            if (balancesContractStuff[i] !== '0') {
+              return (
+                <option key={i} value={i}>
+                  {stuff}
+                </option>
+              )
+            } else return ''
+          })}
         </select>
 
         <s.Button
@@ -64,7 +61,7 @@ const MyStuff = ({
       <s.SpacerLarge />
 
       <s.TextTitle>Mon Equipement</s.TextTitle>
-      {characters && characters.length > 0 && (
+      {characters && characters.length > 0 && stuffs.length > 0 && (
         <>
           <s.TextSubTitle>
             Veuillez choisir un personnage à équiper
@@ -87,13 +84,13 @@ const MyStuff = ({
         </>
       )}
       <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
-        {balancePotion > 0 && (
+        {balancesMyStuff[5] > 0 && (
           <s.Container ai="center" style={{ minWidth: '200px', marginTop: 50 }}>
             <StuffRenderer stuffId={5} size={200} />
             <s.TextDescription>Name : POTION</s.TextDescription>
             <s.TextDescription>HP : FULL</s.TextDescription>
-            <s.TextDescription>STAMINA : FULL</s.TextDescription>
-            <s.TextDescription>QUANTITY : {balancePotion}</s.TextDescription>
+            <s.TextDescription>Stamina : FULL</s.TextDescription>
+            <s.TextDescription>Quantity : {balancesMyStuff[5]}</s.TextDescription>
 
             {characters &&
             characters.length > 0 &&
@@ -138,6 +135,9 @@ const MyStuff = ({
                   </s.TextDescription>
                   <s.TextDescription>
                     Type : {stuff.typeStuff === '0' ? 'WEAPON' : 'SHIELD'}
+                  </s.TextDescription>
+                  <s.TextDescription>
+                    Quantity : {balancesMyStuff[stuff.id]}
                   </s.TextDescription>
 
                   {characters && characters.length > 0 && typeEquipChar ? (

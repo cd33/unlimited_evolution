@@ -16,16 +16,16 @@ const Navbar = ({ accounts }) => {
         </n.NavLink>
         <n.Menu isOpen={isOpen}>
           <n.NavLink to="/">
-          <n.MenuLink href="">Accueil</n.MenuLink>
+          <n.MenuLink>Accueil</n.MenuLink>
         </n.NavLink>
           <n.NavLink to="/MyCharacters">
-            <n.MenuLink href="">Mes Personnages</n.MenuLink>
+            <n.MenuLink>Mes Personnages</n.MenuLink>
           </n.NavLink>
           <n.NavLink to="/MyStuff">
-            <n.MenuLink href="">Mon Equipement</n.MenuLink>
+            <n.MenuLink>Mon Equipement</n.MenuLink>
           </n.NavLink>
           <n.NavLink to="/MyEnemies">
-            <n.MenuLink href="">Mes Ennemies</n.MenuLink>
+            <n.MenuLink>Mes Ennemies</n.MenuLink>
           </n.NavLink>
         </n.Menu>
       </div>

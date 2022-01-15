@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/unlimited_evolution/static/css/main.559e94e9.chunk.css",
-    "main.js": "/unlimited_evolution/static/js/main.0dcdccf8.chunk.js",
-    "main.js.map": "/unlimited_evolution/static/js/main.0dcdccf8.chunk.js.map",
+    "main.js": "/unlimited_evolution/static/js/main.730a7b9f.chunk.js",
+    "main.js.map": "/unlimited_evolution/static/js/main.730a7b9f.chunk.js.map",
     "runtime-main.js": "/unlimited_evolution/static/js/runtime-main.41f94c70.js",
     "runtime-main.js.map": "/unlimited_evolution/static/js/runtime-main.41f94c70.js.map",
     "static/css/2.68a81a89.chunk.css": "/unlimited_evolution/static/css/2.68a81a89.chunk.css",
     "static/js/2.fb894bd1.chunk.js": "/unlimited_evolution/static/js/2.fb894bd1.chunk.js",
     "static/js/2.fb894bd1.chunk.js.map": "/unlimited_evolution/static/js/2.fb894bd1.chunk.js.map",
     "index.html": "/unlimited_evolution/index.html",
-    "precache-manifest.2cb57162824a046dbfeede5e60677d51.js": "/unlimited_evolution/precache-manifest.2cb57162824a046dbfeede5e60677d51.js",
+    "precache-manifest.1e5017726f2fcb6956621c89abd208b2.js": "/unlimited_evolution/precache-manifest.1e5017726f2fcb6956621c89abd208b2.js",
     "service-worker.js": "/unlimited_evolution/service-worker.js",
     "static/css/2.68a81a89.chunk.css.map": "/unlimited_evolution/static/css/2.68a81a89.chunk.css.map",
     "static/css/main.559e94e9.chunk.css.map": "/unlimited_evolution/static/css/main.559e94e9.chunk.css.map",
@@ -23,7 +23,7 @@
     "static/media/grass.png": "/unlimited_evolution/static/media/grass.f45f95de.png",
     "static/media/green.png": "/unlimited_evolution/static/media/green.c17194f5.png",
     "static/media/home.jpg": "/unlimited_evolution/static/media/home.8609c655.jpg",
-    "static/media/logo.png": "/unlimited_evolution/static/media/logo.c405a766.png",
+    "static/media/logoGrosTraits.png": "/unlimited_evolution/static/media/logoGrosTraits.2664ba03.png",
     "static/media/ocean.png": "/unlimited_evolution/static/media/ocean.26c503e9.png",
     "static/media/potion.png": "/unlimited_evolution/static/media/potion.4cfc342f.png",
     "static/media/punk.png": "/unlimited_evolution/static/media/punk.21f4e36f.png",
@@ -44,6 +44,6 @@
     "static/css/2.68a81a89.chunk.css",
     "static/js/2.fb894bd1.chunk.js",
     "static/css/main.559e94e9.chunk.css",
-    "static/js/main.0dcdccf8.chunk.js"
+    "static/js/main.730a7b9f.chunk.js"
   ]
 }

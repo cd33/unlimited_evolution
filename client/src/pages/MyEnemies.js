@@ -28,10 +28,11 @@ const MyEnemies = ({
         ) {
           tempArray.push(character)
         }
+        return ""
       })
       setCharactersDisplayed(tempArray)
     }
-  }, [selectedCharacter])
+  }, [selectedCharacter, othersCharacters, timeStamp])
 
   const handleSelectedCharacter = (e) => {
     if (e === '') {

@@ -225,7 +225,7 @@ const App = () => {
   const createCharacter = () => {
     setLoading(true)
     ueContract.methods
-      .createCharacter(typeCharacter, genderCharacter)
+      .askCreateCharacter(typeCharacter, genderCharacter)
       .send({ from: accounts[0], value: web3.utils.toWei('0.001', 'Ether') })
       .once('error', (err) => {
         setLoading(false)

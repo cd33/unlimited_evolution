@@ -8,7 +8,7 @@ import "./RandomNumberGenerator.sol";
 import "./UnlimitedToken.sol";
 
 /** @title Unlimited Evolution */
-contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGenerator {
+contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
 
     /**
      * @dev Allows you to receive ERC1155 tokens and therefore make external calls to mint.
@@ -29,11 +29,11 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     uint24[] countMints = new uint8[](3);
     uint256 mintFee = 0.001 ether;
     uint256 stuffFee = 0.001 ether;
-    uint256 randomNumber;
     // Only for tests, to avoid chainlink
     bool public testMode;
     
-    UnlimitedToken public unlimitedToken;
+    UnlimitedToken unlimitedToken;
+    RandomNumberGenerator randomNumberGenerator;
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
@@ -77,10 +77,13 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     mapping(address => uint8) private _balanceOfCharacters;
 
     /**
-     * @dev Constructor of the contract ERC1155, mint stuff and add it to the mapping
+     * @dev Constructor of the contract ERC1155, mint stuff and add it to the mapping.
+     * @param _unlimitedTokenAddress Address of the contract UnlimitedToken.
+     * @param _randomNumberGenerator Address of the contract RandomNumberGenerator.
      */
-    constructor(UnlimitedToken _unlimitedTokenAddress) ERC1155("") {
+    constructor(UnlimitedToken _unlimitedTokenAddress, RandomNumberGenerator _randomNumberGenerator) ERC1155("") {
         unlimitedToken = _unlimitedTokenAddress;
+        randomNumberGenerator = _randomNumberGenerator;
         _mint(address(this), BASIC_SWORD, 10**5, "");
         _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, type_stuff.WEAPON);
         _mint(address(this), BASIC_SHIELD, 10**5, "");
@@ -149,6 +152,14 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     function setTokenAddress(address _tokenAddress) external onlyOwner {
         unlimitedToken = UnlimitedToken(_tokenAddress);
     }
+
+    /**
+     * @dev The function changes the Chainlink Random Number Generator address
+     * @param _randomAddress New token address.
+     */
+    function setLinkAddress(address _randomAddress) external onlyOwner {
+        randomNumberGenerator = RandomNumberGenerator(_randomAddress);
+    }
     
     /**
      * @dev The function changes the ether fee for minting.
@@ -183,7 +194,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     /**
      * @dev Owner withdraws the entire amount of ETH.
      */
-    function withdraw() external onlyOwner {
+    function withdrawEth() external onlyOwner {
         payable(owner()).transfer(address(this).balance);
     }
 
@@ -191,8 +202,8 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
      * @dev Owner withdraws an amount of LINK.
      * @param value Value of LINK.
      */
-    function withdrawLINK(uint256 value) external onlyOwner {
-        LINK.transfer(owner(), value);
+    function withdrawLink(uint256 value) external onlyOwner {
+        randomNumberGenerator.withdraw(value);
     }
 
     /**
@@ -240,22 +251,11 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     }
 
     /**
-     * @dev The function uses the chainlink requestRandomness of VRFConsumerBase.
-     * @param _mod Length of number, needed (modulo).
-     */
-    function _generateRandomNumber(uint256 _mod) private {
-        if (!testMode) { // Only for tests, to avoid chainlink
-            randomNumber = uint256(getRandomNumber()) % _mod;
-        } else {
-            randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % _mod;
-        }
-    }
-
-    /**
      * @dev The function assigns a number between 3 and 5 randomly to the attack characteristics using "randomNumber".
+     * @param randomNumber Random number from chainlink.
      * @return Array of number (attributes).
      */
-    function _attributesMintDistribution() private view returns(uint8[] memory) {
+    function _attributesMintDistribution(uint256 randomNumber) private pure returns(uint8[] memory) {
         uint8[] memory _attributes = new uint8[](4);
         for(uint8 i=0; i<4; i++) {
             _attributes[i] = 3 + uint8((randomNumber % (10+i)) % 3);
@@ -344,21 +344,36 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable, RandomNumberGene
     }
 
     /**
-     * @dev The Function mint an NFT.
+     * @dev The Function ask to Chainlink a random number before to mint an NFT.
      * @param _typeCharacter Type of character between BRUTE, SPIRITUAL, ELEMENTARY.
      * @param _genderCharacter Gender of character between MASCULINE, FEMININE, OTHER.
-     * Emits a "CharacterCreated" event.
      */
-    function createCharacter(type_character _typeCharacter, gender_character _genderCharacter) external payable {
+    function askCreateCharacter(type_character _typeCharacter, gender_character _genderCharacter) external payable {
         require(msg.value == mintFee, "Wrong amount of fees");
         require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
         require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
-        _generateRandomNumber(10**16);
-        uint8[] memory _attributes = _attributesMintDistribution();
+        if (!testMode) { // Only for tests, to avoid chainlink
+            randomNumberGenerator.getRandomNumber(_typeCharacter, _genderCharacter, msg.sender);
+        } else {
+            this.createCharacter(_typeCharacter, _genderCharacter, uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 10**16, msg.sender);
+        }
+    }
+
+    /**
+     * @dev The Function mint an NFT.
+     * @param _typeCharacter Type of character between BRUTE, SPIRITUAL, ELEMENTARY.
+     * @param _genderCharacter Gender of character between MASCULINE, FEMININE, OTHER.
+     * @param randomNumber Random number from chainlink.
+     * @param _address Address of the requestor (necessary for chainlink).
+     * Emits a "CharacterCreated" event.
+     */
+    function createCharacter(type_character _typeCharacter, gender_character _genderCharacter, uint256 randomNumber, address _address) external {
+        require(msg.sender == owner() || msg.sender == address(randomNumberGenerator) || msg.sender == address(this), "Not allowed to use this function");
+        uint8[] memory _attributes = _attributesMintDistribution(randomNumber);
         _characterDetails[nextCharacterId] = Character(nextCharacterId, uint56(randomNumber), 1, 1, 100, 100, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, 0, 0, 0, _typeCharacter, _genderCharacter);
-        _balanceOfCharacters[msg.sender]++;
+        _balanceOfCharacters[_address]++;
         countMints[uint8(_typeCharacter)]++;
-        _mint(msg.sender, nextCharacterId, 1, "");
+        _mint(_address, nextCharacterId, 1, "");
         emit CharacterCreated(nextCharacterId);
         nextCharacterId++;
     }

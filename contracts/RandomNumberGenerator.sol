@@ -2,6 +2,8 @@
 pragma solidity 0.8.7;
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./UnlimitedEvolution.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT WHICH USES HARDCODED VALUES FOR CLARITY.
@@ -13,12 +15,17 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
  * Find information on LINK Token Contracts and get the latest ETH and LINK faucets here: https://docs.chain.link/docs/link-token-contracts/
  */
  
-contract RandomNumberGenerator is VRFConsumerBase {
+contract RandomNumberGenerator is VRFConsumerBase, Ownable {
     
     bytes32 internal keyHash;
     uint256 internal fee;
-    
-    uint256 public randomResult;
+
+    UnlimitedEvolution unlimited;
+    UnlimitedEvolution.type_character typeCharacter;
+    UnlimitedEvolution.gender_character genderCharacter;
+    address requestor;
+
+    event requestedRandomness(bytes32 _requestId);
     
     /**
      * Constructor inherits VRFConsumerBase
@@ -39,17 +46,36 @@ contract RandomNumberGenerator is VRFConsumerBase {
     }
 
     /** 
+     * Change the address of the contract UnlimitedEvolution
+     */
+    function setUnlimitedAddress(address _unlimited) external onlyOwner {
+        unlimited = UnlimitedEvolution(_unlimited);
+    }
+
+    /** 
      * Requests randomness 
      */
-    function getRandomNumber() public returns (bytes32 requestId) {
+    function getRandomNumber(UnlimitedEvolution.type_character _typeCharacter, UnlimitedEvolution.gender_character _genderCharacter, address _address) public {
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
-        return requestRandomness(keyHash, fee);
+        typeCharacter = _typeCharacter;
+        genderCharacter = _genderCharacter;
+        requestor = _address;
+        bytes32 requestId = requestRandomness(keyHash, fee);
+        emit requestedRandomness(requestId);
     }
 
     /**
      * Callback function used by VRF Coordinator
      */
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-        randomResult = randomness;
+        require(randomness > 0, "Randomness number not found");
+        unlimited.createCharacter(typeCharacter, genderCharacter, randomness % 10**16, requestor);
+    }
+
+    /**
+     * Withdraw Link
+     */
+    function withdraw(uint256 value) external onlyOwner {
+        LINK.transfer(msg.sender, value);
     }
 }

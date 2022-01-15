@@ -35,9 +35,7 @@ const MyStuff = ({
     <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Boutique</s.TextTitle>
       <div style={{ flexDirection: 'row' }}>
-        <select
-          onChange={(e) => setTypeBuyStuff(e.target.value)}
-        >
+        <select onChange={(e) => setTypeBuyStuff(e.target.value)}>
           {stuffType.map((stuff, i) => {
             if (balancesContractStuff[i] !== '0') {
               return (
@@ -61,7 +59,7 @@ const MyStuff = ({
       <s.SpacerLarge />
 
       <s.TextTitle>Mon Equipement</s.TextTitle>
-      {characters && characters.length > 0 && stuffs.length > 0 && (
+      {characters && characters.length > 0 && stuffs.length > 0 ? (
         <>
           <s.TextSubTitle>
             Veuillez choisir un personnage à équiper
@@ -82,6 +80,12 @@ const MyStuff = ({
             ))}
           </select>
         </>
+      ) : (
+        <s.TextSubTitle style={{ marginTop: 50 }}>
+          Vous ne possédez pas encore d'équipement.
+          <br />
+          La boutique est juste au dessus.
+        </s.TextSubTitle>
       )}
       <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
         {balancesMyStuff[5] > 0 && (
@@ -90,7 +94,9 @@ const MyStuff = ({
             <s.TextDescription>Name : POTION</s.TextDescription>
             <s.TextDescription>HP : FULL</s.TextDescription>
             <s.TextDescription>Stamina : FULL</s.TextDescription>
-            <s.TextDescription>Quantity : {balancesMyStuff[5]}</s.TextDescription>
+            <s.TextDescription>
+              Quantity : {balancesMyStuff[5]}
+            </s.TextDescription>
 
             {characters &&
             characters.length > 0 &&

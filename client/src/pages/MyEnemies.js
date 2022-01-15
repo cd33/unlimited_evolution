@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import * as s from '../styles/globalStyles'
 import CharacterRenderer from '../components/CharacterRenderer'
 import img from '../img/Arena.jpg'
@@ -14,6 +14,25 @@ const MyEnemies = ({
   fight,
   timeStamp,
 }) => {
+  const [charactersDisplayed, setCharactersDisplayed] = useState([])
+
+  useEffect(() => {
+    if (othersCharacters && othersCharacters.length > 0) {
+      let tempArray = []
+      othersCharacters.map((character) => {
+        if (
+          timeStamp - 86400 > character.lastRest &&
+          character.hp > 0 &&
+          selectedCharacter &&
+          selectedCharacter.level <= character.level
+        ) {
+          tempArray.push(character)
+        }
+      })
+      setCharactersDisplayed(tempArray)
+    }
+  }, [selectedCharacter])
+
   const handleSelectedCharacter = (e) => {
     if (e === '') {
       setSelectedCharacter(null)
@@ -29,7 +48,7 @@ const MyEnemies = ({
     <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Mes Ennemis</s.TextTitle>
 
-      {characters && characters.length > 0 && (
+      {characters && characters.length > 0 ? (
         <>
           <s.TextSubTitle>
             Veuillez choisir un personnage pour combattre
@@ -52,17 +71,23 @@ const MyEnemies = ({
             })}
           </select>
         </>
+      ) : (
+        <>
+          <s.TextSubTitle style={{ marginTop: 50 }}>
+            Pour débuter un combat, <br/> Vous devez posséder un personnage
+          </s.TextSubTitle>
+          <s.ButtonHome>
+            <s.ButtonLink to="/MyCharacters">
+              Commencer l'aventure !
+            </s.ButtonLink>
+          </s.ButtonHome>
+        </>
       )}
 
       <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
-        {othersCharacters &&
-          othersCharacters.length > 0 &&
-          othersCharacters.map((character) => {
-            if (
-              timeStamp - 86400 > character.lastRest &&
-              character.hp > 0 && selectedCharacter &&
-              selectedCharacter.level <= character.level
-            ) {
+        {selectedCharacter &&
+          (charactersDisplayed.length > 0 ? (
+            charactersDisplayed.map((character) => {
               return (
                 <div key={character.id}>
                   <s.Container
@@ -98,17 +123,21 @@ const MyEnemies = ({
                   <s.SpacerSmall />
                 </div>
               )
-            } else return ''
-          })    
-        }
+            })
+          ) : (
+            <s.TextSubTitle style={{ marginTop: 50 }}>
+              Aucun Ennemies disponible
+              <br />
+              (niveau trop faible, mort ou en repos)
+            </s.TextSubTitle>
+          ))}
 
-{/* MESSAGE d'erreur quand aucun ennemie n'est disponible */}
-{/* <s.TextSubTitle style={{ textAlign: 'center' }}>
+        {/* MESSAGE d'erreur quand aucun ennemie n'est disponible */}
+        {/* <s.TextSubTitle style={{ textAlign: 'center' }}>
     Aucun Ennemies disponible
     <br />
     (niveau trop faible, mort ou en repos)
     </s.TextSubTitle> */}
-
       </s.Container>
       <s.SpacerLarge />
     </s.Container>

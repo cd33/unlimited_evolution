@@ -233,7 +233,6 @@ const App = () => {
       })
       .then((receipt) => {
         setLoading(false)
-        console.log(receipt)
       })
   }
 
@@ -248,7 +247,6 @@ const App = () => {
       })
       .then((res) => {
         setLoading(false)
-        console.log(res)
       })
   }
 
@@ -263,7 +261,6 @@ const App = () => {
       })
       .then((res) => {
         setLoading(false)
-        console.log(res)
       })
   }
 
@@ -278,7 +275,6 @@ const App = () => {
       })
       .then((res) => {
         setLoading(false)
-        console.log(res)
       })
   }
 
@@ -293,7 +289,6 @@ const App = () => {
       })
       .then((res) => {
         setLoading(false)
-        console.log(res)
       })
   }
 
@@ -308,7 +303,6 @@ const App = () => {
       })
       .then((res) => {
         setLoading(false)
-        console.log(res)
       })
   }
 

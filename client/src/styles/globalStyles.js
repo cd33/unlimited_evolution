@@ -63,6 +63,7 @@ export const TextSubTitle = styled.p`
   font-size: ${({ fs }) => (fs ? `${fs}px` : '30px')};
   font-weight: 700;
   text-shadow: 1px 1px 2px black;
+  text-align: center;
 `
 
 export const TextDescription = styled.p`
@@ -70,6 +71,7 @@ export const TextDescription = styled.p`
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 0px;
+  text-align: center;
 `
 
 export const StyledClickable = styled.div`

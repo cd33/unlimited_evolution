@@ -81378,10 +81378,308 @@
   },
   "networks": {
     "1337": {
-      "events": {},
+      "events": {
+        "0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "approved",
+              "type": "bool"
+            }
+          ],
+          "name": "ApprovalForAll",
+          "type": "event"
+        },
+        "0xe227f939502c878cd77af001b21022d49a6b5ad9c3103d7ad7cacc22b89c7e18": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "id",
+              "type": "uint24"
+            }
+          ],
+          "name": "CharacterCreated",
+          "type": "event"
+        },
+        "0x91ad1d4c0919e1b53fbdcec65d7dc46d5f6d4de4cbeeeef5e6f1f107d0f4e28e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "myTokenId",
+              "type": "uint24"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "rivalTokenId",
+              "type": "uint24"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "substrateLifeToRival",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "substrateLifeToMe",
+              "type": "uint256"
+            }
+          ],
+          "name": "Fighted",
+          "type": "event"
+        },
+        "0x719792e6ed880d27219754d543fad5ae2f877eeff920d283bb067052d8937811": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "tokenId",
+              "type": "uint24"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint16",
+              "name": "level",
+              "type": "uint16"
+            }
+          ],
+          "name": "LevelUp",
+          "type": "event"
+        },
+        "0xb7d28e616ee42c9b98a93c9bc72ee6f206603cd1e23793ae33c19c3c3b86c4e1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "limitMint",
+              "type": "uint24"
+            }
+          ],
+          "name": "LimitUpdated",
+          "type": "event"
+        },
+        "0x38fbb1c8b109c430f0c030e7ed076cf5611a307773a4e8e365601e8f8bceaec6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "mintFee",
+              "type": "uint256"
+            }
+          ],
+          "name": "MintFeeUpdated",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x127a62fea82fb42bc3a6f379a68f1ccd885eb84979d3c9372bf3d70c765cf13b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "tokenId",
+              "type": "uint24"
+            }
+          ],
+          "name": "PotionUsed",
+          "type": "event"
+        },
+        "0x70b3acde96522f48d954a5bb77f27755c277bb00853b13264d21178135d3d0a9": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "tokenId",
+              "type": "uint24"
+            }
+          ],
+          "name": "Rested",
+          "type": "event"
+        },
+        "0x4afa87c6ddce4f5aa8b4ca6a375ecd27ea57ee7fec3e1648ceeea5c9dd19a2c8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "stuffId",
+              "type": "uint8"
+            }
+          ],
+          "name": "StuffBought",
+          "type": "event"
+        },
+        "0x610fb6ee23e2ff6ad836d380855fbefc8d4c765b388a588262c443f13fefc300": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint24",
+              "name": "tokenId",
+              "type": "uint24"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "stuffId",
+              "type": "uint8"
+            }
+          ],
+          "name": "StuffEquiped",
+          "type": "event"
+        },
+        "0x38f4067adf1477c6ed59234d75dfe320c18a2373bd9a839a489794e207148bbb": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "stuffFee",
+              "type": "uint256"
+            }
+          ],
+          "name": "StuffFeeUpdated",
+          "type": "event"
+        },
+        "0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "ids",
+              "type": "uint256[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "values",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "TransferBatch",
+          "type": "event"
+        },
+        "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "TransferSingle",
+          "type": "event"
+        },
+        "0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "value",
+              "type": "string"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            }
+          ],
+          "name": "URI",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0xcbC449faf74b59b17d6a0Be77E941A94Bf1dCf13",
-      "transactionHash": "0x7a055d8364fda4cb45518dda987c3389fdab79c2651a2fbe35850c7a10aeb45b"
+      "address": "0xC4553917281F1d939096e5a509dc53dF5e54Be35",
+      "transactionHash": "0x4d67de43305103e5d506f6d4a3423baa84193356459c117190ca15c1b0a47db0"
     },
     "80001": {
       "events": {
@@ -81689,7 +81987,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2022-01-14T22:52:29.713Z",
+  "updatedAt": "2022-01-14T23:12:32.600Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

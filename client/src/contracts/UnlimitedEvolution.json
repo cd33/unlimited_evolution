@@ -82758,12 +82758,12 @@
         }
       },
       "links": {},
-      "address": "0xE6F39Aee1c5f8FDdD224620c366CDEE6312b0841",
-      "transactionHash": "0xd9415f894eb0ba497ad2ef3892e21619066844ecb0b72cb8f139d8f81f827cc2"
+      "address": "0xb0E8eF08A88922E59F80D3578147Eb504A718550",
+      "transactionHash": "0xda169bb564c9d69644d0145c805578650b7b07b057335bd92bbd18119dcd7b4e"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2022-01-16T12:22:31.397Z",
+  "updatedAt": "2022-01-16T20:32:49.289Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

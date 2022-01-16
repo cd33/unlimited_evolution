@@ -1,27 +1,24 @@
-const {
-  expectRevert,
-  expectEvent,
-  time,
-} = require('@openzeppelin/test-helpers')
 const { expect } = require('chai')
 
 const UnlimitedEvolution = artifacts.require('UnlimitedEvolution')
 const UnlimitedToken = artifacts.require('UnlimitedToken')
-
-const readable = (val) => web3.utils.toWei(val, 'ether')
+const RandomNumberGenerator = artifacts.require('RandomNumberGenerator')
 
 contract('UnlimitedToken', function (accounts) {
-  let ue, ut
+  let ue, ut, rng
   const owner = accounts[0]
-  const investor = accounts[1]
 
   describe('UT Tests', async () => {
     beforeEach(async function () {
+      rng = await RandomNumberGenerator.new({
+        from: owner,
+      })
       ut = await UnlimitedToken.new({
         from: owner,
       })
-      ue = await UnlimitedEvolution.new(ut.address, { from: owner })
+      ue = await UnlimitedEvolution.new(ut.address, rng.address, { from: owner })
       await ut.setGameContract(ue.address)
+      await rng.setUnlimitedAddress(ue.address)
       await ue.testModeSwitch()
     })
 

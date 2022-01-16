@@ -55,7 +55,8 @@ contract RandomNumberGenerator is VRFConsumerBase, Ownable {
     /** 
      * Requests randomness 
      */
-    function getRandomNumber(UnlimitedEvolution.type_character _typeCharacter, UnlimitedEvolution.gender_character _genderCharacter, address _address) public {
+    function getRandomNumber(UnlimitedEvolution.type_character _typeCharacter, UnlimitedEvolution.gender_character _genderCharacter, address _address) external {
+        require(msg.sender == address(unlimited), "Not allowed to use this function");
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
         typeCharacter = _typeCharacter;
         genderCharacter = _genderCharacter;

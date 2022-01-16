@@ -14,12 +14,6 @@ export const Screen = styled.div`
 `
 
 // Used for providing space between components
-export const SpacerXSmall = styled.div`
-  height: 8px;
-  width: 8px;
-`
-
-// Used for providing space between components
 export const SpacerSmall = styled.div`
   height: 16px;
   width: 16px;
@@ -51,6 +45,41 @@ export const Container = styled.div`
   background-position: center;
 `
 
+export const ContainerCard = styled.div`
+  display: flex;
+  flex: ${({ flex }) => (flex ? flex : 0)};
+  flex-direction: ${({ fd }) => (fd ? fd : 'column')};
+  justify-content: ${({ jc }) => (jc ? jc : 'flex-start')};
+  align-items: ${({ ai }) => (ai ? ai : 'flex-start')};
+  background-color: ${({ bc }) => (bc ? bc : 'none')};
+  width: 100%;
+  background-image: ${({ image }) => (image ? `url(${image})` : 'none')};
+  background-size: cover;
+  background-position: center;
+  padding: 20px 20px;
+  box-shadow: 5px 5px 5px 5px black;
+  border: ${({ border }) => (border ? border : 'none')};
+`
+
+export const ContainerCardMyCharacters = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: ${({ jc }) => (jc ? jc : 'flex-start')};
+  align-items: center;
+  background-color: ${({ bc }) => (bc ? bc : 'none')};
+  width: auto;
+  background-size: cover;
+  background-position: center;
+  padding: 20px 20px;
+  box-shadow: 5px 5px 5px 5px black;
+  border: 2px solid;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+`
+
 export const TextTitle = styled.p`
   color: ${({ color }) => (color ? color : 'white')};
   font-size: ${({ fs }) => (fs ? `${fs}px` : '40px')};
@@ -68,16 +97,20 @@ export const TextSubTitle = styled.p`
 
 export const TextDescription = styled.p`
   color: var(--white);
-  font-size: 14px;
+  font-size: ${({ fs }) => (fs ? `${fs}px` : '14px')};
   font-weight: 600;
   margin-bottom: 0px;
   text-align: center;
 `
 
-export const StyledClickable = styled.div`
-  :active {
-    opacity: 0.6;
-  }
+export const TextButtonStyle = styled.div`
+  color: var(--white);
+  font-size: ${({ fs }) => (fs ? fs : '20px')};
+  font-weight: 600;
+  background-color: ${({ bc }) => (bc ? bc : 'red')};
+  width: ${({ width }) => (width ? width : '100px')};
+  border-radius: ${({ br }) => (br ? br : '20px')};
+  text-align: center;
 `
 
 export const ModalBackground = styled.div`
@@ -127,6 +160,16 @@ export const down = styled.div`
   border-radius: 25px;
 `
 
+export const Select = styled.select`
+  height: 50px;
+  font-size: 1.1em;
+  font-weight: 700;
+  border-radius: 3px;
+  border: 2px solid black;
+  color: ${({ color }) => (color ? color : 'black')};
+  background-color: ${({ bc }) => (bc ? bc : 'white')};
+`
+
 export const ButtonLink = styled(Link)`
   color: #fff;
   text-decoration: none;
@@ -141,10 +184,15 @@ export const Button = styled.button`
   background: ${(props) => (props.primary ? 'black' : 'white')};
   color: ${(props) => (props.primary ? 'white' : 'black')};
   font-size: 1em;
-  margin: 1em;
+  margin-top: 1em;
   padding: 0.25em 1em;
   border: 2px solid white;
   border-radius: 3px;
+
+  :hover {
+    background-color: ${({ bchover }) => (bchover ? bchover : '#46bcb9')};
+    color: ${({ colorhover }) => (colorhover ? colorhover : 'auto')};
+  }
 `
 
 export const ButtonHome = styled.div`
@@ -158,7 +206,6 @@ export const ButtonHome = styled.div`
   justify-content: center;
   text-align: center;
   font-size: 24px;
-  font-weight: 500;
   font-weight: bold;
   text-shadow: 1px 1px 2px black;
   border: 2px solid black;
@@ -169,11 +216,19 @@ export const ButtonHome = styled.div`
   }
 `
 
-export const Input = styled.input`
-  padding: 0.5em;
-  margin: 0.5em;
-  color: ${(props) => props.inputColor || 'black'};
-  background: papayawhip;
-  border: none;
+export const ButtonTop = styled.button`
+  background: ${(props) => (props.primary ? 'black' : 'white')};
+  color: ${(props) => (props.primary ? 'white' : 'black')};
+  font-size: 1.2em;
+  font-weight: 700;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid white;
   border-radius: 3px;
+  min-height: 50px;
+  border-radius: 3px;
+
+  :hover {
+    background-color: ${({ bc }) => (bc ? bc : '#46bcb9')};
+  }
 `

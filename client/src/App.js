@@ -146,7 +146,7 @@ const App = () => {
     }
     balanceContractStuff()
     balanceMyStuff()
-  }, [ueContract, web3, accounts])
+  }, [ueContract, web3, accounts, stuffs])
 
   // EVENTS
   useEffect(() => {

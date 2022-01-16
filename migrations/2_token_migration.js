@@ -13,5 +13,5 @@ module.exports = async function (deployer) {
   randomNumberGenerator.setUnlimitedAddress(unlimitedEvolution.address)
 
   // TESTS GANACHE
-  // await unlimitedEvolution.testModeSwitch();
+  await unlimitedEvolution.testModeSwitch();
 };

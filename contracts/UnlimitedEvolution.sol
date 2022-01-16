@@ -32,8 +32,8 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     // Only for tests, to avoid chainlink
     bool public testMode;
     
-    UnlimitedToken unlimitedToken;
-    RandomNumberGenerator randomNumberGenerator;
+    UnlimitedToken public unlimitedToken;
+    RandomNumberGenerator public randomNumberGenerator;
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }

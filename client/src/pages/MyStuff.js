@@ -35,7 +35,7 @@ const MyStuff = ({
     <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Boutique</s.TextTitle>
       <div style={{ flexDirection: 'row' }}>
-        <select onChange={(e) => setTypeBuyStuff(e.target.value)}>
+        <s.Select onChange={(e) => setTypeBuyStuff(e.target.value)}>
           {stuffType.map((stuff, i) => {
             if (balancesContractStuff[i] !== '0') {
               return (
@@ -45,31 +45,33 @@ const MyStuff = ({
               )
             } else return ''
           })}
-        </select>
+        </s.Select>
 
-        <s.Button
+        <s.ButtonTop
           disabled={loading ? 1 : 0}
           onClick={() => buyStuff(typeBuyStuff)}
           primary={loading ? '' : 'primary'}
         >
           Achat équipement
-        </s.Button>
+        </s.ButtonTop>
       </div>
 
       <s.SpacerLarge />
 
       <s.TextTitle>Mon Equipement</s.TextTitle>
-      {characters && characters.length > 0 && stuffs.length > 0 ? (
+      {characters && characters.length > 0 && stuffs.length > 0 || balancesMyStuff[5] > 0 ? (
         <>
           <s.TextSubTitle>
             Veuillez choisir un personnage à équiper
           </s.TextSubTitle>
-          <select
+          <s.Select
+            bc="#46bcb9"
+            color="white"
             onChange={(e) => {
               handleSelectedCharacter(e.target.value)
             }}
           >
-            <option value="">Please choose a character</option>
+            <option value="">Choisissez un personnage</option>
             {characters.map((character) => (
               <option
                 key={character.id}
@@ -78,7 +80,7 @@ const MyStuff = ({
                 ID #{character.id}
               </option>
             ))}
-          </select>
+          </s.Select>
         </>
       ) : (
         <s.TextSubTitle style={{ marginTop: 50 }}>
@@ -89,14 +91,16 @@ const MyStuff = ({
       )}
       <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
         {balancesMyStuff[5] > 0 && (
-          <s.Container ai="center" style={{ minWidth: '200px', marginTop: 50 }}>
+          <s.ContainerCard ai="center" jc="space-around" style={{ minHeight: 397, margin: 30 }}>
             <StuffRenderer stuffId={5} size={200} />
+            <s.Container bc="black" ai="center" flex="1" jc="center">
             <s.TextDescription>Name : POTION</s.TextDescription>
             <s.TextDescription>HP : FULL</s.TextDescription>
             <s.TextDescription>Stamina : FULL</s.TextDescription>
             <s.TextDescription>
               Quantity : {balancesMyStuff[5]}
             </s.TextDescription>
+            </s.Container>
 
             {characters &&
             characters.length > 0 &&
@@ -112,39 +116,38 @@ const MyStuff = ({
             ) : (
               ''
             )}
-          </s.Container>
+          </s.ContainerCard>
         )}
         {stuffs &&
           stuffs.length > 0 &&
           stuffs.map((stuff) => {
             return (
-              <div key={stuff.id}>
-                <s.Container
-                  ai="center"
-                  style={{ minWidth: '200px', marginTop: 50, marginRight: 50 }}
-                >
+              <div key={stuff.id} style={{ margin: 30 }}>
+                <s.ContainerCard ai="center" style={{ minWidth: 200 }}>
                   <StuffRenderer stuffId={stuff.id} size={200} />
-                  <s.TextDescription>
-                    Name : {stuffType[stuff.id]}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Bonus Attack 1 : {stuff.bonusAttack1}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Bonus Attack 2 : {stuff.bonusAttack2}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Bonus Defence 1 : {stuff.bonusDefence1}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Bonus Defence 2 : {stuff.bonusDefence2}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Type : {stuff.typeStuff === '0' ? 'WEAPON' : 'SHIELD'}
-                  </s.TextDescription>
-                  <s.TextDescription>
-                    Quantity : {balancesMyStuff[stuff.id]}
-                  </s.TextDescription>
+                  <s.Container bc="black" ai="center">
+                    <s.TextDescription>
+                      Name : {stuffType[stuff.id]}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Bonus Attack 1 : {stuff.bonusAttack1}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Bonus Attack 2 : {stuff.bonusAttack2}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Bonus Defence 1 : {stuff.bonusDefence1}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Bonus Defence 2 : {stuff.bonusDefence2}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Type : {stuff.typeStuff === '0' ? 'WEAPON' : 'SHIELD'}
+                    </s.TextDescription>
+                    <s.TextDescription>
+                      Quantity : {balancesMyStuff[stuff.id]}
+                    </s.TextDescription>
+                  </s.Container>
 
                   {characters && characters.length > 0 && typeEquipChar ? (
                     <s.Button
@@ -152,13 +155,12 @@ const MyStuff = ({
                       onClick={() => equipStuff(typeEquipChar.id, stuff.id)}
                       primary={loading ? '' : 'primary'}
                     >
-                      Equiper stuff
+                      Equiper Stuff
                     </s.Button>
                   ) : (
                     ''
                   )}
-                </s.Container>
-                <s.SpacerSmall />
+                </s.ContainerCard>
               </div>
             )
           })}

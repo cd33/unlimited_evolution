@@ -28,7 +28,7 @@ const MyEnemies = ({
         ) {
           tempArray.push(character)
         }
-        return ""
+        return ''
       })
       setCharactersDisplayed(tempArray)
     }
@@ -54,15 +54,13 @@ const MyEnemies = ({
           <s.TextSubTitle>
             Veuillez choisir un personnage pour combattre
           </s.TextSubTitle>
-          {/* <select onChange={(e) => setSelectedCharacter(e.target.value)}> */}
-          <select onChange={(e) => handleSelectedCharacter(e.target.value)}>
-            <option value="">Please choose a character</option>
+          <s.Select onChange={(e) => handleSelectedCharacter(e.target.value)}>
+            <option value="">Choisissez un personnage</option>
             {characters.map((character) => {
               if (timeStamp - 86400 > character.lastRest) {
                 return (
                   <option
                     key={character.id}
-                    // value={character.id}
                     value={`{"id":${character.id},"level":${character.level}}`}
                   >
                     ID #{character.id}
@@ -70,12 +68,12 @@ const MyEnemies = ({
                 )
               } else return ''
             })}
-          </select>
+          </s.Select>
         </>
       ) : (
         <>
           <s.TextSubTitle style={{ marginTop: 50 }}>
-            Pour débuter un combat, <br/> Vous devez posséder un personnage
+            Pour débuter un combat, <br /> Vous devez posséder un personnage
           </s.TextSubTitle>
           <s.ButtonHome>
             <s.ButtonLink to="/MyCharacters">
@@ -85,31 +83,53 @@ const MyEnemies = ({
         </>
       )}
 
-      <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
+      <s.Container
+        fd="row"
+        jc="center"
+        style={{ flexWrap: 'wrap', marginTop: 30 }}
+      >
         {selectedCharacter &&
           (charactersDisplayed.length > 0 ? (
             charactersDisplayed.map((character) => {
               return (
-                <div key={character.id}>
-                  <s.Container
+                <div key={character.id} style={{ margin: 15 }}>
+                  <s.ContainerCard
                     ai="center"
-                    style={{ minWidth: '200px', margin: 10 }}
+                    bc="black"
+                    border="2px solid white"
+                    style={{ minWidth: 200, borderRadius: 10 }}
                   >
                     <CharacterRenderer character={character} size={300} />
-                    <s.TextDescription>ID: {character.id}</s.TextDescription>
-                    <s.TextDescription>
-                      Level: {character.level}
-                    </s.TextDescription>
-                    <s.TextDescription>
-                      Type: {typeCharacterName(character.typeCharacter)}
-                    </s.TextDescription>
-                    <s.TextDescription>
-                      Gender: {typeGenderName(character.genderCharacter)}
-                    </s.TextDescription>
+
+                    <s.Container
+                      fd="row"
+                      jc="space-around"
+                      style={{ marginTop: 30 }}
+                    >
+                      <s.TextButtonStyle>ID: {character.id}</s.TextButtonStyle>
+                      <s.TextButtonStyle bc="green">
+                        Level: {character.level}
+                      </s.TextButtonStyle>
+                    </s.Container>
+
+                    <s.Container
+                      fd="row"
+                      jc="space-around"
+                      style={{ marginTop: 20, fontSize: 16 }}
+                    >
+                      <s.TextDescription fs="16">
+                        Type: {typeCharacterName(character.typeCharacter)}
+                      </s.TextDescription>
+                      <s.TextDescription fs="16">
+                        Gender: {typeGenderName(character.genderCharacter)}
+                      </s.TextDescription>
+                    </s.Container>
 
                     {characters && characters.length > 0 && (
                       <s.Container fd="row" jc="center">
                         <s.Button
+                        bchover="white"
+                        colorhover="black"
                           disabled={loading ? 1 : 0}
                           onClick={() =>
                             fight(selectedCharacter.id, character.id)
@@ -120,7 +140,7 @@ const MyEnemies = ({
                         </s.Button>
                       </s.Container>
                     )}
-                  </s.Container>
+                  </s.ContainerCard>
                   <s.SpacerSmall />
                 </div>
               )

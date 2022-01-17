@@ -59,47 +59,64 @@ const MyStuff = ({
       <s.SpacerLarge />
 
       <s.TextTitle>Mon Equipement</s.TextTitle>
-      {characters && characters.length > 0 && stuffs.length > 0 || balancesMyStuff[5] > 0 ? (
+      {characters && characters.length > 0 ? (
+        stuffs.length > 0 || balancesMyStuff[5] > 0 ? (
+          <>
+            <s.TextSubTitle>
+              Veuillez choisir un personnage à équiper
+            </s.TextSubTitle>
+            <s.Select
+              bc="#46bcb9"
+              color="white"
+              onChange={(e) => {
+                handleSelectedCharacter(e.target.value)
+              }}
+            >
+              <option value="">Choisissez un personnage</option>
+              {characters.map((character) => (
+                <option
+                  key={character.id}
+                  value={`{"id":${character.id},"hp":${character.hp},"stamina":${character.stamina}}`}
+                >
+                  ID #{character.id}
+                </option>
+              ))}
+            </s.Select>
+          </>
+        ) : (
+          <s.TextSubTitle style={{ marginTop: 50 }}>
+            Vous ne possédez pas encore d'équipement.
+            <br />
+            La boutique est juste au dessus.
+          </s.TextSubTitle>
+        )
+      ) : (
         <>
           <s.TextSubTitle>
-            Veuillez choisir un personnage à équiper
+            Vous ne possédez pas encore de Personnage.
           </s.TextSubTitle>
-          <s.Select
-            bc="#46bcb9"
-            color="white"
-            onChange={(e) => {
-              handleSelectedCharacter(e.target.value)
-            }}
-          >
-            <option value="">Choisissez un personnage</option>
-            {characters.map((character) => (
-              <option
-                key={character.id}
-                value={`{"id":${character.id},"hp":${character.hp},"stamina":${character.stamina}}`}
-              >
-                ID #{character.id}
-              </option>
-            ))}
-          </s.Select>
+          <s.ButtonHome>
+            <s.ButtonLink to="/MyCharacters">
+              Commencer l'aventure !
+            </s.ButtonLink>
+          </s.ButtonHome>
         </>
-      ) : (
-        <s.TextSubTitle style={{ marginTop: 50 }}>
-          Vous ne possédez pas encore d'équipement.
-          <br />
-          La boutique est juste au dessus.
-        </s.TextSubTitle>
       )}
       <s.Container fd="row" jc="center" style={{ flexWrap: 'wrap' }}>
         {balancesMyStuff[5] > 0 && (
-          <s.ContainerCard ai="center" jc="space-around" style={{ minHeight: 397, margin: 30 }}>
+          <s.ContainerCard
+            ai="center"
+            jc="space-around"
+            style={{ minHeight: 397, margin: 30 }}
+          >
             <StuffRenderer stuffId={5} size={200} />
             <s.Container bc="black" ai="center" flex="1" jc="center">
-            <s.TextDescription>Name : POTION</s.TextDescription>
-            <s.TextDescription>HP : FULL</s.TextDescription>
-            <s.TextDescription>Stamina : FULL</s.TextDescription>
-            <s.TextDescription>
-              Quantity : {balancesMyStuff[5]}
-            </s.TextDescription>
+              <s.TextDescription>Name : POTION</s.TextDescription>
+              <s.TextDescription>HP : FULL</s.TextDescription>
+              <s.TextDescription>Stamina : FULL</s.TextDescription>
+              <s.TextDescription>
+                Quantity : {balancesMyStuff[5]}
+              </s.TextDescription>
             </s.Container>
 
             {characters &&

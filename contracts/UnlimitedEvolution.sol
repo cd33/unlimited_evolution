@@ -200,7 +200,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
 
     /**
      * @dev Owner withdraws an amount of LINK.
-     * @param value Value of LINK.
+     * @param value Amount of LINK.
      */
     function withdrawLink(uint256 value) external onlyOwner {
         randomNumberGenerator.withdraw(value);

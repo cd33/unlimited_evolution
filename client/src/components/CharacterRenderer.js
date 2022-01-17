@@ -8,8 +8,6 @@ const CharacterRenderer = ({ character = null, size, style }) => {
 
   let dnaStr = String(character.dna)
 
-  while (dnaStr.length < 16) dnaStr = '0' + dnaStr
-
   const attribution = (dna, first, end) => {
     // 50%, 35%, 10% et 5%
     let res = dna.substring(first, end) % 20

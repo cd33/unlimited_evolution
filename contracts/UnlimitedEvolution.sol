@@ -287,7 +287,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param _defence1 Defence number 1 of the token.
      * @param _defence2 Defence number 2 of the token.
      */
-    function attributesLevelUp(uint24 _tokenId, uint24 _attack1, uint24 _attack2, uint24 _defence1, uint24 _defence2) external {
+    function attributesLevelUp(uint24 _tokenId, uint16 _attack1, uint16 _attack2, uint16 _defence1, uint16 _defence2) external {
         require(_characterDetails[_tokenId].attributePoints == _attack1 + _attack2 + _defence1 + _defence2, "Wrong amount of points to attribute");
         _characterDetails[_tokenId].attack1 += _attack1;
         _characterDetails[_tokenId].attack2 += _attack2;
@@ -397,6 +397,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param _myTokenId Id of the fighter number 1.
      * @param _rivalTokenId Id of the fighter number 2.
      */
+
     function fight(uint24 _myTokenId, uint24 _rivalTokenId) external {
         require(_ownerOf(_myTokenId), "You don't own this NFT");
         require(_ownerOf(_myTokenId) != _ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");

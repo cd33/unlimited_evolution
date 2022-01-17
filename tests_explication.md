@@ -14,7 +14,7 @@ Pour les fonctions suivantes, nous vérifions si :
   - L'événement est émis
 * Fonction Withdraw
   - Le solde du propriétaire augmente
-* Fonction Mint
+* Fonction Mint CreateCharacter
   - Le NFT Character et les NFTs Stuff sont créés et le demandeur en est le propriétaire
   - L'événement est émis
 * Fonction Fight
@@ -63,7 +63,7 @@ For the following functions, we check if :
   - The event is emitted
 * Withdraw function
   - The owner's balance increases
-* Mint function
+* Mint function CreateCharacter
   - The NFT Character and NFTs Stuff are created and the requester is the owner
   - The event is emitted
 * Fight function

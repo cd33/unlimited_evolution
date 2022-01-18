@@ -1,0 +1,2 @@
+*{margin:0;padding:0;box-sizing:border-box;list-style-type:none;outline:none;border:none;text-decoration:none;--white:#fff;--blue:#5f9ea0;--red:#ff1493}.image-container{background-color:#ccc;overflow:hidden;position:relative;max-width:800px;margin:20px auto}.image{position:absolute;width:100%;height:100%;opacity:0}.image.thumb{opacity:1;-webkit-filter:blur(10px);filter:blur(10px);transition:opacity 1s ease-out;position:absolute}.image.thumb.isLoaded{opacity:0}.image.isLoaded{transition:opacity 1s ease-out;opacity:1}
+/*# sourceMappingURL=main.f1a9e059.chunk.css.map */

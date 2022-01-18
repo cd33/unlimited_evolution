@@ -15,6 +15,7 @@ contract UnlimitedToken is Ownable {
     string public symbol = "ULT";
     uint8 public decimals = 18;
     uint256 public totalSupply;
+    uint mintNumber;
 
     /**
      * @dev Custom parameters to have a tax in swaps 
@@ -60,11 +61,13 @@ contract UnlimitedToken is Ownable {
     /**
      * @dev When a level up happens in game contract, a mint is triggered
      * @param receiver Address to receive the mint
-     * @param amount The quantity of token to mint 
      */
-    function levelUpMint(address receiver, uint amount) external {
+    function levelUpMint(address receiver) external {
         require(msg.sender==gameContract);
         
+        uint amount=10000*1/2**(mintNumber%100); //totalMint : 2M
+        mintNumber++;
+
         balanceOf[receiver] += amount*10**18;
         totalSupply += amount;
         

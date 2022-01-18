@@ -15,7 +15,7 @@ contract UnlimitedToken is Ownable {
     string public symbol = "ULT";
     uint8 public decimals = 18;
     uint256 public totalSupply;
-    uint mintNumber=1;
+    uint mintNumber;
 
     /**
      * @dev Custom parameters to have a tax in swaps 

@@ -1,35 +1,80 @@
-import React from 'react'
-import parts from './parts'
+import React, { useState, useRef } from 'react'
+import classnames from 'classnames'
+import { useIntersection } from './intersectionObserver'
+import '../styles/imageRenderer.scss'
+import s_1 from "../img/assetsStuffs/swordBasic.png";
+import s_2 from "../img/assetsStuffs/shieldBasic.png";
+import s_3 from "../img/assetsStuffs/swordExcalibur.png";
+import s_4 from "../img/assetsStuffs/shieldAegis.png";
+
+const parts = {
+  stuffs: ["", s_1, s_2, s_3, s_4]
+};
 
 const CharacterRenderer = ({ character = null, size, style }) => {
-  if (!character) {
-    return null
-  }
-
-  let dnaStr = String(character.dna)
-
-  const attribution = (dna, first, end) => {
-    // 50%, 35%, 10% et 5%
-    let res = dna.substring(first, end) % 20
-    if (res === 0) return 0
-    if (res === 1 || res === 2) return 1
-    if (res > 2 && res < 10) return 2
-    if (res > 9 && res < 20) return 3
-  }
-
-  let characterDetails = {
-    bg: character.typeCharacter,
-    hair: attribution(dnaStr, 2, 4),
-    head: attribution(dnaStr, 4, 6),
-    upbody: attribution(dnaStr, 6, 8),
-    lowbody: attribution(dnaStr, 8, 10),
-    shoes: attribution(dnaStr, 10, 12),
-  }
-
   const characterStyle = {
     width: '100%',
     height: '100%',
     position: 'absolute',
+  }
+
+  const ImageRenderer = ({ url, thumb, width, height }) => {
+    const [isLoaded, setIsLoaded] = useState(false)
+    const [isInView, setIsInView] = useState(false)
+    const imgRef = useRef()
+    useIntersection(imgRef, () => {
+      setIsInView(true)
+    })
+
+    const handleOnLoad = () => {
+      setIsLoaded(true)
+    }
+    return (
+      <div
+        className="image-container"
+        ref={imgRef}
+        style={{
+          paddingBottom: `${(height / width) * 100}%`,
+          width: '100%',
+        }}
+      >
+        {isInView && (
+          <>
+            <img
+              className={classnames('image', 'thumb', {
+                ['isLoaded']: !!isLoaded,
+              })}
+              alt={'nft_thumb'}
+              src={thumb}
+              style={characterStyle}
+            />
+            <img
+              className={classnames('image', {
+                ['isLoaded']: !!isLoaded,
+              })}
+              alt={'nft'}
+              src={url}
+              onLoad={handleOnLoad}
+              style={characterStyle}
+            />
+            {character.weapon !== '0' && (
+              <img
+                alt={'weapon'}
+                src={parts.stuffs[character.weapon]}
+                style={characterStyle}
+              />
+            )}
+            {character.shield !== '0' && (
+              <img
+                alt={'shield'}
+                src={parts.stuffs[character.shield]}
+                style={characterStyle}
+              />
+            )}
+          </>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -37,55 +82,17 @@ const CharacterRenderer = ({ character = null, size, style }) => {
       style={{
         minWidth: size,
         minHeight: size,
-        background: 'blue',
         position: 'relative',
         ...style,
       }}
     >
-      <img
-        alt={'bg'}
-        src={parts.bg[characterDetails.bg]}
-        style={characterStyle}
+      <ImageRenderer
+        key={character.id}
+        url={`https://gateway.pinata.cloud/ipfs/QmZEC9RAZ2bLdgdXEg3x2zno4Cq62SzMMZbjCyvgkP3KxG/${character.id}.png`}
+        thumb={`https://gateway.pinata.cloud/ipfs/QmZEC9RAZ2bLdgdXEg3x2zno4Cq62SzMMZbjCyvgkP3KxG/${character.id}.png`}
+        width={size}
+        height={size}
       />
-      <img
-        alt={'hair'}
-        src={parts.hair[characterDetails.hair]}
-        style={characterStyle}
-      />
-      <img
-        alt={'head'}
-        src={parts.head[characterDetails.head]}
-        style={characterStyle}
-      />
-      <img
-        alt={'upbody'}
-        src={parts.upbody[characterDetails.upbody]}
-        style={characterStyle}
-      />
-      <img
-        alt={'lowbody'}
-        src={parts.lowbody[characterDetails.lowbody]}
-        style={characterStyle}
-      />
-      <img
-        alt={'shoes'}
-        src={parts.shoes[characterDetails.shoes]}
-        style={characterStyle}
-      />
-      {character.weapon !== '0' && (
-        <img
-          alt={'weapon'}
-          src={parts.stuffs[character.weapon]}
-          style={characterStyle}
-        />
-      )}
-      {character.shield !== '0' && (
-        <img
-          alt={'shield'}
-          src={parts.stuffs[character.shield]}
-          style={characterStyle}
-        />
-      )}
     </div>
   )
 }

@@ -41,82 +41,82 @@ contract('UnlimitedEvolution', function (accounts) {
       await ue.testModeSwitch()
     })
 
-    it('Update Mint Fee', async function () {
-      eventOwner = await ue.updateMintFee(readable('0.01'), { from: owner })
-      let mintFee = eventOwner.logs[0].args[0].toString()
-      expect(readable('0.01')).to.equal(mintFee)
+    // it('Update Mint Fee', async function () {
+    //   eventOwner = await ue.updateMintFee(readable('0.01'), { from: owner })
+    //   let mintFee = eventOwner.logs[0].args[0].toString()
+    //   expect(readable('0.01')).to.equal(mintFee)
 
-      await expectEvent(eventOwner, 'MintFeeUpdated', { mintFee: mintFee })
-    })
+    //   await expectEvent(eventOwner, 'MintFeeUpdated', { mintFee: mintFee })
+    // })
 
-    it('REVERT: updateMintFee() owner', async function () {
-      await expectRevert(
-        ue.updateMintFee(readable('0.01'), {
-          from: investor,
-        }),
-        'Ownable: caller is not the owner',
-      )
-    })
+    // it('REVERT: updateMintFee() owner', async function () {
+    //   await expectRevert(
+    //     ue.updateMintFee(readable('0.01'), {
+    //       from: investor,
+    //     }),
+    //     'Ownable: caller is not the owner',
+    //   )
+    // })
 
-    it('Update Stuff Fee', async function () {
-      eventOwner = await ue.updateStuffFee(readable('0.01'), { from: owner })
-      let stuffFee = eventOwner.logs[0].args[0].toString()
-      expect(readable('0.01')).to.equal(stuffFee)
+    // it('Update Stuff Fee', async function () {
+    //   eventOwner = await ue.updateStuffFee(readable('0.01'), { from: owner })
+    //   let stuffFee = eventOwner.logs[0].args[0].toString()
+    //   expect(readable('0.01')).to.equal(stuffFee)
 
-      await expectEvent(eventOwner, 'StuffFeeUpdated', { stuffFee: stuffFee })
-    })
+    //   await expectEvent(eventOwner, 'StuffFeeUpdated', { stuffFee: stuffFee })
+    // })
 
-    it('REVERT: updateStuffFee() owner', async function () {
-      await expectRevert(
-        ue.updateStuffFee(readable('0.01'), {
-          from: investor,
-        }),
-        'Ownable: caller is not the owner',
-      )
-    })
+    // it('REVERT: updateStuffFee() owner', async function () {
+    //   await expectRevert(
+    //     ue.updateStuffFee(readable('0.01'), {
+    //       from: investor,
+    //     }),
+    //     'Ownable: caller is not the owner',
+    //   )
+    // })
 
-    it('Update limit mint', async function () {
-      eventOwner = await ue.updateLimitMint(10, { from: owner })
-      let limitMint = eventOwner.logs[0].args[0].toString()
-      expect(10).to.equal(parseInt(limitMint))
+    // it('Update limit mint', async function () {
+    //   eventOwner = await ue.updateLimitMint(10, { from: owner })
+    //   let limitMint = eventOwner.logs[0].args[0].toString()
+    //   expect(10).to.equal(parseInt(limitMint))
 
-      await expectEvent(eventOwner, 'LimitUpdated', { limitMint: limitMint })
-    })
+    //   await expectEvent(eventOwner, 'LimitUpdated', { limitMint: limitMint })
+    // })
 
-    it('REVERT: updateLimitMint() owner', async function () {
-      await expectRevert(
-        ue.updateLimitMint(10, {
-          from: investor,
-        }),
-        'Ownable: caller is not the owner',
-      )
-    })
+    // it('REVERT: updateLimitMint() owner', async function () {
+    //   await expectRevert(
+    //     ue.updateLimitMint(10, {
+    //       from: investor,
+    //     }),
+    //     'Ownable: caller is not the owner',
+    //   )
+    // })
 
-    it('Withdraw Ether', async function () {
-      balanceBefore = await web3.eth.getBalance(owner)
-      await ue.askCreateCharacter(1, 1, {
-        value: readable('0.001'),
-        from: investor,
-      })
-      await ue.askCreateCharacter(1, 1, {
-        value: readable('0.001'),
-        from: investor,
-      })
-      await ue.askCreateCharacter(1, 1, {
-        value: readable('0.001'),
-        from: investor,
-      })
-      await ue.withdrawEth({ from: owner })
-      balanceAfter = await web3.eth.getBalance(owner)
-      expect(parseInt(balanceBefore)).to.be.lt(parseInt(balanceAfter)) // lower than
-    })
+    // it('Withdraw Ether', async function () {
+    //   balanceBefore = await web3.eth.getBalance(owner)
+    //   await ue.askCreateCharacter(1, 1, {
+    //     value: readable('0.001'),
+    //     from: investor,
+    //   })
+    //   await ue.askCreateCharacter(1, 1, {
+    //     value: readable('0.001'),
+    //     from: investor,
+    //   })
+    //   await ue.askCreateCharacter(1, 1, {
+    //     value: readable('0.001'),
+    //     from: investor,
+    //   })
+    //   await ue.withdrawEth({ from: owner })
+    //   balanceAfter = await web3.eth.getBalance(owner)
+    //   expect(parseInt(balanceBefore)).to.be.lt(parseInt(balanceAfter)) // lower than
+    // })
 
-    it('REVERT: withdrawEth() owner', async function () {
-      await expectRevert(
-        ue.withdrawEth({ from: investor }),
-        'Ownable: caller is not the owner',
-      )
-    })
+    // it('REVERT: withdrawEth() owner', async function () {
+    //   await expectRevert(
+    //     ue.withdrawEth({ from: investor }),
+    //     'Ownable: caller is not the owner',
+    //   )
+    // })
 
     describe('Create a Character', async () => {
       it('Creation askCreateCharacter()', async function () {
@@ -960,11 +960,16 @@ contract('UnlimitedEvolution', function (accounts) {
           from: investor,
         })
 
+        await ue.askCreateCharacter(2, 0, {
+          value: readable('0.001'),
+          from: investor,
+        })
+
         let test = await ue.getMyCharacters({ from: owner })
         expect(parseInt(test.length)).to.equal(0)
 
         test = await ue.getOthersCharacters({ from: owner })
-        expect(parseInt(test.length)).to.equal(1)
+        expect(parseInt(test.length)).to.equal(2)
       })
 
       it('GetMyStuffs', async function () {

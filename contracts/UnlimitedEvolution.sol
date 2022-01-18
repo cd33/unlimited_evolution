@@ -4,6 +4,7 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./RandomNumberGenerator.sol";
 import "./UnlimitedToken.sol";
 
@@ -24,7 +25,9 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     uint8 constant AEGIS = 4;
     uint8 constant POTION = 5;
     uint8 nextStuffId = 6;
-    uint24 nextCharacterId = 256;
+    uint16 nextBruteId = 256;
+    uint24 nextSpiritualId = 40256;
+    uint24 nextElementaryId = 80256;
     uint24 limitMint = 4000;
     uint24[] countMints = new uint8[](3);
     uint256 mintFee = 0.001 ether;
@@ -41,7 +44,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
 
     struct Character {
         uint24 id;
-        uint56 dna;
         uint16 level;
         uint24 xp;
         uint24 hp;
@@ -81,18 +83,18 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param _unlimitedTokenAddress Address of the contract UnlimitedToken.
      * @param _randomNumberGenerator Address of the contract RandomNumberGenerator.
      */
-    constructor(UnlimitedToken _unlimitedTokenAddress, RandomNumberGenerator _randomNumberGenerator) ERC1155("") {
+    constructor(UnlimitedToken _unlimitedTokenAddress, RandomNumberGenerator _randomNumberGenerator) ERC1155("ipfs://Qme6snoWc3reD5C9nuSxW3BpLyVci2iiD8vqCZSnA2i42p/{id}.json") {
         unlimitedToken = _unlimitedTokenAddress;
         randomNumberGenerator = _randomNumberGenerator;
-        _mint(address(this), BASIC_SWORD, 10**5, "");
+        _mint(address(this), BASIC_SWORD, 10**5, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(BASIC_SWORD))));
         _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, type_stuff.WEAPON);
-        _mint(address(this), BASIC_SHIELD, 10**5, "");
+        _mint(address(this), BASIC_SHIELD, 10**5, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(BASIC_SHIELD))));
         _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 2, 2, type_stuff.SHIELD);
-        _mint(address(this), EXCALIBUR, 1, "");
+        _mint(address(this), EXCALIBUR, 1, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(EXCALIBUR))));
         _stuffDetails[EXCALIBUR] = Stuff(EXCALIBUR, 10, 10, 10, 10, type_stuff.WEAPON);
-        _mint(address(this), AEGIS, 1, "");
+        _mint(address(this), AEGIS, 1, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(AEGIS))));
         _stuffDetails[AEGIS] = Stuff(AEGIS, 10, 10, 10, 10, type_stuff.SHIELD); 
-        _mint(address(this), POTION, 10**6, "");
+        _mint(address(this), POTION, 10**6, bytes(abi.encodePacked("Unlimited Evolution Potion #", Strings.toString(POTION))));
     }
 
     /**
@@ -144,6 +146,25 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @dev Emitted when the msg.sender burn a potion.
      */
     event PotionUsed(uint24 tokenId);
+
+    /**
+     * @dev Change the token's image URI
+     * @param _tokenId Id of the token.
+     */
+    function uri(uint _tokenId) override public pure returns(string memory) {
+        return string(abi.encodePacked(
+            "ipfs://Qme6snoWc3reD5C9nuSxW3BpLyVci2iiD8vqCZSnA2i42p/",
+            Strings.toString(_tokenId),
+            ".json"
+        ));
+    }
+
+    /**
+     * @dev Return the name of the contract
+     */
+    function name() public pure returns(string memory) {
+        return "Unlimited Evolution";
+    }
 
     /**
      * @dev The function changes the ERC20 token address
@@ -250,6 +271,22 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         }
     }
 
+    // /**
+    //  * @dev The function allows the allocation of "attributePoints" to the different characteristics.
+    //  * @param _tokenId Id of the token.
+    //  * @param _attack1 Attack number 1 of the token.
+    //  * @param _attack2 Attack number 2 of the token.
+    //  * @param _defence1 Defence number 1 of the token.
+    //  * @param _defence2 Defence number 2 of the token.
+    //  */
+    // function attributesLevelUp(uint24 _tokenId, uint16 _attack1, uint16 _attack2, uint16 _defence1, uint16 _defence2) external {
+    //     require(_characterDetails[_tokenId].attributePoints == _attack1 + _attack2 + _defence1 + _defence2, "Wrong amount of points to attribute");
+    //     _characterDetails[_tokenId].attack1 += _attack1;
+    //     _characterDetails[_tokenId].attack2 += _attack2;
+    //     _characterDetails[_tokenId].defence1 += _defence1;
+    //     _characterDetails[_tokenId].defence2 += _defence2;
+    // }
+
     /**
      * @dev The function assigns a number between 3 and 5 randomly to the attack characteristics using "randomNumber".
      * @param randomNumber Random number from chainlink.
@@ -264,6 +301,71 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     }
 
     /**
+     * @dev The Function ask to Chainlink a random number before to mint an NFT.
+     * @param _typeCharacter Type of character between BRUTE, SPIRITUAL, ELEMENTARY.
+     * @param _genderCharacter Gender of character between MASCULINE, FEMININE, OTHER.
+     */
+    function askCreateCharacter(type_character _typeCharacter, gender_character _genderCharacter) external payable {
+        require(msg.value == mintFee, "Wrong amount of fees");
+        require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
+        require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
+        if (!testMode) { // Only for tests, to avoid chainlink
+            randomNumberGenerator.getRandomNumber(_typeCharacter, _genderCharacter, msg.sender);
+        } else {
+            this.createCharacter(_typeCharacter, _genderCharacter, uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 10**16, msg.sender);
+        }
+    }
+
+    /**
+     * @dev The Function mint an NFT.
+     * @param _typeCharacter Type of character between BRUTE, SPIRITUAL, ELEMENTARY.
+     * @param _genderCharacter Gender of character between MASCULINE, FEMININE, OTHER.
+     * @param randomNumber Random number from chainlink.
+     * @param _address Address of the requestor (necessary for chainlink).
+     * Emits a "CharacterCreated" event.
+     */
+    function createCharacter(type_character _typeCharacter, gender_character _genderCharacter, uint256 randomNumber, address _address) external {
+        require(msg.sender == owner() || msg.sender == address(randomNumberGenerator) || msg.sender == address(this), "Not allowed to use this function");
+        uint8[] memory _attributes = _attributesMintDistribution(randomNumber);
+        uint24 nextCharacterId;
+        if(_typeCharacter == type_character.BRUTE) {
+            nextCharacterId = nextBruteId;
+        } else if (_typeCharacter == type_character.SPIRITUAL) {
+            nextCharacterId = nextSpiritualId;
+        } else {
+            nextCharacterId = nextElementaryId;
+        }
+        
+        _characterDetails[nextCharacterId] = Character(nextCharacterId, 1, 1, 100, 100, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, 0, 0, 0, _typeCharacter, _genderCharacter);
+        _balanceOfCharacters[_address]++;
+        countMints[uint8(_typeCharacter)]++;
+        _mint(_address, nextCharacterId, 1, bytes(abi.encodePacked("Unlimited Evolution Character #", Strings.toString(nextCharacterId))));
+        emit CharacterCreated(nextCharacterId);
+
+        if(_typeCharacter == type_character.BRUTE) {
+            nextBruteId++;
+        } else if (_typeCharacter == type_character.SPIRITUAL) {
+            nextSpiritualId++;
+        } else {
+            nextElementaryId++;
+        }
+    }
+
+    /**
+     * @dev The function allows the NFT to recover 100 health points and 100 stamina points.
+     * @param _tokenId Id of the token.
+     * Emits a "Rested" event.
+     */
+    function rest(uint24 _tokenId) external {
+        require(_ownerOf(_tokenId), "You don't own this NFT");
+        require(_characterDetails[_tokenId].stamina < 100 || _characterDetails[_tokenId].hp < 100, "You're character is already rested");
+        _characterDetails[_tokenId].lastRest = block.timestamp;
+        _characterDetails[_tokenId].stamina = 100;
+        _characterDetails[_tokenId].hp = 100;
+        emit Rested(_tokenId);
+    }
+
+        /**
      * @dev One experience point is added and if the experience number reaches % 10 == 0 then the NFT increases one level and gains 10 points to attribute to his stats.
      * @param _tokenId Id of the token.
      * Emits a "LevelUp" event.
@@ -277,22 +379,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
             this.safeTransferFrom(address(this), msg.sender, POTION, 1, "");
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
-    }
-
-    /**
-     * @dev The function allows the allocation of "attributePoints" to the different characteristics.
-     * @param _tokenId Id of the token.
-     * @param _attack1 Attack number 1 of the token.
-     * @param _attack2 Attack number 2 of the token.
-     * @param _defence1 Defence number 1 of the token.
-     * @param _defence2 Defence number 2 of the token.
-     */
-    function attributesLevelUp(uint24 _tokenId, uint16 _attack1, uint16 _attack2, uint16 _defence1, uint16 _defence2) external {
-        require(_characterDetails[_tokenId].attributePoints == _attack1 + _attack2 + _defence1 + _defence2, "Wrong amount of points to attribute");
-        _characterDetails[_tokenId].attack1 += _attack1;
-        _characterDetails[_tokenId].attack2 += _attack2;
-        _characterDetails[_tokenId].defence1 += _defence1;
-        _characterDetails[_tokenId].defence2 += _defence2;
     }
 
     /**
@@ -341,55 +427,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
             }
         }
         emit Fighted(_myTokenId, _rivalTokenId, _substrateLifeToRival, _substrateLifeToMe);
-    }
-
-    /**
-     * @dev The Function ask to Chainlink a random number before to mint an NFT.
-     * @param _typeCharacter Type of character between BRUTE, SPIRITUAL, ELEMENTARY.
-     * @param _genderCharacter Gender of character between MASCULINE, FEMININE, OTHER.
-     */
-    function askCreateCharacter(type_character _typeCharacter, gender_character _genderCharacter) external payable {
-        require(msg.value == mintFee, "Wrong amount of fees");
-        require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
-        require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
-        if (!testMode) { // Only for tests, to avoid chainlink
-            randomNumberGenerator.getRandomNumber(_typeCharacter, _genderCharacter, msg.sender);
-        } else {
-            this.createCharacter(_typeCharacter, _genderCharacter, uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 10**16, msg.sender);
-        }
-    }
-
-    /**
-     * @dev The Function mint an NFT.
-     * @param _typeCharacter Type of character between BRUTE, SPIRITUAL, ELEMENTARY.
-     * @param _genderCharacter Gender of character between MASCULINE, FEMININE, OTHER.
-     * @param randomNumber Random number from chainlink.
-     * @param _address Address of the requestor (necessary for chainlink).
-     * Emits a "CharacterCreated" event.
-     */
-    function createCharacter(type_character _typeCharacter, gender_character _genderCharacter, uint256 randomNumber, address _address) external {
-        require(msg.sender == owner() || msg.sender == address(randomNumberGenerator) || msg.sender == address(this), "Not allowed to use this function");
-        uint8[] memory _attributes = _attributesMintDistribution(randomNumber);
-        _characterDetails[nextCharacterId] = Character(nextCharacterId, uint56(randomNumber), 1, 1, 100, 100, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, 0, 0, 0, _typeCharacter, _genderCharacter);
-        _balanceOfCharacters[_address]++;
-        countMints[uint8(_typeCharacter)]++;
-        _mint(_address, nextCharacterId, 1, "");
-        emit CharacterCreated(nextCharacterId);
-        nextCharacterId++;
-    }
-
-    /**
-     * @dev The function allows the NFT to recover 100 health points and 100 stamina points.
-     * @param _tokenId Id of the token.
-     * Emits a "Rested" event.
-     */
-    function rest(uint24 _tokenId) external {
-        require(_ownerOf(_tokenId), "You don't own this NFT");
-        require(_characterDetails[_tokenId].stamina < 100 || _characterDetails[_tokenId].hp < 100, "You're character is already rested");
-        _characterDetails[_tokenId].lastRest = block.timestamp;
-        _characterDetails[_tokenId].stamina = 100;
-        _characterDetails[_tokenId].hp = 100;
-        emit Rested(_tokenId);
     }
 
     /**
@@ -502,7 +539,19 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     function getMyCharacters() external view returns(Character[] memory){
         uint8 count;
         Character[] memory myCharacters = new Character[](_balanceOfCharacters[msg.sender]);
-        for (uint24 i = 256; i < nextCharacterId; i++) {
+        for (uint16 i = 256; i < nextBruteId; i++) {
+            if (_ownerOf(i)) {
+                myCharacters[count] = _characterDetails[i];
+                count++;
+            }
+        }
+        for (uint24 i = 40256; i < nextSpiritualId; i++) {
+            if (_ownerOf(i)) {
+                myCharacters[count] = _characterDetails[i];
+                count++;
+            }
+        }
+        for (uint24 i = 80256; i < nextElementaryId; i++) {
             if (_ownerOf(i)) {
                 myCharacters[count] = _characterDetails[i];
                 count++;
@@ -517,8 +566,20 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      */
     function getOthersCharacters() external view returns(Character[] memory){
         uint24 count;
-        Character[] memory othersCharacters = new Character[](nextCharacterId - 256 - _balanceOfCharacters[msg.sender]);
-        for (uint24 i = 256; i < nextCharacterId; i++) {
+        Character[] memory othersCharacters = new Character[]((nextBruteId - 256) + ((nextSpiritualId - 40256)) + (nextElementaryId - 80256) - _balanceOfCharacters[msg.sender]);
+        for (uint16 i = 256; i < nextBruteId; i++) {
+            if (!_ownerOf(i)) {
+                othersCharacters[count] = _characterDetails[i];
+                count++;
+            }
+        }
+        for (uint24 i = 40256; i < nextSpiritualId; i++) {
+            if (!_ownerOf(i)) {
+                othersCharacters[count] = _characterDetails[i];
+                count++;
+            }
+        }
+        for (uint24 i = 80256; i < nextElementaryId; i++) {
             if (!_ownerOf(i)) {
                 othersCharacters[count] = _characterDetails[i];
                 count++;

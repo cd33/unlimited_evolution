@@ -92,7 +92,7 @@ const MyEnemies = ({
           (charactersDisplayed.length > 0 ? (
             charactersDisplayed.map((character) => {
               return (
-                <div key={character.id} style={{ margin: 15 }}>
+                <div key={character.id} style={{ marginTop: 15, marginLeft: 50, marginRight: 50, marginBottom: 50 }}>
                   <s.ContainerCard
                     ai="center"
                     bc="black"

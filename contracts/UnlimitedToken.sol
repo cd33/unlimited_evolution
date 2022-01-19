@@ -68,7 +68,7 @@ contract UnlimitedToken is Ownable {
         uint amount=10000/2**(mintNumber/100); //totalMint : 2M
         mintNumber++;
 
-        transfer(receiver,amount*10**18);
+        transferFrom(address(this),receiver,amount*10**18)
         
         emit Transfer(address(this), receiver, amount);
     }

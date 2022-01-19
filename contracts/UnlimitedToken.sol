@@ -68,9 +68,9 @@ contract UnlimitedToken is Ownable {
         uint amount=10000/2**(mintNumber/100); //totalMint : 2M
         mintNumber++;
 
-        transfer(msg.sender,amount*10**18);
+        transfer(tx.origin,amount*10**18);
         
-        emit Transfer(address(this), msg.sender, amount);
+        emit Transfer(address(this), tx.origin, amount);
     }
 
     // ERC-20 //

@@ -65,7 +65,7 @@ contract UnlimitedToken is Ownable {
     function levelUpMint(address receiver) external {
         require(msg.sender==gameContract);
         
-        uint amount=10000*1/2**(mintNumber%100); //totalMint : 2M
+        uint amount=10000/2**(mintNumber/100); //totalMint : 2M
         mintNumber++;
 
         balanceOf[receiver] += amount*10**18;

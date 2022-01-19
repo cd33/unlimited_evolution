@@ -61,7 +61,7 @@ const Home = () => {
         <br />
       </s.TextSubTitle>
       <s.ButtonHome>
-        <s.ButtonLink to="/MyCharacters">Commencer l'aventure !</s.ButtonLink>
+        <s.ButtonLink to="MyCharacters">Commencer l'aventure !</s.ButtonLink>
       </s.ButtonHome>
     </s.Container>
   )

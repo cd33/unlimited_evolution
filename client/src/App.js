@@ -54,7 +54,10 @@ const App = () => {
 
         const networkId = await web3.eth.net.getId()
         if (networkId !== 1337 && networkId !== 80001) {
-          handleModal('Wrong Network', 'Please Switch to the Mumbai Polygon Network')
+          handleModal(
+            'Wrong Network',
+            'Please Switch to the Mumbai Polygon Network',
+          )
           return
         }
 
@@ -123,11 +126,11 @@ const App = () => {
     const balanceContractStuff = async () => {
       if (ueContract !== null && web3 !== null && accounts !== null) {
         let tempArray = []
-        for (let i=0; i < 6; i++) {
+        for (let i = 0; i < 6; i++) {
           await ueContract.methods
-          .balanceOf(ueContract._address, i)
-          .call({ from: accounts[0] })
-          .then((res) => tempArray.push(res))
+            .balanceOf(ueContract._address, i)
+            .call({ from: accounts[0] })
+            .then((res) => tempArray.push(res))
         }
         setBalancesContractStuff(tempArray)
       }
@@ -135,11 +138,11 @@ const App = () => {
     const balanceMyStuff = async () => {
       if (ueContract !== null && web3 !== null && accounts !== null) {
         let tempArray = []
-        for (let i=0; i < 6; i++) {
+        for (let i = 0; i < 6; i++) {
           await ueContract.methods
-          .balanceOf(accounts[0], i)
-          .call({ from: accounts[0] })
-          .then((res) => tempArray.push(res))
+            .balanceOf(accounts[0], i)
+            .call({ from: accounts[0] })
+            .then((res) => tempArray.push(res))
         }
         setBalancesMyStuff(tempArray)
       }
@@ -374,69 +377,82 @@ const App = () => {
         </>
       ) : (
         <>
-          <Navbar accounts={accounts} />
-
           <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route
-              path="/MyCharacters"
-              element={
-                <MyCharacters
-                  loading={loading}
-                  rest={rest}
-                  createCharacter={createCharacter}
-                  setTypeCharacter={setTypeCharacter}
-                  setGenderCharacter={setGenderCharacter}
-                  characters={characters}
-                  attacks={attacks}
-                  typeCharacterName={typeCharacterName}
-                  typeGenderName={typeGenderName}
-                  stuffType={stuffType}
-                  potionUse={potionUse}
-                  resting={resting}
-                  timeStamp={timeStamp}
-                  balancesMyStuff={balancesMyStuff}
-                />
-              }
-            />
-            <Route
-              path="/MyEnemies"
-              element={
-                <MyEnemies
-                  loading={loading}
-                  characters={characters}
-                  attacks={attacks}
-                  typeCharacterName={typeCharacterName}
-                  typeGenderName={typeGenderName}
-                  othersCharacters={othersCharacters}
-                  setSelectedCharacter={setSelectedCharacter}
-                  selectedCharacter={selectedCharacter}
-                  fight={fight}
-                  stuffType={stuffType}
-                  timeStamp={timeStamp}
-                />
-              }
-            />
-            <Route
-              path="/MyStuff"
-              element={
-                <MyStuff
-                  loading={loading}
-                  characters={characters}
-                  stuffs={stuffs}
-                  stuffType={stuffType}
-                  buyStuff={buyStuff}
-                  equipStuff={equipStuff}
-                  setTypeBuyStuff={setTypeBuyStuff}
-                  typeBuyStuff={typeBuyStuff}
-                  setTypeEquipChar={setTypeEquipChar}
-                  typeEquipChar={typeEquipChar}
-                  potionUse={potionUse}
-                  balancesContractStuff={balancesContractStuff}
-                  balancesMyStuff={balancesMyStuff}
-                />
-              }
-            />
+            <Route path="/" element={<Navbar accounts={accounts} />}>
+              <Route index element={<Home />} />
+              <Route
+                path="MyCharacters"
+                element={
+                  <MyCharacters
+                    loading={loading}
+                    rest={rest}
+                    createCharacter={createCharacter}
+                    setTypeCharacter={setTypeCharacter}
+                    setGenderCharacter={setGenderCharacter}
+                    characters={characters}
+                    attacks={attacks}
+                    typeCharacterName={typeCharacterName}
+                    typeGenderName={typeGenderName}
+                    stuffType={stuffType}
+                    potionUse={potionUse}
+                    resting={resting}
+                    timeStamp={timeStamp}
+                    balancesMyStuff={balancesMyStuff}
+                  />
+                }
+              />
+              <Route
+                path="MyEnemies"
+                element={
+                  <MyEnemies
+                    loading={loading}
+                    characters={characters}
+                    attacks={attacks}
+                    typeCharacterName={typeCharacterName}
+                    typeGenderName={typeGenderName}
+                    othersCharacters={othersCharacters}
+                    setSelectedCharacter={setSelectedCharacter}
+                    selectedCharacter={selectedCharacter}
+                    fight={fight}
+                    stuffType={stuffType}
+                    timeStamp={timeStamp}
+                  />
+                }
+              />
+              <Route
+                path="MyStuff"
+                element={
+                  <MyStuff
+                    loading={loading}
+                    characters={characters}
+                    stuffs={stuffs}
+                    stuffType={stuffType}
+                    buyStuff={buyStuff}
+                    equipStuff={equipStuff}
+                    setTypeBuyStuff={setTypeBuyStuff}
+                    typeBuyStuff={typeBuyStuff}
+                    setTypeEquipChar={setTypeEquipChar}
+                    typeEquipChar={typeEquipChar}
+                    potionUse={potionUse}
+                    balancesContractStuff={balancesContractStuff}
+                    balancesMyStuff={balancesMyStuff}
+                  />
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <s.Container bc="pink" ai="center" flex="1" style={{ paddingTop: 80 }}>
+                  <s.TextTitle fs="80" style={{ marginTop: 80 }}>
+                   Il n'y a rien ici !
+                  </s.TextTitle>
+                  <s.ButtonHome>
+                    <s.ButtonLink to="/">Accueil</s.ButtonLink>
+                  </s.ButtonHome>
+                </s.Container>
+                }
+              />
+            </Route>
           </Routes>
 
           <Modal

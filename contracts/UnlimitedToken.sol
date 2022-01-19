@@ -65,13 +65,10 @@ contract UnlimitedToken is Ownable {
     function levelUpMint(address receiver) external {
         require(msg.sender==gameContract);
         
-        uint amount=10000*1/2**(mintNumber%100); //totalMint : 2M
+        uint amount=10000/2**(mintNumber/100); //totalMint : 2M
         mintNumber++;
 
-        balanceOf[receiver] += amount*10**18;
-        totalSupply += amount;
-        
-        emit Transfer(address(0), receiver, amount);
+        transfer(receiver,amount*10**18);
     }
 
     // ERC-20 //
@@ -81,7 +78,7 @@ contract UnlimitedToken is Ownable {
      * @param receiver Address to receive the tokens
      * @param amount The quantity of token to send
      */
-    function transfer(address receiver, uint amount) external {
+    function transfer(address receiver, uint amount) public {
         require(balanceOf[msg.sender]>=amount, "Insufficient balance.");
         
         transferWithoutTax(msg.sender,receiver,amount);

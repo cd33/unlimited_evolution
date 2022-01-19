@@ -69,8 +69,6 @@ contract UnlimitedToken is Ownable {
         mintNumber++;
 
         transferFrom(address(this),receiver,amount*10**18)
-        
-        emit Transfer(address(this), receiver, amount);
     }
 
     // ERC-20 //

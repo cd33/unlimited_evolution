@@ -147,18 +147,11 @@ const MyEnemies = ({
             })
           ) : (
             <s.TextSubTitle style={{ marginTop: 50 }}>
-              Aucun Ennemies disponible
+              Aucun Ennemis disponible
               <br />
               (niveau trop faible, mort ou en repos)
             </s.TextSubTitle>
           ))}
-
-        {/* MESSAGE d'erreur quand aucun ennemie n'est disponible */}
-        {/* <s.TextSubTitle style={{ textAlign: 'center' }}>
-    Aucun Ennemies disponible
-    <br />
-    (niveau trop faible, mort ou en repos)
-    </s.TextSubTitle> */}
       </s.Container>
       <s.SpacerLarge />
     </s.Container>

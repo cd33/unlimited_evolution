@@ -27,7 +27,7 @@ const Navbar = ({ accounts }) => {
               <n.MenuLink>Mon Equipement</n.MenuLink>
             </n.NavLink>
             <n.NavLink to="MyEnemies">
-              <n.MenuLink>Mes Ennemies</n.MenuLink>
+              <n.MenuLink>Mes Ennemis</n.MenuLink>
             </n.NavLink>
           </n.Menu>
         </div>

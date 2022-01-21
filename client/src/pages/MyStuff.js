@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import * as s from '../styles/globalStyles'
 import StuffRenderer from '../components/StuffRenderer'
 import img from '../img/MyStuff.jpg'
@@ -18,6 +18,10 @@ const MyStuff = ({
   balancesContractStuff,
   balancesMyStuff,
 }) => {
+  useEffect(() => {
+    setTypeEquipChar(null)
+  }, [])
+
   const handleSelectedStuff = (e) => {
     if (e === '') {
       setTypeEquipChar(null)
@@ -51,10 +55,7 @@ const MyStuff = ({
           {stuffType.map((stuff, i) => {
             if (balancesContractStuff[i] !== '0') {
               return (
-                <option
-                  key={i}
-                  value={`{"id":${i},"mintPrice":${stuff[1]}}`}
-                >
+                <option key={i} value={`{"id":${i},"mintPrice":${stuff[1]}}`}>
                   {stuff[0]}
                 </option>
               )

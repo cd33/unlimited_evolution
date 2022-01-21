@@ -28,7 +28,8 @@ module.exports = {
     // },
     matic: {
       provider: () => new HDWalletProvider(process.env.MNEMONIC, 
-      `https://rpc-mumbai.matic.today`),
+      // `https://rpc-mumbai.matic.today`),
+      "wss://ws-mumbai.matic.today/"),
       network_id: 80001,
       confirmations: 2,
       timeoutBlocks: 200,

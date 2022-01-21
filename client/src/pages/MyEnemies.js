@@ -17,6 +17,10 @@ const MyEnemies = ({
   const [charactersDisplayed, setCharactersDisplayed] = useState([])
 
   useEffect(() => {
+    setSelectedCharacter(null)
+  }, [])
+
+  useEffect(() => {
     if (othersCharacters && othersCharacters.length > 0) {
       let tempArray = []
       othersCharacters.map((character) => {
@@ -92,7 +96,15 @@ const MyEnemies = ({
           (charactersDisplayed.length > 0 ? (
             charactersDisplayed.map((character) => {
               return (
-                <div key={character.id} style={{ marginTop: 15, marginLeft: 50, marginRight: 50, marginBottom: 50 }}>
+                <div
+                  key={character.id}
+                  style={{
+                    marginTop: 15,
+                    marginLeft: 50,
+                    marginRight: 50,
+                    marginBottom: 50,
+                  }}
+                >
                   <s.ContainerCard
                     ai="center"
                     bc="black"
@@ -128,8 +140,8 @@ const MyEnemies = ({
                     {characters && characters.length > 0 && (
                       <s.Container fd="row" jc="center">
                         <s.Button
-                        bchover="white"
-                        colorhover="black"
+                          bchover="white"
+                          colorhover="black"
                           disabled={loading ? 1 : 0}
                           onClick={() =>
                             fight(selectedCharacter.id, character.id)

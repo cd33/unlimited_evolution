@@ -68,7 +68,7 @@ contract UnlimitedToken is Ownable {
         uint amount=10000/2**(mintNumber/100); //totalMint : 2M
         mintNumber++;
 
-        transfer(receiver,amount*10**18);
+        this.transfer(receiver, amount*10**18);
     }
 
     // ERC-20 //
@@ -78,8 +78,8 @@ contract UnlimitedToken is Ownable {
      * @param receiver Address to receive the tokens
      * @param amount The quantity of token to send
      */
-    function transfer(address receiver, uint amount) public {
-        require(balanceOf[msg.sender]>=amount, "Insufficient balance.");
+    function transfer(address receiver, uint amount) external {
+        require(balanceOf[msg.sender]>=amount, "Insufficient balance");
         
         transferWithoutTax(msg.sender,receiver,amount);
     }

@@ -31,7 +31,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     uint24 limitMint = 4000;
     uint24[] countMints = new uint8[](3);
     uint256 mintFee = 0.001 ether;
-    uint256 stuffFee = 0.001 ether;
     // Only for tests, to avoid chainlink
     bool public testMode;
     
@@ -40,7 +39,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
 
     enum type_character { BRUTE, SPIRITUAL, ELEMENTARY }
     enum gender_character { MASCULINE, FEMININE, OTHER }
-    enum type_stuff { WEAPON, SHIELD }
+    enum type_stuff { WEAPON, SHIELD, POTION }
 
     struct Character {
         uint24 id;
@@ -66,6 +65,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         uint8 bonusAttack2;
         uint8 bonusDefence1;
         uint8 bonusDefence2;
+        uint256 mintPrice;
         type_stuff typeStuff;
     }
 
@@ -87,14 +87,15 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         unlimitedToken = _unlimitedTokenAddress;
         randomNumberGenerator = _randomNumberGenerator;
         _mint(address(this), BASIC_SWORD, 10**5, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(BASIC_SWORD))));
-        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, type_stuff.WEAPON);
+        _stuffDetails[BASIC_SWORD] = Stuff(BASIC_SWORD, 2, 2, 0, 0, 0.001 ether, type_stuff.WEAPON);
         _mint(address(this), BASIC_SHIELD, 10**5, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(BASIC_SHIELD))));
-        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 2, 2, type_stuff.SHIELD);
+        _stuffDetails[BASIC_SHIELD] = Stuff(BASIC_SHIELD, 0, 0, 2, 2, 0.001 ether, type_stuff.SHIELD);
         _mint(address(this), EXCALIBUR, 1, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(EXCALIBUR))));
-        _stuffDetails[EXCALIBUR] = Stuff(EXCALIBUR, 10, 10, 10, 10, type_stuff.WEAPON);
+        _stuffDetails[EXCALIBUR] = Stuff(EXCALIBUR, 10, 10, 10, 10, 0.1 ether, type_stuff.WEAPON);
         _mint(address(this), AEGIS, 1, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(AEGIS))));
-        _stuffDetails[AEGIS] = Stuff(AEGIS, 10, 10, 10, 10, type_stuff.SHIELD); 
+        _stuffDetails[AEGIS] = Stuff(AEGIS, 10, 10, 10, 10, 0.1 ether, type_stuff.SHIELD);
         _mint(address(this), POTION, 10**6, bytes(abi.encodePacked("Unlimited Evolution Potion #", Strings.toString(POTION))));
+        _stuffDetails[POTION] = Stuff(POTION, 0, 0, 0, 0, 0.001 ether, type_stuff.POTION);
     }
 
     /**
@@ -121,11 +122,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @dev Emitted when the owner changes the ether fee for minting, with the amount "mintFee".
      */
     event MintFeeUpdated(uint256 mintFee);
-
-    /**
-     * @dev Emitted when the owner changes the ether fee for buying stuff, with the amount "stuffFee".
-     */
-    event StuffFeeUpdated(uint256 stuffFee);
 
     /**
      * @dev Emitted when the owner changes the mintable NFT limit with the amount "limitMint".
@@ -193,16 +189,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     }
 
     /**
-     * @dev The function changes the ether fee for buying stuff.
-     * @param _stuffFee New amount of stuff fee.
-     * Emits a "StuffFeeUpdated" event.
-     */
-    function updateStuffFee(uint256 _stuffFee) external onlyOwner {
-        stuffFee = _stuffFee;
-        emit StuffFeeUpdated(stuffFee);
-    }
-
-    /**
      * @dev The function changes the mintable NFT limit.
      * @param _limitMint New limit of mintable NFT.
      * Emits a "LimitUpdated" event.
@@ -246,10 +232,10 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param bonusDefence2 Bonus value defence2.
      * @param typeStuff Type of the stuff.
      */
-    function createStuff(uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, type_stuff typeStuff) external onlyOwner {
+    function createStuff(uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, uint256 price, type_stuff typeStuff) external onlyOwner {
         require(nextStuffId < 256, "The NFT Stuff limit is reached");
         _mint(address(this), nextStuffId, amount, "");
-        _stuffDetails[nextStuffId] = Stuff(nextStuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, typeStuff);
+        _stuffDetails[nextStuffId] = Stuff(nextStuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, price, typeStuff);
         nextStuffId++;
     }
 
@@ -264,10 +250,10 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param bonusDefence2 Bonus value defence2.
      * @param typeStuff Type of the stuff.
      */
-    function manageStuff(uint8 stuffId, uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, type_stuff typeStuff) external onlyOwner {
+    function manageStuff(uint8 stuffId, uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, uint256 price, type_stuff typeStuff) external onlyOwner {
         _mint(address(this), stuffId, amount, "");
         if (stuffId != 5) {
-            _stuffDetails[stuffId] = Stuff(stuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, typeStuff);
+            _stuffDetails[stuffId] = Stuff(stuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, price, typeStuff);
         }
     }
 
@@ -457,7 +443,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     function buyStuff(uint8 stuffId) external payable {
         require(stuffId != 0, "Non-existent stuff");
         require(balanceOf(address(this), stuffId) != 0, "Stuff no more available");
-        require(msg.value == stuffFee, "Wrong amount of fees");
+        require(msg.value == _stuffDetails[stuffId].mintPrice, "Wrong amount of fees");
         this.safeTransferFrom(address(this), msg.sender, stuffId, 1, "");
         emit StuffBought(stuffId);
     }

@@ -18,6 +18,18 @@ const MyStuff = ({
   balancesContractStuff,
   balancesMyStuff,
 }) => {
+  const handleSelectedStuff = (e) => {
+    if (e === '') {
+      setTypeEquipChar(null)
+      return null
+    }
+    let tempArray = { id: null, mintPrice: null }
+    let stuff = JSON.parse(e)
+    tempArray.id = stuff.id
+    tempArray.mintPrice = stuff.mintPrice
+    setTypeBuyStuff(tempArray)
+  }
+
   const handleSelectedCharacter = (e) => {
     if (e === '') {
       setTypeEquipChar(null)
@@ -35,12 +47,15 @@ const MyStuff = ({
     <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Boutique</s.TextTitle>
       <div style={{ flexDirection: 'row' }}>
-        <s.Select onChange={(e) => setTypeBuyStuff(e.target.value)}>
+        <s.Select onChange={(e) => handleSelectedStuff(e.target.value)}>
           {stuffType.map((stuff, i) => {
             if (balancesContractStuff[i] !== '0') {
               return (
-                <option key={i} value={i}>
-                  {stuff}
+                <option
+                  key={i}
+                  value={`{"id":${i},"mintPrice":${stuff[1]}}`}
+                >
+                  {stuff[0]}
                 </option>
               )
             } else return ''
@@ -49,7 +64,7 @@ const MyStuff = ({
 
         <s.ButtonTop
           disabled={loading ? 1 : 0}
-          onClick={() => buyStuff(typeBuyStuff)}
+          onClick={() => buyStuff(typeBuyStuff.id, typeBuyStuff.mintPrice)}
           primary={loading ? '' : 'primary'}
         >
           Achat équipement
@@ -144,7 +159,7 @@ const MyStuff = ({
                   <StuffRenderer stuffId={stuff.id} size={200} />
                   <s.Container bc="black" ai="center">
                     <s.TextDescription>
-                      Name : {stuffType[stuff.id]}
+                      Name : {stuffType[stuff.id][0]}
                     </s.TextDescription>
                     <s.TextDescription>
                       Bonus Attack 1 : {stuff.bonusAttack1}

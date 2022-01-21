@@ -102,12 +102,12 @@ const MyCharacters = ({
                   </s.TextSubTitle>
                   {character.weapon !== '0' && (
                     <s.TextSubTitle fs="24" style={{marginBottom: 5}}>
-                      Weapon: {stuffType[character.weapon]}
+                      Weapon: {stuffType[character.weapon][0]}
                     </s.TextSubTitle>
                   )}
                   {character.shield !== '0' && (
                     <s.TextSubTitle fs="24" style={{marginBottom: 5}}>
-                      Shield: {stuffType[character.shield]}
+                      Shield: {stuffType[character.shield][0]}
                     </s.TextSubTitle>
                   )}
                   <s.TextSubTitle fs="24" style={{marginBottom: 5}}>

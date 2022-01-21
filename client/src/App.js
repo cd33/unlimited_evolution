@@ -28,7 +28,7 @@ const App = () => {
   const [stuffs, setStuffs] = useState(null)
   const [balancesContractStuff, setBalancesContractStuff] = useState([])
   const [balancesMyStuff, setBalancesMyStuff] = useState([])
-  const [typeBuyStuff, setTypeBuyStuff] = useState(1)
+  const [typeBuyStuff, setTypeBuyStuff] = useState({"id":"1","mintPrice":"0.001"})
   const [typeEquipChar, setTypeEquipChar] = useState(0)
 
   useEffect(() => {
@@ -267,11 +267,11 @@ const App = () => {
       })
   }
 
-  const buyStuff = (_stuffId) => {
+  const buyStuff = (_stuffId, _mintPrice) => {
     setLoading(true)
     ueContract.methods
       .buyStuff(_stuffId)
-      .send({ from: accounts[0], value: web3.utils.toWei('0.001', 'Ether') })
+      .send({ from: accounts[0], value: web3.utils.toWei(_mintPrice.toString(), 'Ether') })
       .once('error', (err) => {
         setLoading(false)
         console.log(err)
@@ -347,12 +347,12 @@ const App = () => {
   }
 
   const stuffType = [
-    '',
-    'BASIC SWORD',
-    'BASIC SHIELD',
-    'EXCALIBUR',
-    'AEGIS',
-    'POTION',
+    ['', ''],
+    ['BASIC SWORD', '0.001'],
+    ['BASIC SHIELD', '0.001'],
+    ['EXCALIBUR', '0.1'],
+    ['AEGIS', '0.1'],
+    ['POTION', '0.001'],
   ]
 
   const resting = (character, timeStamp) => {
@@ -414,7 +414,6 @@ const App = () => {
                     setSelectedCharacter={setSelectedCharacter}
                     selectedCharacter={selectedCharacter}
                     fight={fight}
-                    stuffType={stuffType}
                     timeStamp={timeStamp}
                   />
                 }

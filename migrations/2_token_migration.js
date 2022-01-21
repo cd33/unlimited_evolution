@@ -13,7 +13,6 @@ module.exports = async function (deployer) {
   // unlimitedToken.approve(unlimitedEvolution.address, 21*10**6*10**18);
   randomNumberGenerator.setUnlimitedAddress(unlimitedEvolution.address);
 
-
   // TESTS GANACHE
   // await unlimitedEvolution.testModeSwitch();
 };

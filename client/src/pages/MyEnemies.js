@@ -8,8 +8,8 @@ const MyEnemies = ({
   characters,
   typeCharacterName,
   typeGenderName,
-  setSelectedCharacter,
   othersCharacters,
+  setSelectedCharacter,
   selectedCharacter,
   fight,
   timeStamp,
@@ -18,7 +18,7 @@ const MyEnemies = ({
 
   useEffect(() => {
     setSelectedCharacter(null)
-  }, [])
+  }, [setSelectedCharacter])
 
   useEffect(() => {
     if (othersCharacters && othersCharacters.length > 0) {

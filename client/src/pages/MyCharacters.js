@@ -6,9 +6,9 @@ import img from '../img/MyCharacters.jpg'
 const MyCharacters = ({
   loading,
   rest,
+  createCharacter,
   setTypeCharacter,
   setGenderCharacter,
-  createCharacter,
   characters,
   attacks,
   typeCharacterName,

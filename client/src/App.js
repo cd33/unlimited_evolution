@@ -28,7 +28,10 @@ const App = () => {
   const [stuffs, setStuffs] = useState(null)
   const [balancesContractStuff, setBalancesContractStuff] = useState([])
   const [balancesMyStuff, setBalancesMyStuff] = useState([])
-  const [typeBuyStuff, setTypeBuyStuff] = useState({"id":"1","mintPrice":"0.001"})
+  const [typeBuyStuff, setTypeBuyStuff] = useState({
+    id: '1',
+    mintPrice: '0.001',
+  })
   const [typeEquipChar, setTypeEquipChar] = useState(0)
 
   useEffect(() => {
@@ -85,6 +88,22 @@ const App = () => {
         let lastBlockInfo = await web3.eth.getBlock(lastBlockNumber)
         setTimeStamp(lastBlockInfo.timestamp)
 
+        let balanceContractStuff = []
+        let balanceMyStuff = []
+        for (let i = 0; i < 6; i++) {
+          await ueContract.methods
+            .balanceOf(ueContract._address, i)
+            .call({ from: accounts[0] })
+            .then((res) => balanceContractStuff.push(res))
+
+          await ueContract.methods
+            .balanceOf(accounts[0], i)
+            .call({ from: accounts[0] })
+            .then((res) => balanceMyStuff.push(res))
+        }
+        setBalancesContractStuff(balanceContractStuff)
+        setBalancesMyStuff(balanceMyStuff)
+
         // Subscribe to the contract states to update the front states
         web3.eth.subscribe('newBlockHeaders', async (err, res) => {
           if (!err) {
@@ -103,6 +122,21 @@ const App = () => {
             lastBlockNumber = await web3.eth.getBlockNumber()
             lastBlockInfo = await web3.eth.getBlock(lastBlockNumber)
             setTimeStamp(lastBlockInfo.timestamp)
+            let balanceContractStuff = []
+            let balanceMyStuff = []
+            for (let i = 0; i < 6; i++) {
+              await ueContract.methods
+                .balanceOf(ueContract._address, i)
+                .call({ from: accounts[0] })
+                .then((res) => balanceContractStuff.push(res))
+
+              await ueContract.methods
+                .balanceOf(accounts[0], i)
+                .call({ from: accounts[0] })
+                .then((res) => balanceMyStuff.push(res))
+            }
+            setBalancesContractStuff(balanceContractStuff)
+            setBalancesMyStuff(balanceMyStuff)
           }
         })
 
@@ -122,34 +156,34 @@ const App = () => {
     init()
   }, [])
 
-  useEffect(() => {
-    const balanceContractStuff = async () => {
-      if (ueContract !== null && web3 !== null && accounts !== null) {
-        let tempArray = []
-        for (let i = 0; i < 6; i++) {
-          await ueContract.methods
-            .balanceOf(ueContract._address, i)
-            .call({ from: accounts[0] })
-            .then((res) => tempArray.push(res))
-        }
-        setBalancesContractStuff(tempArray)
-      }
-    }
-    const balanceMyStuff = async () => {
-      if (ueContract !== null && web3 !== null && accounts !== null) {
-        let tempArray = []
-        for (let i = 0; i < 6; i++) {
-          await ueContract.methods
-            .balanceOf(accounts[0], i)
-            .call({ from: accounts[0] })
-            .then((res) => tempArray.push(res))
-        }
-        setBalancesMyStuff(tempArray)
-      }
-    }
-    balanceContractStuff()
-    balanceMyStuff()
-  }, [ueContract, web3, accounts, stuffs])
+  // useEffect(() => {
+  //   const balanceContractStuff = async () => {
+  //     if (ueContract !== null && web3 !== null && accounts !== null) {
+  //       let tempArray = []
+  //       for (let i = 0; i < 6; i++) {
+  //         await ueContract.methods
+  //           .balanceOf(ueContract._address, i)
+  //           .call({ from: accounts[0] })
+  //           .then((res) => tempArray.push(res))
+  //       }
+  //       setBalancesContractStuff(tempArray)
+  //     }
+  //   }
+  //   const balanceMyStuff = async () => {
+  //     if (ueContract !== null && web3 !== null && accounts !== null) {
+  //       let tempArray = []
+  //       for (let i = 0; i < 6; i++) {
+  //         await ueContract.methods
+  //           .balanceOf(accounts[0], i)
+  //           .call({ from: accounts[0] })
+  //           .then((res) => tempArray.push(res))
+  //       }
+  //       setBalancesMyStuff(tempArray)
+  //     }
+  //   }
+  //   balanceContractStuff()
+  //   balanceMyStuff()
+  // }, [ueContract, web3, accounts, stuffs])
 
   // EVENTS
   useEffect(() => {
@@ -271,7 +305,10 @@ const App = () => {
     setLoading(true)
     ueContract.methods
       .buyStuff(_stuffId)
-      .send({ from: accounts[0], value: web3.utils.toWei(_mintPrice.toString(), 'Ether') })
+      .send({
+        from: accounts[0],
+        value: web3.utils.toWei(_mintPrice.toString(), 'Ether'),
+      })
       .once('error', (err) => {
         setLoading(false)
         console.log(err)
@@ -407,7 +444,6 @@ const App = () => {
                   <MyEnemies
                     loading={loading}
                     characters={characters}
-                    attacks={attacks}
                     typeCharacterName={typeCharacterName}
                     typeGenderName={typeGenderName}
                     othersCharacters={othersCharacters}
@@ -441,14 +477,19 @@ const App = () => {
               <Route
                 path="*"
                 element={
-                  <s.Container bc="pink" ai="center" flex="1" style={{ paddingTop: 80 }}>
-                  <s.TextTitle fs="80" style={{ marginTop: 80 }}>
-                   Il n'y a rien ici !
-                  </s.TextTitle>
-                  <s.ButtonHome>
-                    <s.ButtonLink to="/">Accueil</s.ButtonLink>
-                  </s.ButtonHome>
-                </s.Container>
+                  <s.Container
+                    bc="pink"
+                    ai="center"
+                    flex="1"
+                    style={{ paddingTop: 80 }}
+                  >
+                    <s.TextTitle fs="80" style={{ marginTop: 80 }}>
+                      Il n'y a rien ici !
+                    </s.TextTitle>
+                    <s.ButtonHome>
+                      <s.ButtonLink to="/">Accueil</s.ButtonLink>
+                    </s.ButtonHome>
+                  </s.Container>
                 }
               />
             </Route>

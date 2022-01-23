@@ -5,22 +5,22 @@ import img from '../img/MyStuff.jpg'
 
 const MyStuff = ({
   loading,
-  stuffs,
   characters,
+  stuffs,
   stuffType,
-  setTypeBuyStuff,
   buyStuff,
+  equipStuff,
+  setTypeBuyStuff,
   typeBuyStuff,
   setTypeEquipChar,
   typeEquipChar,
-  equipStuff,
   potionUse,
   balancesContractStuff,
   balancesMyStuff,
 }) => {
   useEffect(() => {
     setTypeEquipChar(null)
-  }, [])
+  }, [setTypeEquipChar])
 
   const handleSelectedStuff = (e) => {
     if (e === '') {

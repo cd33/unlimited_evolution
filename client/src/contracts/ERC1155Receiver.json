@@ -116,13 +116,13 @@
         1729
       ],
       "ERC165": [
-        3267
+        2275
       ],
       "IERC1155Receiver": [
         1629
       ],
       "IERC165": [
-        3279
+        2287
       ]
     },
     "id": 1730,
@@ -159,7 +159,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 1730,
-        "sourceUnit": 3268,
+        "sourceUnit": 2276,
         "src": "167:49:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -172,7 +172,7 @@
               "id": 1701,
               "name": "ERC165",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 3267,
+              "referencedDeclaration": 2275,
               "src": "295:6:9"
             },
             "id": 1702,
@@ -205,8 +205,8 @@
         "linearizedBaseContracts": [
           1729,
           1629,
-          3267,
-          3279
+          2275,
+          2287
         ],
         "name": "ERC1155Receiver",
         "nameLocation": "276:15:9",
@@ -214,8 +214,8 @@
         "nodes": [
           {
             "baseFunctions": [
-              3266,
-              3278
+              2274,
+              2286
             ],
             "body": {
               "id": 1727,
@@ -368,7 +368,7 @@
                         "lValueRequested": false,
                         "memberName": "supportsInterface",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3266,
+                        "referencedDeclaration": 2274,
                         "src": "565:23:9",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes4_$returns$_t_bool_$",
@@ -425,14 +425,14 @@
                   "id": 1709,
                   "name": "ERC165",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 3267,
+                  "referencedDeclaration": 2275,
                   "src": "463:6:9"
                 },
                 {
                   "id": 1710,
                   "name": "IERC165",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 3279,
+                  "referencedDeclaration": 2287,
                   "src": "471:7:9"
                 }
               ],
@@ -527,13 +527,13 @@
         1729
       ],
       "ERC165": [
-        3267
+        2275
       ],
       "IERC1155Receiver": [
         1629
       ],
       "IERC165": [
-        3279
+        2287
       ]
     },
     "id": 1730,
@@ -570,7 +570,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 1730,
-        "sourceUnit": 3268,
+        "sourceUnit": 2276,
         "src": "167:49:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -583,7 +583,7 @@
               "id": 1701,
               "name": "ERC165",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 3267,
+              "referencedDeclaration": 2275,
               "src": "295:6:9"
             },
             "id": 1702,
@@ -616,8 +616,8 @@
         "linearizedBaseContracts": [
           1729,
           1629,
-          3267,
-          3279
+          2275,
+          2287
         ],
         "name": "ERC1155Receiver",
         "nameLocation": "276:15:9",
@@ -625,8 +625,8 @@
         "nodes": [
           {
             "baseFunctions": [
-              3266,
-              3278
+              2274,
+              2286
             ],
             "body": {
               "id": 1727,
@@ -779,7 +779,7 @@
                         "lValueRequested": false,
                         "memberName": "supportsInterface",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3266,
+                        "referencedDeclaration": 2274,
                         "src": "565:23:9",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes4_$returns$_t_bool_$",
@@ -836,14 +836,14 @@
                   "id": 1709,
                   "name": "ERC165",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 3267,
+                  "referencedDeclaration": 2275,
                   "src": "463:6:9"
                 },
                 {
                   "id": 1710,
                   "name": "IERC165",
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 3279,
+                  "referencedDeclaration": 2287,
                   "src": "471:7:9"
                 }
               ],
@@ -937,7 +937,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.3",
-  "updatedAt": "2022-01-21T17:47:18.083Z",
+  "updatedAt": "2022-01-23T11:28:49.412Z",
   "devdoc": {
     "details": "_Available since v3.1._",
     "kind": "dev",

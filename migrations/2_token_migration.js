@@ -9,9 +9,9 @@ module.exports = async function (deployer) {
   const unlimitedToken = await UnlimitedToken.deployed();
   await deployer.deploy(UnlimitedEvolution, unlimitedToken.address, randomNumberGenerator.address);
   const unlimitedEvolution = await UnlimitedEvolution.deployed();
-  unlimitedToken.setGameContract(unlimitedEvolution.address);
-  unlimitedToken.approve(unlimitedEvolution.address, "2000000000000000000000000");
-  randomNumberGenerator.setUnlimitedAddress(unlimitedEvolution.address);
+  await unlimitedToken.setGameContract(unlimitedEvolution.address);
+  // await unlimitedToken.approve(unlimitedEvolution.address, "2000000000000000000000000");
+  await randomNumberGenerator.setUnlimitedAddress(unlimitedEvolution.address);
 
   // TESTS GANACHE
   // await unlimitedEvolution.testModeSwitch();

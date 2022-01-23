@@ -43,7 +43,7 @@ contract UnlimitedToken is Ownable {
      * @dev Constructor of the ERC20, first mint of 21M to token deployer
      */
     constructor(){
-        firstMint(address(this), 21*10**6*10**decimals);
+        firstMint(address(this), 21*1e6*10**decimals);
     }
 
      /**

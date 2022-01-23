@@ -10,16 +10,38 @@ contract RandomNumberGenerator is VRFConsumerBase, Ownable {
     
     bytes32 internal keyHash;
     uint256 internal fee;
-
+    uint24 myTokenId;
+    uint24 rivalTokenId;
+    bool mint;
     UnlimitedEvolution unlimited;
-    UnlimitedEvolution.type_character typeCharacter;
-    UnlimitedEvolution.gender_character genderCharacter;
-    address requestor;
+    
+    struct Minter {
+        UnlimitedEvolution.type_character typeCharacter;    
+        UnlimitedEvolution.gender_character genderCharacter;
+        address requestor;
+        bool mint;
+    }
+
+    struct Fighter {
+        uint24 myTokenId;
+        uint24 rivalTokenId;
+    }
+
+    // Mapping from account to his number of NFTs
+    mapping(bytes32 => Minter) private requestorMintDetails;
+
+    // Mapping from account to his number of NFTs
+    mapping(bytes32 => Fighter) private requestorFightDetails;
 
     /**
      * @dev Emitted when getRandomNumber has been successfully executed. Return the ID unique to a single request.
      */
     event requestedRandomness(bytes32 _requestId);
+
+    /**
+     * @dev Emitted when getRandomNumber has been successfully returned. Return the ID unique to a single request.
+     */
+    event returnedRandomness(bytes32 _requestId);
     
     /**
      * @dev Constructor inherits VRFConsumerBase
@@ -47,18 +69,33 @@ contract RandomNumberGenerator is VRFConsumerBase, Ownable {
     }
 
     /** 
-     * @dev Requests randomness 
+     * @dev Requests randomness before a fight
+     * @param _myTokenId Id of the token number 1.
+     * @param _rivalTokenId Id of the token number 2.
+     */
+    function getRandomNumberFight(uint24 _myTokenId, uint24 _rivalTokenId) external {
+        require(msg.sender == address(unlimited), "Not allowed to use this function");
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+        bytes32 requestId = requestRandomness(keyHash, fee);
+        requestorFightDetails[requestId].myTokenId = _myTokenId;
+        requestorFightDetails[requestId].rivalTokenId = _rivalTokenId;
+        emit requestedRandomness(requestId);
+    }
+
+    /** 
+     * @dev Requests randomness before to mint a character
      * @param _typeCharacter Type of character between BRUTE, SPIRITUAL, ELEMENTARY.
      * @param _genderCharacter Gender of character between MASCULINE, FEMININE, OTHER.
      * @param _address Address of the original requestor.
      */
-    function getRandomNumber(UnlimitedEvolution.type_character _typeCharacter, UnlimitedEvolution.gender_character _genderCharacter, address _address) external {
+    function getRandomNumberMint(UnlimitedEvolution.type_character _typeCharacter, UnlimitedEvolution.gender_character _genderCharacter, address _address) external {
         require(msg.sender == address(unlimited), "Not allowed to use this function");
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
-        typeCharacter = _typeCharacter;
-        genderCharacter = _genderCharacter;
-        requestor = _address;
         bytes32 requestId = requestRandomness(keyHash, fee);
+        requestorMintDetails[requestId].typeCharacter = _typeCharacter;
+        requestorMintDetails[requestId].genderCharacter = _genderCharacter;
+        requestorMintDetails[requestId].requestor = _address;
+        requestorMintDetails[requestId].mint = true;
         emit requestedRandomness(requestId);
     }
 
@@ -69,7 +106,12 @@ contract RandomNumberGenerator is VRFConsumerBase, Ownable {
      */
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
         require(randomness > 0, "Randomness number not found");
-        unlimited.createCharacter(typeCharacter, genderCharacter, randomness % 10**16, requestor);
+        if (requestorMintDetails[requestId].mint) {
+            unlimited.createCharacter(requestorMintDetails[requestId].typeCharacter, requestorMintDetails[requestId].genderCharacter, randomness % 10**16, requestorMintDetails[requestId].requestor);
+        } else {
+            unlimited.fight(requestorFightDetails[requestId].myTokenId, requestorFightDetails[requestId].rivalTokenId, randomness % 3);
+        }
+        emit returnedRandomness(requestId);
     }
 
     /**

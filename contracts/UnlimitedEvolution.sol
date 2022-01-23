@@ -78,6 +78,9 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     // Mapping from account to his number of NFTs
     mapping(address => uint8) private _balanceOfCharacters;
 
+    // Mapping from account to his number of NFTs, useful to send rewards
+    mapping(uint24 => address) private ownerOfCharacter;
+
     /**
      * @dev Constructor of the contract ERC1155, mint stuff and add it to the mapping.
      * @param _unlimitedTokenAddress Address of the contract UnlimitedToken.
@@ -199,9 +202,9 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     }
     
     /**
-     * @dev Owner withdraws the entire amount of ETH.
+     * @dev Owner withdraws the entire amount of MATIC.
      */
-    function withdrawEth() external onlyOwner {
+    function withdrawMatic() external onlyOwner {
         payable(owner()).transfer(address(this).balance);
     }
 
@@ -222,22 +225,22 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         return balanceOf(msg.sender, _tokenId) != 0;
     }
 
-    /**
-     * @dev Allows you to create a new Stuff.
-     * Warning: Prefer to use createStuff() rather than manageStuff(), more secure with nextStuffId.
-     * @param amount Amount of NFT mintable.
-     * @param bonusAttack1 Bonus value attack1.
-     * @param bonusAttack2 Bonus value attack2.
-     * @param bonusDefence1 Bonus value defence1.
-     * @param bonusDefence2 Bonus value defence2.
-     * @param typeStuff Type of the stuff.
-     */
-    function createStuff(uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, uint256 price, type_stuff typeStuff) external onlyOwner {
-        require(nextStuffId < 256, "The NFT Stuff limit is reached");
-        _mint(address(this), nextStuffId, amount, "");
-        _stuffDetails[nextStuffId] = Stuff(nextStuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, price, typeStuff);
-        nextStuffId++;
-    }
+    // /**
+    //  * @dev Allows you to create a new Stuff.
+    //  * Warning: Prefer to use createStuff() rather than manageStuff(), more secure with nextStuffId.
+    //  * @param amount Amount of NFT mintable.
+    //  * @param bonusAttack1 Bonus value attack1.
+    //  * @param bonusAttack2 Bonus value attack2.
+    //  * @param bonusDefence1 Bonus value defence1.
+    //  * @param bonusDefence2 Bonus value defence2.
+    //  * @param typeStuff Type of the stuff.
+    //  */
+    // function createStuff(uint256 amount, uint8 bonusAttack1, uint8 bonusAttack2, uint8 bonusDefence1, uint8 bonusDefence2, uint256 price, type_stuff typeStuff) external onlyOwner {
+    //     require(nextStuffId < 256, "The NFT Stuff limit is reached");
+    //     _mint(address(this), nextStuffId, amount, "");
+    //     _stuffDetails[nextStuffId] = Stuff(nextStuffId, bonusAttack1, bonusAttack2, bonusDefence1, bonusDefence2, price, typeStuff);
+    //     nextStuffId++;
+    // }
 
     /**
      * @dev Allows you to create a new Stuff/Consumable and to modify the quantity, statistics and type of an existing NFT Stuff.
@@ -296,7 +299,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         require(_balanceOfCharacters[msg.sender] < 5, "You can't have more than 5 NFT");
         require(countMints[uint8(_typeCharacter)] <= limitMint, "You cannot mint more character with this class");
         if (!testMode) { // Only for tests, to avoid chainlink
-            randomNumberGenerator.getRandomNumber(_typeCharacter, _genderCharacter, msg.sender);
+            randomNumberGenerator.getRandomNumberMint(_typeCharacter, _genderCharacter, msg.sender);
         } else {
             this.createCharacter(_typeCharacter, _genderCharacter, uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 10**16, msg.sender);
         }
@@ -311,7 +314,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * Emits a "CharacterCreated" event.
      */
     function createCharacter(type_character _typeCharacter, gender_character _genderCharacter, uint256 randomNumber, address _address) external {
-        require(msg.sender == owner() || msg.sender == address(randomNumberGenerator) || msg.sender == address(this), "Not allowed to use this function");
+        require(msg.sender == address(randomNumberGenerator) || msg.sender == address(this), "Not allowed to use this function");
         uint8[] memory _attributes = _attributesMintDistribution(randomNumber);
         uint24 nextCharacterId;
         if(_typeCharacter == type_character.BRUTE) {
@@ -326,6 +329,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         _balanceOfCharacters[_address]++;
         countMints[uint8(_typeCharacter)]++;
         _mint(_address, nextCharacterId, 1, bytes(abi.encodePacked("Unlimited Evolution Character #", Strings.toString(nextCharacterId))));
+        ownerOfCharacter[nextCharacterId] = _address;
         emit CharacterCreated(nextCharacterId);
 
         if(_typeCharacter == type_character.BRUTE) {
@@ -351,7 +355,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         emit Rested(_tokenId);
     }
 
-        /**
+    /**
      * @dev One experience point is added and if the experience number reaches % 10 == 0 then the NFT increases one level and gains 10 points to attribute to his stats.
      * @param _tokenId Id of the token.
      * Emits a "LevelUp" event.
@@ -361,8 +365,8 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
             _characterDetails[_tokenId].attributePoints += 10;
-            unlimitedToken.levelUpMint(msg.sender);
-            this.safeTransferFrom(address(this), msg.sender, POTION, 1, "");
+            unlimitedToken.levelUpMint(ownerOfCharacter[_tokenId]);
+            safeTransferFrom(address(this), ownerOfCharacter[_tokenId], POTION, 1, "");
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
     }
@@ -373,9 +377,9 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param _id2 Id of the token number 2.
      * @return Number resulting from fight operations.
      */
-    function _substrateLife(uint24 _id1, uint24 _id2) private view returns(uint256) {
-        uint256 op1 = ((_characterDetails[_id1].attack1 + _characterDetails[_id1].attack2) / 2) * (1 + _characterDetails[_id1].xp);
-        uint256 op2 = ((_characterDetails[_id2].defence1 + _characterDetails[_id2].defence2 ) / 2) * ((1 + _characterDetails[_id2].xp) / 2);
+    function _substrateLife(uint24 _id1, uint24 _id2, uint256 randomNumber) private view returns(uint16) {
+        uint16 op1 = uint16(((_characterDetails[_id1].attack1 + _characterDetails[_id1].attack2 + _characterDetails[_id1].xp) / 2) * (1 + randomNumber));
+        uint16 op2 = uint16((_characterDetails[_id2].defence1 + _characterDetails[_id2].defence2) / 2);
         if (op1 < op2) {
             return 0;
         } else {
@@ -391,7 +395,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param _substrateLifeToMe Number of life points to remove from _myTokenId.
      * Emits a "Fighted" event.
      */
-    function _subtrateLifeOperation(uint24 _myTokenId, uint24 _rivalTokenId, uint256 _substrateLifeToRival, uint256 _substrateLifeToMe) private {
+    function _subtrateLifeOperation(uint24 _myTokenId, uint24 _rivalTokenId, uint16 _substrateLifeToRival, uint16 _substrateLifeToMe) private {
         if(_substrateLifeToRival >= _characterDetails[_rivalTokenId].hp) {
             _characterDetails[_rivalTokenId].hp = 0;
             _xpLevelUp(_myTokenId);
@@ -416,12 +420,11 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     }
 
     /**
-     * @dev The function allows you to use your NFT to fight with another NFT belonging to another user.
+     * @dev The Function ask to Chainlink a random number before to fight.
      * @param _myTokenId Id of the fighter number 1.
      * @param _rivalTokenId Id of the fighter number 2.
      */
-
-    function fight(uint24 _myTokenId, uint24 _rivalTokenId) external {
+    function askFight(uint24 _myTokenId, uint24 _rivalTokenId) external {
         require(_ownerOf(_myTokenId), "You don't own this NFT");
         require(_ownerOf(_myTokenId) != _ownerOf(_rivalTokenId), "Your NFTs cannot fight each other");
         require(_characterDetails[_myTokenId].lastRest + 86400 < block.timestamp, "You're character is resting");
@@ -429,8 +432,23 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         require(_characterDetails[_myTokenId].stamina >= 10, "Not enough stamina");
         require(_characterDetails[_myTokenId].level <= _characterDetails[_rivalTokenId].level, "Fight someone your own size!");
         require(_characterDetails[_myTokenId].hp > 0 && _characterDetails[_rivalTokenId].hp > 0, "One of the NFTs is dead");
-        uint256 _substrateLifeToRival = _substrateLife(_myTokenId, _rivalTokenId);
-        uint256 _substrateLifeToMe = _substrateLife(_rivalTokenId, _myTokenId);
+        if (!testMode) { // Only for tests, to avoid chainlink
+            randomNumberGenerator.getRandomNumberFight(_myTokenId, _rivalTokenId);
+        } else {
+            this.fight(_myTokenId, _rivalTokenId, uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 3);
+        }  
+    }
+
+    /**
+     * @dev The function allows you to use your NFT to fight with another NFT belonging to another user.
+     * @param _myTokenId Id of the fighter number 1.
+     * @param _rivalTokenId Id of the fighter number 2.
+     * @param randomNumber Random number from chainlink.
+     */
+    function fight(uint24 _myTokenId, uint24 _rivalTokenId, uint256 randomNumber) external {
+        require(msg.sender == address(randomNumberGenerator) || msg.sender == address(this), "Not allowed to use this function");
+        uint16 _substrateLifeToRival = _substrateLife(_myTokenId, _rivalTokenId, randomNumber);
+        uint16 _substrateLifeToMe = _substrateLife(_rivalTokenId, _myTokenId, 0);
         _characterDetails[_myTokenId].stamina = _characterDetails[_myTokenId].stamina - 10;
         _subtrateLifeOperation(_myTokenId, _rivalTokenId, _substrateLifeToRival, _substrateLifeToMe);
     }

@@ -20,19 +20,19 @@ Pour les fonctions suivantes, nous vérifions si :
 * Fonction Fight
   - Pour les deux protagonistes, s'ils perdent des points de vie et gagnent de l'expérience
   - L'événement est émis
-  - Si les conditions sont remplies, le NFT augmente de niveau et le propriétaire recoit ses récompenses, l'événement est émis.
+  - Si les conditions sont remplies, le NFT augmente de niveau et le propriétaire recoit ses récompenses après avoir appelé la fonction claimRewards, l'événement est émis.
 * Fonction Rest
   - Les points de vie et d'endurance ont augmentés
   - Le timestamp du dernier block est assigné à la variable lastRest
   - L'événement est émis
 * Le Construteur
   - Les différents NFT Stuff sont mintés et que le smart contrat les possède
-* Fonction CreateStuff
-  - Le nouveau NFT Stuff est minté et que ses statistiques bonus sont bien celles attendues
+<!-- * Fonction CreateStuff
+  - Le nouveau NFT Stuff est minté et que ses statistiques bonus sont bien celles attendues -->
 * Fonction ManageStuff
   - Le NFT Stuff modifié est minté et que ses nouvelles valeurs lui sont attribuées
   - L'ajout de potion fonctionne
-  - Elle est capable de créer un nouveau NFT Stuff à l'instar de CreateStuff
+  - Elle est capable de créer un nouveau NFT Stuff <!-- à l'instar de CreateStuff -->
 * Fonction BuyStuff
   - Le NFT Stuff est acheté puis transféré au demandeur
   - L'événement est émis
@@ -43,6 +43,8 @@ Pour les fonctions suivantes, nous vérifions si :
 * Fonction UsePotion
   - Le NFT Potion est burn puis les champs hp et stamina du Character ont augmentés
   - L'événement est émis
+* Fonctions GET
+  - Les fonctions renvoient bien les informations attendus sans erreurs
 
 **Tous les différents Reverts possibles sont également testés**
 
@@ -69,18 +71,18 @@ For the following functions, we check if :
 * Fight function
   - For both protagonists, if they lose health points and gain experience
   - The event is emitted
-  - The NFT increases in level if the conditions are met, then the event is emitted
+  - The NFT increases in level if the conditions are met and the owner receives his rewards after calling the claimRewards function, then the event is emitted
 * Rest function
   - Life and stamina points have increased
   - The event is emitted
 * The Constructor
   - The different NFT Stuff are minted and the smart contract own them
-* CreateStuff function
-  - The new NFT Stuff is minted and its bonus statistics are as expected
+<!-- * CreateStuff function
+  - The new NFT Stuff is minted and its bonus statistics are as expected -->
 * ManageStuff function
   - The modified NFT Stuff is minted and assigned its new values
   - The potion addition works
-  - It is able to create a new NFT Stuff like CreateStuff
+  - It is able to create a new NFT Stuff<!-- like CreateStuff -->
 * BuyStuff function
   - The NFT Stuff is bought and transferred to the requester
   - The event is emitted
@@ -90,5 +92,7 @@ For the following functions, we check if :
 * UsePotion function
   - The NFT Potion is burned and then the Character's hp and stamina fields are increased
   - The event is emitted
+* Functions GET
+  - The functions return the expected information without errors
 
 **All the different possible Reverts are also tested**

@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "fb39dd7892c92fb4cb85b5d15c67eceb",
+    "revision": "7af23e28e7f5951ae3efff83bc69e187",
     "url": "/unlimited_evolution/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/unlimited_evolution/static/css/2.68a81a89.chunk.css"
   },
   {
-    "revision": "e5243626bc57cb2ad419",
+    "revision": "3f47946bdb0566907e98",
     "url": "/unlimited_evolution/static/css/main.f1a9e059.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/unlimited_evolution/static/js/2.aa60c179.chunk.js"
   },
   {
-    "revision": "e5243626bc57cb2ad419",
-    "url": "/unlimited_evolution/static/js/main.89ad42d5.chunk.js"
+    "revision": "3f47946bdb0566907e98",
+    "url": "/unlimited_evolution/static/js/main.c2c87184.chunk.js"
   },
   {
     "revision": "850c4e3d965a02ed501b",
@@ -48,35 +48,31 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/unlimited_evolution/static/media/potion.4cfc342f.png"
   },
   {
-    "revision": "60d4cfffe6f8f0bc170688941f809555",
-    "url": "/unlimited_evolution/static/media/shieldAegis.60d4cfff.png"
+    "revision": "05f61fcb2d89631b634047506306f511",
+    "url": "/unlimited_evolution/static/media/shieldAegis.05f61fcb.png"
   },
   {
-    "revision": "9a5bf9bd48f2ac1e7e15e96adac6ef3f",
-    "url": "/unlimited_evolution/static/media/shieldAegis.9a5bf9bd.png"
+    "revision": "60d4cfffe6f8f0bc170688941f809555",
+    "url": "/unlimited_evolution/static/media/shieldAegis.60d4cfff.png"
   },
   {
     "revision": "881358ef09536458cb689d0022a81c23",
     "url": "/unlimited_evolution/static/media/shieldBasic.881358ef.png"
   },
   {
-    "revision": "95381f390dcfeee305e7594bd9fe3959",
-    "url": "/unlimited_evolution/static/media/shieldBasic.95381f39.png"
-  },
-  {
-    "revision": "2b11b4c0765fc492996f231c1e794dc7",
-    "url": "/unlimited_evolution/static/media/swordBasic.2b11b4c0.png"
-  },
-  {
     "revision": "7b20d00387d2ecd1c6e1905bc80e7877",
     "url": "/unlimited_evolution/static/media/swordBasic.7b20d003.png"
+  },
+  {
+    "revision": "b6460c341c1240f86718239325349b62",
+    "url": "/unlimited_evolution/static/media/swordBasic.b6460c34.png"
   },
   {
     "revision": "84ec7fa0234f2136a4f03e0881974313",
     "url": "/unlimited_evolution/static/media/swordExcalibur.84ec7fa0.png"
   },
   {
-    "revision": "9070b76518588b7575e31d9dcaa7cd9b",
-    "url": "/unlimited_evolution/static/media/swordExcalibur.9070b765.png"
+    "revision": "8bc5ce2297df74d37c37b1064aa14611",
+    "url": "/unlimited_evolution/static/media/swordExcalibur.8bc5ce22.png"
   }
 ]);

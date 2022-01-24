@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/unlimited_evolution/static/css/main.f1a9e059.chunk.css",
-    "main.js": "/unlimited_evolution/static/js/main.89ad42d5.chunk.js",
-    "main.js.map": "/unlimited_evolution/static/js/main.89ad42d5.chunk.js.map",
+    "main.js": "/unlimited_evolution/static/js/main.c2c87184.chunk.js",
+    "main.js.map": "/unlimited_evolution/static/js/main.c2c87184.chunk.js.map",
     "runtime-main.js": "/unlimited_evolution/static/js/runtime-main.41f94c70.js",
     "runtime-main.js.map": "/unlimited_evolution/static/js/runtime-main.41f94c70.js.map",
     "static/css/2.68a81a89.chunk.css": "/unlimited_evolution/static/css/2.68a81a89.chunk.css",
     "static/js/2.aa60c179.chunk.js": "/unlimited_evolution/static/js/2.aa60c179.chunk.js",
     "static/js/2.aa60c179.chunk.js.map": "/unlimited_evolution/static/js/2.aa60c179.chunk.js.map",
     "index.html": "/unlimited_evolution/index.html",
-    "precache-manifest.6f04efadf0301ad3b809c3c4a8900194.js": "/unlimited_evolution/precache-manifest.6f04efadf0301ad3b809c3c4a8900194.js",
+    "precache-manifest.3cab50e3a053f87764a257490af6a0e7.js": "/unlimited_evolution/precache-manifest.3cab50e3a053f87764a257490af6a0e7.js",
     "service-worker.js": "/unlimited_evolution/service-worker.js",
     "static/css/2.68a81a89.chunk.css.map": "/unlimited_evolution/static/css/2.68a81a89.chunk.css.map",
     "static/css/main.f1a9e059.chunk.css.map": "/unlimited_evolution/static/css/main.f1a9e059.chunk.css.map",
@@ -19,16 +19,16 @@
     "static/media/home.jpg": "/unlimited_evolution/static/media/home.8609c655.jpg",
     "static/media/logoGrosTraits.png": "/unlimited_evolution/static/media/logoGrosTraits.2664ba03.png",
     "static/media/potion.png": "/unlimited_evolution/static/media/potion.4cfc342f.png",
-    "static/media/shieldAegis.png": "/unlimited_evolution/static/media/shieldAegis.9a5bf9bd.png",
-    "static/media/shieldBasic.png": "/unlimited_evolution/static/media/shieldBasic.95381f39.png",
-    "static/media/swordBasic.png": "/unlimited_evolution/static/media/swordBasic.7b20d003.png",
-    "static/media/swordExcalibur.png": "/unlimited_evolution/static/media/swordExcalibur.9070b765.png"
+    "static/media/shieldAegis.png": "/unlimited_evolution/static/media/shieldAegis.60d4cfff.png",
+    "static/media/shieldBasic.png": "/unlimited_evolution/static/media/shieldBasic.881358ef.png",
+    "static/media/swordBasic.png": "/unlimited_evolution/static/media/swordBasic.b6460c34.png",
+    "static/media/swordExcalibur.png": "/unlimited_evolution/static/media/swordExcalibur.8bc5ce22.png"
   },
   "entrypoints": [
     "static/js/runtime-main.41f94c70.js",
     "static/css/2.68a81a89.chunk.css",
     "static/js/2.aa60c179.chunk.js",
     "static/css/main.f1a9e059.chunk.css",
-    "static/js/main.89ad42d5.chunk.js"
+    "static/js/main.c2c87184.chunk.js"
   ]
 }

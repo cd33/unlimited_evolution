@@ -149,7 +149,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      */
     function uri(uint _tokenId) override public pure returns(string memory) {
         return string(abi.encodePacked(
-            "ipfs://Qme6snoWc3reD5C9nuSxW3BpLyVci2iiD8vqCZSnA2i42p/",
+            "ipfs://QmbbLcmiZ3Qtu3kc2LQoR4d87tWPpbkiRuERpV2fN4HDTm/",
             Strings.toString(_tokenId),
             ".json"
         ));

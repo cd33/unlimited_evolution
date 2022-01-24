@@ -27,10 +27,10 @@ contract RandomNumberGenerator is VRFConsumerBase, Ownable {
         uint24 rivalTokenId;
     }
 
-    // Mapping from account to his number of NFTs
+    // Mapping from the requestId to the struct Minter
     mapping(bytes32 => Minter) private requestorMintDetails;
 
-    // Mapping from account to his number of NFTs
+    // Mapping from the requestId to the struct Fighter
     mapping(bytes32 => Fighter) private requestorFightDetails;
 
     /**

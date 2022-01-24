@@ -289,56 +289,78 @@ contract('UnlimitedEvolution', function (accounts) {
         )
       })
 
-      // it('REVERT: askFight() same level & expectEvent LevelUp & rewards', async function () {
-      //   await ue.buyStuff(3, {
-      //     value: readable('0.1'),
-      //     from: owner,
-      //   })
-      //   await ue.equipStuff(tokenIdOwner, 3, {
-      //     from: owner,
-      //   })
+      it('REVERT: askFight() same level & expectEvent LevelUp & rewards', async function () {
+        await ue.buyStuff(3, {
+          value: readable('0.1'),
+          from: owner,
+        })
+        await ue.equipStuff(tokenIdOwner, 3, {
+          from: owner,
+        })
 
-      //   let tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
-      //   let tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
-      //   let balancePotion = await ue.balanceOf(owner, 5)
-      //   expect(parseInt(balancePotion)).to.equal(0)
-      //   let balanceTokenOwner = await ut.balanceOf(owner)
-      //   expect(parseInt(balanceTokenOwner)).to.equal(0)
+        let tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+        let tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
+        let balancePotion = await ue.balanceOf(owner, 5)
+        expect(parseInt(balancePotion)).to.equal(0)
+        let balanceTokenOwner = await ut.balanceOf(owner)
+        expect(parseInt(balanceTokenOwner)).to.equal(0)
 
-      //   while (tokenDetailsOwner[1] < 2) {
-      //     while (tokenDetailsInvestor[3] > 0 && tokenDetailsOwner[1] < 2) {
-      //       await ue.askFight(tokenIdOwner, tokenIdInvestor, {
-      //         from: owner,
-      //       })
-      //       tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
-      //       tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
-      //     }
-      //     await ue.buyStuff(5, {
-      //       value: readable('0.001'),
-      //       from: investor,
-      //     })
-      //     await ue.usePotion(tokenIdInvestor, {
-      //       from: investor,
-      //     })
-      //     tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
-      //     tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
-      //   }
+        while (tokenDetailsOwner[1] < 2) {
+          while (tokenDetailsInvestor[3] > 0 && tokenDetailsOwner[1] < 2) {
+            await ue.askFight(tokenIdOwner, tokenIdInvestor, {
+              from: owner,
+            })
+            tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
+            tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+          }
+          await ue.buyStuff(5, {
+            value: readable('0.001'),
+            from: investor,
+          })
+          await ue.usePotion(tokenIdInvestor, {
+            from: investor,
+          })
+          tokenDetailsInvestor = await ue.getTokenDetails(tokenIdInvestor)
+          tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
+        }
 
-      //   await expectRevert(
-      //     ue.askFight(tokenIdOwner, tokenIdInvestor, {
-      //       from: owner,
-      //     }),
-      //     'Fight someone your own size!',
-      //   )
+        await expectRevert(
+          ue.askFight(tokenIdOwner, tokenIdInvestor, {
+            from: owner,
+          }),
+          'Fight someone your own size!',
+        )
 
-      //   balancePotion = await ue.balanceOf(owner, 5)
-      //   expect(parseInt(balancePotion)).to.equal(1)
+        await ue.claimRewards(tokenIdOwner, {
+          from: owner,
+        })
 
-      //   balanceTokenOwner = await ut.balanceOf(owner)
-      //   expect(parseInt(balanceTokenOwner)).to.equal(
-      //     parseInt(readable('10000')),
-      //   )
-      // })
+        balancePotion = await ue.balanceOf(owner, 5)
+        expect(parseInt(balancePotion)).to.equal(1)
+
+        balanceTokenOwner = await ut.balanceOf(owner)
+        expect(parseInt(balanceTokenOwner)).to.equal(
+          parseInt(readable('10000')),
+        )
+      })
+
+      it('REVERT: claimRewards() not owner', async function () {
+        await expectRevert(
+          ue.claimRewards(tokenIdOwner, {
+            from: investor,
+          }),
+          "You don't own this NFT",
+        )
+      })
+
+      it('REVERT: claimRewards() any rewards', async function () {
+        await expectRevert(
+          ue.claimRewards(tokenIdOwner, {
+            from: owner,
+          }),
+          "You don't have any reward",
+        )
+      })
 
       it('REVERT: askFight() resting', async function () {
         await ue.askFight(tokenIdOwner, tokenIdInvestor, {
@@ -550,20 +572,20 @@ contract('UnlimitedEvolution', function (accounts) {
         expect(parseInt(balancePotion)).to.equal(10 ** 6)
       })
 
-    //   it('Create Stuff', async function () {
-    //     await ue.createStuff(10, 0, 1, 2, 3, readable('1'), 1, { from: owner })
+      it('Create Stuff', async function () {
+        await ue.createStuff(10, 0, 1, 2, 3, readable('1'), 1, { from: owner })
 
-    //     let balanceNewShield = await ue.balanceOf(ue.address, 6)
-    //     expect(parseInt(balanceNewShield)).to.equal(10)
+        let balanceNewShield = await ue.balanceOf(ue.address, 6)
+        expect(parseInt(balanceNewShield)).to.equal(10)
 
-    //     let stuffDetails = await ue.getStuffDetails(6)
-    //     expect(parseInt(stuffDetails[1])).to.equal(0)
-    //     expect(parseInt(stuffDetails[2])).to.equal(1)
-    //     expect(parseInt(stuffDetails[3])).to.equal(2)
-    //     expect(parseInt(stuffDetails[4])).to.equal(3)
-    //     expect(parseInt(stuffDetails[5])).to.equal(parseInt(readable('1')))
-    //     expect(parseInt(stuffDetails[6])).to.equal(1)
-    //   })
+        let stuffDetails = await ue.getStuffDetails(6)
+        expect(parseInt(stuffDetails[1])).to.equal(0)
+        expect(parseInt(stuffDetails[2])).to.equal(1)
+        expect(parseInt(stuffDetails[3])).to.equal(2)
+        expect(parseInt(stuffDetails[4])).to.equal(3)
+        expect(parseInt(stuffDetails[5])).to.equal(parseInt(readable('1')))
+        expect(parseInt(stuffDetails[6])).to.equal(1)
+      })
 
       it('Manage Stuff Modify Excalibur', async function () {
         let balanceExcalibur = await ue.balanceOf(ue.address, 3)

@@ -62,10 +62,10 @@ contract UnlimitedToken is Ownable {
      * @dev When a level up happens in game contract, a mint is triggered
      * @param receiver Address to receive the mint
      */
-    function levelUpMint(address receiver) external {
+    function levelUpMint(address receiver, uint16 rewards) external {
         require(msg.sender==gameContract);
         
-        uint amount=10000/2**(mintNumber/100); //totalMint : 2M
+        uint amount = rewards*(10000/2**(mintNumber/100)); //totalMint : 2M
         mintNumber++;
 
         this.transfer(receiver, amount*10**18);

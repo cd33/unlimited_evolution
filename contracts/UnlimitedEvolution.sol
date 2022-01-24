@@ -51,9 +51,9 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         uint24 attack2;
         uint24 defence1;
         uint24 defence2;
-        uint24 attributePoints;
         uint8 weapon;
         uint8 shield;
+        uint16 rewards;
         uint256 lastRest;
         type_character typeCharacter;
         gender_character genderCharacter;
@@ -77,9 +77,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
 
     // Mapping from account to his number of NFTs
     mapping(address => uint8) private _balanceOfCharacters;
-
-    // Mapping from account to his number of NFTs, useful to send rewards
-    mapping(uint24 => address) private ownerOfCharacter;
 
     /**
      * @dev Constructor of the contract ERC1155, mint stuff and add it to the mapping.
@@ -260,22 +257,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         }
     }
 
-    // /**
-    //  * @dev The function allows the allocation of "attributePoints" to the different characteristics.
-    //  * @param _tokenId Id of the token.
-    //  * @param _attack1 Attack number 1 of the token.
-    //  * @param _attack2 Attack number 2 of the token.
-    //  * @param _defence1 Defence number 1 of the token.
-    //  * @param _defence2 Defence number 2 of the token.
-    //  */
-    // function attributesLevelUp(uint24 _tokenId, uint16 _attack1, uint16 _attack2, uint16 _defence1, uint16 _defence2) external {
-    //     require(_characterDetails[_tokenId].attributePoints == _attack1 + _attack2 + _defence1 + _defence2, "Wrong amount of points to attribute");
-    //     _characterDetails[_tokenId].attack1 += _attack1;
-    //     _characterDetails[_tokenId].attack2 += _attack2;
-    //     _characterDetails[_tokenId].defence1 += _defence1;
-    //     _characterDetails[_tokenId].defence2 += _defence2;
-    // }
-
     /**
      * @dev The function assigns a number between 3 and 5 randomly to the attack characteristics using "randomNumber".
      * @param randomNumber Random number from chainlink.
@@ -329,7 +310,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         _balanceOfCharacters[_address]++;
         countMints[uint8(_typeCharacter)]++;
         _mint(_address, nextCharacterId, 1, bytes(abi.encodePacked("Unlimited Evolution Character #", Strings.toString(nextCharacterId))));
-        ownerOfCharacter[nextCharacterId] = _address;
         emit CharacterCreated(nextCharacterId);
 
         if(_typeCharacter == type_character.BRUTE) {
@@ -356,7 +336,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     }
 
     /**
-     * @dev One experience point is added and if the experience number reaches % 10 == 0 then the NFT increases one level and gains 10 points to attribute to his stats.
+     * @dev One experience point is added and if the experience number reaches % 10 == 0 then the NFT increases one level and gains 1 point of reward.
      * @param _tokenId Id of the token.
      * Emits a "LevelUp" event.
      */
@@ -364,11 +344,39 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         _characterDetails[_tokenId].xp++;
         if (_characterDetails[_tokenId].xp % 10 == 0) {
             _characterDetails[_tokenId].level++;
-            _characterDetails[_tokenId].attributePoints += 10;
-            unlimitedToken.levelUpMint(ownerOfCharacter[_tokenId]);
-            safeTransferFrom(address(this), ownerOfCharacter[_tokenId], POTION, 1, "");
+            _characterDetails[_tokenId].rewards++;
             emit LevelUp(_tokenId, _characterDetails[_tokenId].level);
         }
+    }
+
+    // /**
+    //  * @dev The function allows the allocation of attribute points (rewards*10) to the different characteristics.
+    //  * @param _tokenId Id of the token.
+    //  * @param _attack1 Attack number 1 of the token.
+    //  * @param _attack2 Attack number 2 of the token.
+    //  * @param _defence1 Defence number 1 of the token.
+    //  * @param _defence2 Defence number 2 of the token.
+    //  */
+    // function attributesLevelUp(uint24 _tokenId, uint16 _attack1, uint16 _attack2, uint16 _defence1, uint16 _defence2) external {
+    //     require(_characterDetails[_tokenId].rewards * 10 == _attack1 + _attack2 + _defence1 + _defence2, "Wrong amount of points to attribute");
+    //     _characterDetails[_tokenId].rewards = 0;
+    //     _characterDetails[_tokenId].attack1 += _attack1;
+    //     _characterDetails[_tokenId].attack2 += _attack2;
+    //     _characterDetails[_tokenId].defence1 += _defence1;
+    //     _characterDetails[_tokenId].defence2 += _defence2;
+    // }
+
+    /**
+     * @dev Claim Rewards after LevelUp, gains potion and ULT.
+     * @param _tokenId Id of the token.
+     */
+    function claimRewards(uint24 _tokenId) external {
+        require(_ownerOf(_tokenId), "You don't own this NFT");
+        require(_characterDetails[_tokenId].rewards > 0, "You don't have any reward");
+        uint16 rewards = _characterDetails[_tokenId].rewards;
+        _characterDetails[_tokenId].rewards = 0;
+        unlimitedToken.levelUpMint(msg.sender, rewards);
+        safeTransferFrom(address(this), msg.sender, POTION, rewards, "");
     }
 
     /**

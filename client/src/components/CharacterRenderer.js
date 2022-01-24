@@ -88,8 +88,8 @@ const CharacterRenderer = ({ character = null, size, style }) => {
     >
       <ImageRenderer
         key={character.id}
-        url={`https://gateway.pinata.cloud/ipfs/QmZEC9RAZ2bLdgdXEg3x2zno4Cq62SzMMZbjCyvgkP3KxG/${character.id}.png`}
-        thumb={`https://gateway.pinata.cloud/ipfs/QmZEC9RAZ2bLdgdXEg3x2zno4Cq62SzMMZbjCyvgkP3KxG/${character.id}.png`}
+        url={`https://gateway.pinata.cloud/ipfs/Qmf1cEwunNKSjh6W1KsCJY6ENaeTTanP8cfDTcuUzgxGMh/${character.id}.png`}
+        thumb={`https://gateway.pinata.cloud/ipfs/Qmf1cEwunNKSjh6W1KsCJY6ENaeTTanP8cfDTcuUzgxGMh/${character.id}.png`}
         width={size}
         height={size}
       />

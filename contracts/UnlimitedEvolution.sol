@@ -83,7 +83,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @param _unlimitedTokenAddress Address of the contract UnlimitedToken.
      * @param _randomNumberGenerator Address of the contract RandomNumberGenerator.
      */
-    constructor(UnlimitedToken _unlimitedTokenAddress, RandomNumberGenerator _randomNumberGenerator) ERC1155("ipfs://Qme6snoWc3reD5C9nuSxW3BpLyVci2iiD8vqCZSnA2i42p/{id}.json") {
+    constructor(UnlimitedToken _unlimitedTokenAddress, RandomNumberGenerator _randomNumberGenerator) ERC1155("ipfs://QmbbLcmiZ3Qtu3kc2LQoR4d87tWPpbkiRuERpV2fN4HDTm/{id}.json") {
         unlimitedToken = _unlimitedTokenAddress;
         randomNumberGenerator = _randomNumberGenerator;
         _mint(address(this), BASIC_SWORD, 10**5, bytes(abi.encodePacked("Unlimited Evolution Stuff #", Strings.toString(BASIC_SWORD))));

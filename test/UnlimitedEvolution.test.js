@@ -247,15 +247,15 @@ contract('UnlimitedEvolution', function (accounts) {
         let ownerDetailsAfter = await ue.getTokenDetails(tokenIdOwner)
         let investorDetailsAfter = await ue.getTokenDetails(tokenIdInvestor)
 
-        expect(parseInt(ownerDetailsBefore[3] - substrateLifeToOwner)).to.equal(
-          parseInt(ownerDetailsAfter[3]),
+        expect(parseInt(ownerDetailsBefore.hp - substrateLifeToOwner)).to.equal(
+          parseInt(ownerDetailsAfter.hp),
         )
         expect(
-          parseInt(investorDetailsBefore[3] - substrateLifeToInvestor),
-        ).to.equal(parseInt(investorDetailsAfter[3]))
+          parseInt(investorDetailsBefore.hp - substrateLifeToInvestor),
+        ).to.equal(parseInt(investorDetailsAfter.hp))
 
-        expect(parseInt(ownerDetailsBefore[2]) + 1).to.equal(
-          parseInt(ownerDetailsAfter[2]),
+        expect(parseInt(ownerDetailsBefore.xp) + 1).to.equal(
+          parseInt(ownerDetailsAfter.xp),
         )
 
         await expectEvent(receipt, 'Fighted', {
@@ -305,8 +305,8 @@ contract('UnlimitedEvolution', function (accounts) {
         let balanceTokenOwner = await ut.balanceOf(owner)
         expect(parseInt(balanceTokenOwner)).to.equal(0)
 
-        while (tokenDetailsOwner[1] < 2) {
-          while (tokenDetailsInvestor[3] > 0 && tokenDetailsOwner[1] < 2) {
+        while (tokenDetailsOwner.level < 2) {
+          while (tokenDetailsInvestor.hp > 0 && tokenDetailsOwner.level < 2) {
             await ue.askFight(tokenIdOwner, tokenIdInvestor, {
               from: owner,
             })
@@ -385,14 +385,14 @@ contract('UnlimitedEvolution', function (accounts) {
         })
 
         let ownerDetails = await ue.getTokenDetails(tokenIdOwner)
-        expect(parseInt(ownerDetails[4])).to.equal(90)
+        expect(parseInt(ownerDetails.stamina)).to.equal(90)
 
         await ue.rest(tokenIdOwner, {
           from: owner,
         })
 
         ownerDetails = await ue.getTokenDetails(tokenIdOwner)
-        expect(parseInt(ownerDetails[4])).to.equal(100)
+        expect(parseInt(ownerDetails.stamina)).to.equal(100)
 
         await time.increase(86401)
 
@@ -401,7 +401,7 @@ contract('UnlimitedEvolution', function (accounts) {
         })
 
         ownerDetails = await ue.getTokenDetails(tokenIdOwner)
-        expect(parseInt(ownerDetails[4])).to.equal(90)
+        expect(parseInt(ownerDetails.stamina)).to.equal(90)
       })
 
       it('REVERT: askFight() not enough stamina', async function () {
@@ -424,7 +424,7 @@ contract('UnlimitedEvolution', function (accounts) {
 
         let tokenDetailsOwner = await ue.getTokenDetails(tokenIdOwner)
 
-        while (tokenDetailsOwner[4] > 0) {
+        while (tokenDetailsOwner.stamina > 0) {
           await ue.askFight(tokenIdOwner, tokenIdInvestor, {
             from: owner,
           })
@@ -455,7 +455,7 @@ contract('UnlimitedEvolution', function (accounts) {
         await ue.equipStuff(tokenIdOwner, 3, {
           from: owner,
         })
-        while (tokenDetailsInvestor[3] > 0) {
+        while (tokenDetailsInvestor.hp > 0) {
           await ue.askFight(tokenIdOwner, tokenIdInvestor, {
             from: owner,
           })
@@ -519,14 +519,14 @@ contract('UnlimitedEvolution', function (accounts) {
           tokenIdInvestor,
         )
 
-        expect(parseInt(tokenDetailsInvestorBefore[3])).to.be.lt(
-          parseInt(tokenDetailsInvestorAfter[3]),
+        expect(parseInt(tokenDetailsInvestorBefore.hp)).to.be.lt(
+          parseInt(tokenDetailsInvestorAfter.hp),
         )
-        expect(parseInt(tokenDetailsInvestorBefore[4])).to.be.lt(
-          parseInt(tokenDetailsInvestorAfter[4]),
+        expect(parseInt(tokenDetailsInvestorBefore.stamina)).to.be.lt(
+          parseInt(tokenDetailsInvestorAfter.stamina),
         )
-        expect(parseInt(tokenDetailsInvestorBefore[12])).to.be.lt(
-          parseInt(tokenDetailsInvestorAfter[12]),
+        expect(parseInt(tokenDetailsInvestorBefore.lastRest)).to.be.lt(
+          parseInt(tokenDetailsInvestorAfter.lastRest),
         )
 
         await expectEvent(receipt, 'Rested', { tokenId: tokenIdInvestor })
@@ -579,26 +579,26 @@ contract('UnlimitedEvolution', function (accounts) {
       // //   expect(parseInt(balanceNewShield)).to.equal(10)
 
       // //   let stuffDetails = await ue.getStuffDetails(6)
-      // //   expect(parseInt(stuffDetails[1])).to.equal(0)
-      // //   expect(parseInt(stuffDetails[2])).to.equal(1)
-      // //   expect(parseInt(stuffDetails[3])).to.equal(2)
-      // //   expect(parseInt(stuffDetails[4])).to.equal(3)
-      // //   expect(parseInt(stuffDetails[5])).to.equal(parseInt(readable('1')))
-      // //   expect(parseInt(stuffDetails[6])).to.equal(1)
+      // //   expect(parseInt(stuffDetails.bonusAttack1)).to.equal(0)
+      // //   expect(parseInt(stuffDetails.bonusAttack2)).to.equal(1)
+      // //   expect(parseInt(stuffDetails.bonusDefence1)).to.equal(2)
+      // //   expect(parseInt(stuffDetails.bonusDefence2)).to.equal(3)
+      // //   expect(parseInt(stuffDetails.mintPrice)).to.equal(parseInt(readable('1')))
+      // //   expect(parseInt(stuffDetails.typeStuff)).to.equal(1)
       // // })
 
       it('Manage Stuff Modify Excalibur', async function () {
         let balanceExcalibur = await ue.balanceOf(ue.address, 3)
         expect(parseInt(balanceExcalibur)).to.equal(1)
         let excaliburDetails = await ue.getStuffDetails(3)
-        expect(parseInt(excaliburDetails[1])).to.equal(10)
-        expect(parseInt(excaliburDetails[2])).to.equal(10)
-        expect(parseInt(excaliburDetails[3])).to.equal(10)
-        expect(parseInt(excaliburDetails[4])).to.equal(10)
-        expect(parseInt(excaliburDetails[5])).to.equal(
+        expect(parseInt(excaliburDetails.bonusAttack1)).to.equal(10)
+        expect(parseInt(excaliburDetails.bonusAttack2)).to.equal(10)
+        expect(parseInt(excaliburDetails.bonusDefence1)).to.equal(10)
+        expect(parseInt(excaliburDetails.bonusDefence2)).to.equal(10)
+        expect(parseInt(excaliburDetails.mintPrice)).to.equal(
           parseInt(readable('0.1')),
         )
-        expect(parseInt(excaliburDetails[6])).to.equal(0)
+        expect(parseInt(excaliburDetails.typeStuff)).to.equal(0)
 
         await ue.manageStuff(3, 3, 100, 100, 100, 100, readable('1'), 1)
 
@@ -606,12 +606,12 @@ contract('UnlimitedEvolution', function (accounts) {
         expect(parseInt(balanceExcalibur)).to.equal(4)
 
         excaliburDetails = await ue.getStuffDetails(3)
-        expect(parseInt(excaliburDetails[1])).to.equal(100)
-        expect(parseInt(excaliburDetails[2])).to.equal(100)
-        expect(parseInt(excaliburDetails[3])).to.equal(100)
-        expect(parseInt(excaliburDetails[4])).to.equal(100)
-        expect(parseInt(excaliburDetails[5])).to.equal(parseInt(readable('1')))
-        expect(parseInt(excaliburDetails[6])).to.equal(1)
+        expect(parseInt(excaliburDetails.bonusAttack1)).to.equal(100)
+        expect(parseInt(excaliburDetails.bonusAttack2)).to.equal(100)
+        expect(parseInt(excaliburDetails.bonusDefence1)).to.equal(100)
+        expect(parseInt(excaliburDetails.bonusDefence2)).to.equal(100)
+        expect(parseInt(excaliburDetails.mintPrice)).to.equal(parseInt(readable('1')))
+        expect(parseInt(excaliburDetails.typeStuff)).to.equal(1)
       })
 
       it('Manage Stuff Create More Potions', async function () {
@@ -631,12 +631,12 @@ contract('UnlimitedEvolution', function (accounts) {
         expect(parseInt(balanceNewSword)).to.equal(10)
 
         let stuffDetails = await ue.getStuffDetails(8)
-        expect(parseInt(stuffDetails[1])).to.equal(0)
-        expect(parseInt(stuffDetails[2])).to.equal(1)
-        expect(parseInt(stuffDetails[3])).to.equal(2)
-        expect(parseInt(stuffDetails[4])).to.equal(3)
-        expect(parseInt(stuffDetails[5])).to.equal(parseInt(readable('0.01')))
-        expect(parseInt(stuffDetails[6])).to.equal(0)
+        expect(parseInt(stuffDetails.bonusAttack1)).to.equal(0)
+        expect(parseInt(stuffDetails.bonusAttack2)).to.equal(1)
+        expect(parseInt(stuffDetails.bonusDefence1)).to.equal(2)
+        expect(parseInt(stuffDetails.bonusDefence2)).to.equal(3)
+        expect(parseInt(stuffDetails.mintPrice)).to.equal(parseInt(readable('0.01')))
+        expect(parseInt(stuffDetails.typeStuff)).to.equal(0)
       })
 
       it('Buy Stuff', async function () {
@@ -839,11 +839,11 @@ contract('UnlimitedEvolution', function (accounts) {
           tokenIdInvestor,
         )
 
-        expect(parseInt(investorDetailsBeforePotion[3])).to.be.lt(
-          parseInt(investorDetailsAfterPotion[3]),
+        expect(parseInt(investorDetailsBeforePotion.hp)).to.be.lt(
+          parseInt(investorDetailsAfterPotion.hp),
         )
-        expect(parseInt(investorDetailsBeforePotion[4])).to.be.lt(
-          parseInt(investorDetailsAfterPotion[4]),
+        expect(parseInt(investorDetailsBeforePotion.stamina)).to.be.lt(
+          parseInt(investorDetailsAfterPotion.stamina),
         )
 
         await expectEvent(eventInvestor, 'PotionUsed', {

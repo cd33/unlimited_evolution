@@ -42,8 +42,11 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     enum type_stuff { WEAPON, SHIELD, POTION }
 
     struct Character {
-        uint24 id;
+        uint8 weapon;
+        uint8 shield;
+        uint16 rewards;
         uint16 level;
+        uint24 id;
         uint24 xp;
         uint24 hp;
         uint24 stamina;
@@ -51,9 +54,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         uint24 attack2;
         uint24 defence1;
         uint24 defence2;
-        uint8 weapon;
-        uint8 shield;
-        uint16 rewards;
         uint256 lastRest;
         type_character typeCharacter;
         gender_character genderCharacter;
@@ -206,14 +206,6 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
     }
 
     /**
-     * @dev Owner withdraws an amount of LINK.
-     * @param value Amount of LINK.
-     */
-    function withdrawLink(uint256 value) external onlyOwner {
-        randomNumberGenerator.withdraw(value);
-    }
-
-    /**
      * @dev Tip to simulate the function ownerOf of ERC721, check if msg.sender is owner of the token.
      * @param _tokenId Id of the token.
      * @return Boolean, true of false.
@@ -306,7 +298,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
             nextCharacterId = nextElementaryId;
         }
         
-        _characterDetails[nextCharacterId] = Character(nextCharacterId, 1, 1, 100, 100, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, 0, 0, 0, _typeCharacter, _genderCharacter);
+        _characterDetails[nextCharacterId] = Character(0, 0, 0, 1, nextCharacterId, 1, 100, 100, _attributes[0], _attributes[1], _attributes[2], _attributes[3], 0, _typeCharacter, _genderCharacter);
         _balanceOfCharacters[_address]++;
         countMints[uint8(_typeCharacter)]++;
         _mint(_address, nextCharacterId, 1, bytes(abi.encodePacked("Unlimited Evolution Character #", Strings.toString(nextCharacterId))));
@@ -376,7 +368,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
         uint16 rewards = _characterDetails[_tokenId].rewards;
         _characterDetails[_tokenId].rewards = 0;
         unlimitedToken.levelUpMint(msg.sender, rewards);
-        safeTransferFrom(address(this), msg.sender, POTION, rewards, "");
+        this.safeTransferFrom(address(this), msg.sender, POTION, rewards, "");
     }
 
     /**

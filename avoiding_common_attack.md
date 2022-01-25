@@ -24,7 +24,6 @@ In Solidity 0.8.0 or better, math overflows revert by default, we don't need Saf
 ### DOS
 
 getMyCharacters() loop is limited because one address can only have 5 characters  
-getOthersCharacters() ?
 
 
 ### Tx Origin

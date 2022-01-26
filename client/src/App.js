@@ -276,7 +276,7 @@ const App = () => {
   const fight = (_myTokenId, _rivalTokenId) => {
     setLoading(true)
     ueContract.methods
-      .fight(_myTokenId, _rivalTokenId)
+      .askFight(_myTokenId, _rivalTokenId)
       .send({ from: accounts[0] })
       .once('error', (err) => {
         setLoading(false)

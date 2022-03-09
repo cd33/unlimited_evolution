@@ -540,7 +540,7 @@ contract UnlimitedEvolution is ERC1155, ERC1155Holder, Ownable {
      * @dev The function returns an array with the characteristics of all my NFTs.
      * @return Array of characters.
      */
-    function getMyCharacters() external view returns(Character[] memory){
+    function getMyCharacters() external view returns(Character[] memory) {
         uint8 count;
         Character[] memory myCharacters = new Character[](_balanceOfCharacters[msg.sender]);
         for (uint16 i = 256; i < nextBruteId; i++) {

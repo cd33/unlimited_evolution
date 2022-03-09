@@ -22,9 +22,9 @@ const MyCharacters = ({
   return (
     <s.Container image={img} ai="center" flex="1" style={{ paddingTop: 80 }}>
       <s.TextTitle>Mes Personnages</s.TextTitle>
-      <s.TextSubTitle>Veuillez choisir un type de personnage</s.TextSubTitle>
+      <s.TextSubTitle style={{marginTop: 30}}>Veuillez choisir un type de personnage</s.TextSubTitle>
 
-      <s.Container fd="row" ai="center" jc="center">
+      <s.Container fd="row" ai="center" jc="center" style={{marginTop: 30}}>
         <s.Select
           onChange={(e) => setTypeCharacter(e.target.value)}
           style={{ marginRight: 16, marginLeft: 16 }}

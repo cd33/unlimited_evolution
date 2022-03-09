@@ -55,10 +55,10 @@ const MyEnemies = ({
 
       {characters && characters.length > 0 ? (
         <>
-          <s.TextSubTitle>
+          <s.TextSubTitle style={{marginTop: 30}}>
             Veuillez choisir un personnage pour combattre
           </s.TextSubTitle>
-          <s.Select onChange={(e) => handleSelectedCharacter(e.target.value)}>
+          <s.Select onChange={(e) => handleSelectedCharacter(e.target.value)} style={{marginTop: 30}}>
             <option value="">Choisissez un personnage</option>
             {characters.map((character) => {
               if (timeStamp - 86400 > character.lastRest) {

@@ -78,7 +78,7 @@ const MyStuff = ({
       {characters && characters.length > 0 ? (
         stuffs.length > 0 || balancesMyStuff[5] > 0 ? (
           <>
-            <s.TextSubTitle>
+            <s.TextSubTitle style={{marginTop: 30}}>
               Veuillez choisir un personnage à équiper
             </s.TextSubTitle>
             <s.Select
@@ -87,6 +87,7 @@ const MyStuff = ({
               onChange={(e) => {
                 handleSelectedCharacter(e.target.value)
               }}
+              style={{marginTop: 30}}
             >
               <option value="">Choisissez un personnage</option>
               {characters.map((character) => (

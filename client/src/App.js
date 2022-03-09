@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
 import * as s from './styles/globalStyles'
 import UnlimitedEvolution from './contracts/UnlimitedEvolution.json'
 import getWeb3 from './getWeb3'
